@@ -363,6 +363,10 @@
     <string name="cannot_call_yourself">You cannot place a call with yourself</string>
     <string name="cannot_call_yourself_with_invite">You cannot place a call with yourself, wait for participants to accept invitation</string>
     <string name="failed_to_add_widget">Failed to add widget</string>
+    <string name="kanban_board_ia_already_added">Kanban board is already added</string>
+    <string name="enter_kanban_board_url_prompt">Please, enter the url of the kanban board, you would like to integrate</string>
+    <string name="kanban_board_url_hint">Kanban board url</string>
+    <string name="save_kanban_board">Save kanban board</string>
     <string name="failed_to_remove_widget">Failed to remove widget</string>
     <string name="or">or</string>
     <string name="done">Done</string>
@@ -1391,6 +1395,7 @@
     <string name="widget_integration_room_not_visible">Room %s is not visible.</string>
     <string name="widget_integration_missing_parameter">A required parameter is missing.</string>
     <string name="room_add_matrix_apps">Add Matrix apps</string>
+    <string name="room_add_kanban_board">Add kanban board</string>
     <string name="room_manage_integrations">Manage Integrations</string>
     <string name="room_no_active_widgets">No active widgets</string>
     <string name="settings_labs_native_camera">Use native camera</string>

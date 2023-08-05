@@ -55,6 +55,8 @@ sealed class RoomDetailViewEvents : VectorViewEvents {
     data class ShowWaitingView(val text: String? = null) : RoomDetailViewEvents()
     object HideWaitingView : RoomDetailViewEvents()
 
+    object ShowKanbanBoardDialog : RoomDetailViewEvents()
+
     data class DownloadFileState(
             val mimeType: String?,
             val file: File?,

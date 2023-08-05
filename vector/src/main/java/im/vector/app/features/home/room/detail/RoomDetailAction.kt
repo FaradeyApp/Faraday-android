@@ -119,6 +119,10 @@ sealed class RoomDetailAction : VectorViewModelAction {
     // Poll
     data class EndPoll(val eventId: String) : RoomDetailAction()
 
+    data class SendAddKanbanBoardRequest(val url: String) : RoomDetailAction()
+
+    object  AddKanbanBoard : RoomDetailAction()
+
     // Live Location
     object StopLiveLocationSharing : RoomDetailAction()
 

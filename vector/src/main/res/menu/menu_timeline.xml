@@ -11,6 +11,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/add_kanban_board"
+        android:title="@string/room_add_kanban_board"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/search"
         android:title="@string/search"
         app:showAsAction="never" />

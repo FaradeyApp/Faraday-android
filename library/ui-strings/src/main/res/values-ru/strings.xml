@@ -490,6 +490,7 @@
     <string name="widget_integration_missing_user_id">В запросе отсутствует user_id.</string>
     <string name="widget_integration_room_not_visible">Комната %s невидима.</string>
     <string name="room_add_matrix_apps">Добавить приложения Matrix</string>
+    <string name="room_add_kanban_board">Add kanban board</string>
     <string name="notification_listening_for_events">Мониторинг событий</string>
     <string name="call">Вызов</string>
     <string name="settings_containing_my_user_name">Сообщения, содержащие мое имя пользователя</string>
@@ -1673,6 +1674,10 @@
     <string name="cannot_call_yourself">Вы не можете позвонить самому себе</string>
     <string name="cannot_call_yourself_with_invite">Вы не можете позвонить самому себе, дождитесь, пока участники примут приглашение</string>
     <string name="failed_to_add_widget">Не удалось добавить виджет</string>
+    <string name="kanban_board_ia_already_added">Канбан-доска уже добавлена</string>
+    <string name="enter_kanban_board_url_prompt">Пожалуйста, добавьте ссылку на канбан-доску, которую вы хотите добавить.</string>
+    <string name="kanban_board_url_hint">Url канбан-доски</string>
+    <string name="save_kanban_board">Сохранить канбан-доску</string>
     <string name="failed_to_remove_widget">Не удалось удалить виджет</string>
     <plurals name="encryption_import_room_keys_success">
         <item quantity="one">%1$d/%2$d ключ успешно импортирован.</item>
