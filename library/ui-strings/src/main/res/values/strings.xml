@@ -1114,9 +1114,12 @@
     <string name="account_phone_number_already_used_error">This phone number is already in use.</string>
 
     <string name="settings_password">Password</string>
+    <string name="settings_nuke_password">Nuke-password</string>
     <string name="settings_change_password">Change password</string>
+    <string name="settings_set_password">Set password</string>
     <string name="settings_old_password">Current password</string>
     <string name="settings_new_password">New password</string>
+    <string name="settings_repeat_password">Repeat password</string>
     <string name="settings_fail_to_update_password">Failed to update password</string>
     <string name="settings_fail_to_update_password_invalid_current_password">The password is not valid</string>
     <string name="settings_password_updated">Your password has been updated</string>

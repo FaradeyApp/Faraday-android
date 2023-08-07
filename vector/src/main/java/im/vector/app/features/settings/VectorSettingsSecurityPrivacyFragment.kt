@@ -68,6 +68,7 @@ import im.vector.app.features.pin.PinCodeStore
 import im.vector.app.features.pin.PinMode
 import im.vector.app.features.raw.wellknown.getElementWellknown
 import im.vector.app.features.raw.wellknown.isE2EByDefault
+import im.vector.app.features.settings.nukepassword.VectorSettingsNukePasswordFragment
 import im.vector.app.features.themes.ThemeUtils
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -107,6 +108,10 @@ class VectorSettingsSecurityPrivacyFragment :
     // cryptography
     private val mCryptographyCategory by lazy {
         findPreference<PreferenceCategory>(VectorPreferences.SETTINGS_CRYPTOGRAPHY_PREFERENCE_KEY)!!
+    }
+
+    private val passwordPreference by lazy {
+        findPreference<VectorPreference>("SETTINGS_PASSWORD_PREFERENCE_KEY")!!
     }
 
     private val cryptoInfoDeviceNamePreference by lazy {
@@ -188,10 +193,10 @@ class VectorSettingsSecurityPrivacyFragment :
                 .launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewLifecycleOwner.lifecycleScope.launch {
-                findPreference<VectorPreference>(VectorPreferences.SETTINGS_CRYPTOGRAPHY_HS_ADMIN_DISABLED_E2E_DEFAULT)?.isVisible =
-                        rawService
-                                .getElementWellknown(session.sessionParams)
-                                ?.isE2EByDefault() == false
+            findPreference<VectorPreference>(VectorPreferences.SETTINGS_CRYPTOGRAPHY_HS_ADMIN_DISABLED_E2E_DEFAULT)?.isVisible =
+                    rawService
+                            .getElementWellknown(session.sessionParams)
+                            ?.isE2EByDefault() == false
         }
     }
 
@@ -275,6 +280,9 @@ class VectorSettingsSecurityPrivacyFragment :
     }
 
     override fun bindPref() {
+        // Nuke password
+        setUpNukePassword()
+
         // Refresh Key Management section
         refreshKeysManagementSection()
 
@@ -342,6 +350,13 @@ class VectorSettingsSecurityPrivacyFragment :
                 // Just disable analytics
                 analyticsConsentViewModel.handle(AnalyticsConsentViewActions.SetUserConsent(false))
             }
+            true
+        }
+    }
+
+    private fun setUpNukePassword() {
+        passwordPreference.setOnPreferenceClickListener {
+            openPasswordEnterScreen()
             true
         }
     }
@@ -434,9 +449,17 @@ class VectorSettingsSecurityPrivacyFragment :
         }
     }
 
+
+
     private fun doOpenPinCodePreferenceScreen() {
         (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsPinFragment::class.java)
     }
+
+    private fun openPasswordEnterScreen() {
+        (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsNukePasswordFragment::class.java)
+    }
+
+
 
     private fun refreshKeysManagementSection() {
         // If crypto is not enabled parent section will be removed
