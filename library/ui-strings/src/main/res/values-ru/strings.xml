@@ -490,7 +490,7 @@
     <string name="widget_integration_missing_user_id">В запросе отсутствует user_id.</string>
     <string name="widget_integration_room_not_visible">Комната %s невидима.</string>
     <string name="room_add_matrix_apps">Добавить приложения Matrix</string>
-    <string name="room_add_kanban_board">Add kanban board</string>
+    <string name="room_add_kanban_board">Добавить канбан-доску</string>
     <string name="notification_listening_for_events">Мониторинг событий</string>
     <string name="call">Вызов</string>
     <string name="settings_containing_my_user_name">Сообщения, содержащие мое имя пользователя</string>
