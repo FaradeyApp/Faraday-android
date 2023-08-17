@@ -258,6 +258,7 @@
     <string name="or">или</string>
     <string name="action_invite">Пригласить</string>
     <string name="action_sign_out">Выйти из учётной записи</string>
+    <string name="action_add_new_account">Добавить аккаунт</string>
     <string name="action_voice_call">Голосовой вызов</string>
     <string name="action_video_call">Видео вызов</string>
     <string name="action_mark_all_as_read">Пометить все как прочитанное</string>
@@ -797,6 +798,7 @@
     <string name="backup">Создание резервной копии</string>
     <string name="sign_out_bottom_sheet_will_lose_secure_messages">Сделайте резервную копию ваших ключей или потеряете доступ к вашим зашифрованным сообщениям.</string>
     <string name="action_sign_out_confirmation_simple">Уверены, что хотите выйти?</string>
+    <string name="action_add_new_account_confirmation_simple">Уверены, что хотите добавить новый аккаунт? Приложение будет перезапущено.</string>
     <string name="error_empty_field_enter_user_name">Пожалуйста, введите имя пользователя.</string>
     <string name="keys_backup_setup_step1_advanced">(Расширенный)</string>
     <string name="keys_backup_setup_step1_manual_export">Ручной экспорт ключей</string>
@@ -1810,6 +1812,7 @@
     <string name="invite_friends_rich_title">🔐️ Присоединяйтесь ко мне в ${app_name}</string>
     <string name="invite_friends_text">Привет, поговори со мной в ${app_name}: %s</string>
     <string name="invite_friends">Пригласить друзей</string>
+    <string name="add_account">Добавить аккаунт</string>
     <string name="add_people">Добавить людей</string>
     <string name="topic_prefix">"Тема: "</string>
     <string name="add_a_topic_link_text">Добавьте тему</string>
@@ -3024,4 +3027,24 @@
     <string name="started_a_voice_broadcast">Голосовая трансляция начата</string>
     <string name="thread_list_not_available">Ваш домашний сервер не поддерживает список обсуждений.</string>
     <string name="action_stop">Остановить</string>
+    <string name="settings_connection_method">Способ подключения</string>
+    <string name="settings_matrix_protocol">Протокол Matrix</string>
+    <string name="settings_onion_routing_protocol">Протокол Onion routing</string>
+    <string name="settings_i2p_network">Сеть I2P</string>
+    <string name="settings_use_proxy_server">Использовать прокси-сервер</string>
+    <string name="settings_connection_method_password_hint">Пароль</string>
+    <string name="settings_connection_method_user_name_hint">Имя пользователя</string>
+    <string name="settings_connection_method_user_proxy_type">Тип прокси</string>
+    <string name="settings_connection_method_authentication">Аутентификация</string>
+    <string name="settings_connection_method_port_hint">Порт</string>
+    <string name="settings_connection_method_server_ip_address_hint">IP адрес сервера</string>
+    <string name="settings_choose_connection_method">Выберете метод подключения</string>
+    <string name="proxy_only_for_matrix">Прокси-сервер может быть задан только для протокола Matrix</string>
+    <string name="tor_connection_is_already_established">Подключение к Тору уже установлено</string>
+    <string name="tor_connection_failed">Ошибка при подключении к onion-протоколу</string>
+    <string name="error_in_host_address">Ошибка в IP адресе прокси-сервера</string>
+    <string name="error_in_port_number">Ошибка в номере порта</string>
+    <string name="error_in_proxy_provide_password">При использовании аутентификации прокси, пожалуйста, укажите пароль</string>
+    <string name="error_in_proxy_provide_username">При использовании аутентификации прокси, пожалуйста, укажите имя пользователя</string>
+    <string name="error_in_proxy_provide_type">Пожалуйста, укажите тип прокси</string>
 </resources>

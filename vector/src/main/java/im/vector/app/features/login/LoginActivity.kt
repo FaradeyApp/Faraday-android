@@ -152,6 +152,7 @@ open class LoginActivity : VectorBaseActivity<ActivityLoginBinding>(), UnlockedA
                             // TODO Disabled because it provokes a flickering
                             // ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
                         })
+            is LoginViewEvents.OpenConnectionSettings -> addFragmentToBackstack(views.loginFragmentContainer, LoginConnectionSettingsFragment::class.java)
             is LoginViewEvents.OnServerSelectionDone -> onServerSelectionDone(loginViewEvents)
             is LoginViewEvents.OnSignModeSelected -> onSignModeSelected(loginViewEvents)
             is LoginViewEvents.OnLoginFlowRetrieved ->

@@ -33,6 +33,7 @@ sealed class LoginViewEvents : VectorViewEvents {
     // Navigation event
 
     object OpenServerSelection : LoginViewEvents()
+    object OpenConnectionSettings : LoginViewEvents()
     data class OnServerSelectionDone(val serverType: ServerType) : LoginViewEvents()
     object OnLoginFlowRetrieved : LoginViewEvents()
     data class OnSignModeSelected(val signMode: SignMode) : LoginViewEvents()

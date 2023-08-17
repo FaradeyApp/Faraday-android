@@ -200,4 +200,10 @@
         <!-- do not change this comment for light accent preview generation -->
     </string-array>
 
+    <string-array name="proxy_type">
+        <item>None</item>
+        <item>HTTP</item>
+        <item>SOCKS</item>
+    </string-array>
+
 </resources>

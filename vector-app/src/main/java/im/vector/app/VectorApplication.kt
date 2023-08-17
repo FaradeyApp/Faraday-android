@@ -54,6 +54,8 @@ import im.vector.app.core.debug.LeakDetector
 import im.vector.app.core.di.ActiveSessionHolder
 import im.vector.app.core.pushers.FcmHelper
 import im.vector.app.core.resources.BuildMeta
+import im.vector.app.core.settings.connectionmethods.onion.TorService
+import im.vector.app.core.settings.connectionmethods.onion.TorSetup
 import im.vector.app.features.analytics.VectorAnalytics
 import im.vector.app.features.call.webrtc.WebRtcCallManager
 import im.vector.app.features.configuration.VectorConfiguration
@@ -75,6 +77,8 @@ import org.jitsi.meet.sdk.log.JitsiMeetDefaultLogHandler
 import org.matrix.android.sdk.api.Matrix
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.legacy.LegacySessionImporter
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import org.matrix.android.sdk.api.util.ConnectionType
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -112,9 +116,12 @@ class VectorApplication :
     @Inject lateinit var matrix: Matrix
     @Inject lateinit var fcmHelper: FcmHelper
     @Inject lateinit var buildMeta: BuildMeta
+    @Inject lateinit var torSetup: TorSetup
+    @Inject lateinit var torService: TorService
     @Inject lateinit var leakDetector: LeakDetector
     @Inject lateinit var vectorLocale: VectorLocale
     @Inject lateinit var disclaimerDialog: DisclaimerDialog
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
 
     // font thread handler
     private var fontThreadHandler: Handler? = null
@@ -131,6 +138,7 @@ class VectorApplication :
     override fun onCreate() {
         enableStrictModeIfNeeded()
         super.onCreate()
+        torSetup.generateTorServiceControllerBuilder(this).build()
         appContext = this
         flipperProxy.init(matrix)
         vectorAnalytics.init()
@@ -186,7 +194,8 @@ class VectorApplication :
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
-                Timber.i("App entered foreground")
+                Timber.i("App entered foreground ${lightweightSettingsStorage.getConnectionType()} ${torService.isProxyRunning}")
+                if (lightweightSettingsStorage.getConnectionType() == ConnectionType.ONION && !torService.isProxyRunning) return
                 fcmHelper.onEnterForeground(activeSessionHolder)
                 activeSessionHolder.getSafeActiveSession()?.also {
                     it.syncService().stopAnyBackgroundSync()

@@ -21,6 +21,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import im.vector.app.core.dialogs.UnrecognizedCertificateDialog
 import im.vector.app.core.error.ErrorFormatter
+import im.vector.app.core.settings.connectionmethods.onion.TorEventBroadcaster
+import im.vector.app.core.settings.connectionmethods.onion.TorEventListener
+import im.vector.app.core.settings.connectionmethods.onion.TorService
 import im.vector.app.features.analytics.AnalyticsTracker
 import im.vector.app.features.call.webrtc.WebRtcCallManager
 import im.vector.app.features.home.AvatarRenderer
@@ -54,6 +57,14 @@ interface SingletonEntryPoint {
     fun bugReporter(): BugReporter
 
     fun vectorPreferences(): VectorPreferences
+
+    fun torService(): TorService
+
+    fun torSetup(): TorService
+
+    fun torEventBroadcaster(): TorEventBroadcaster
+
+    fun torEventListener(): TorEventListener
 
     fun uiStateRepository(): UiStateRepository
 

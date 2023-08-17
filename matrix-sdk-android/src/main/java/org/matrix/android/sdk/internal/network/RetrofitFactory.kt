@@ -19,33 +19,68 @@ package org.matrix.android.sdk.internal.network
 import com.squareup.moshi.Moshi
 import dagger.Lazy
 import okhttp3.Call
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import org.matrix.android.sdk.internal.di.ProxyProvider
 import org.matrix.android.sdk.internal.util.ensureTrailingSlash
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 
-internal class RetrofitFactory @Inject constructor(private val moshi: Moshi) {
+internal class RetrofitFactory @Inject constructor(
+        private val moshi: Moshi,
+        private val lightweightSettingsStorage: LightweightSettingsStorage
+) {
 
     /**
      * Use only for authentication service.
      */
     fun create(okHttpClient: OkHttpClient, baseUrl: String): Retrofit {
+        val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
+        val client = okHttpClient
+                .newBuilder()
+                .proxy(proxy)
+                .apply {
+                    val username = lightweightSettingsStorage.getProxyUsername()
+                    val password = lightweightSettingsStorage.getProxyPassword()
+                    if (username.isNotEmpty() && password.isNotEmpty()) {
+                        val credentials = Credentials.basic(username, password)
+                        val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                        proxyAuthenticator(authenticator)
+                    }
+                }
+                .build()
         return Retrofit.Builder()
                 .baseUrl(baseUrl.ensureTrailingSlash())
-                .client(okHttpClient)
+                .client(client)
                 .addConverterFactory(UnitConverterFactory)
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
     }
 
     fun create(okHttpClient: Lazy<OkHttpClient>, baseUrl: String): Retrofit {
+        val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
+        val client = okHttpClient
+                .get()
+                .newBuilder()
+                .proxy(proxy)
+                .apply {
+                    val username = lightweightSettingsStorage.getProxyUsername()
+                    val password = lightweightSettingsStorage.getProxyPassword()
+                    if (username.isNotEmpty() && password.isNotEmpty()) {
+                        val credentials = Credentials.basic(username, password)
+                        val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                        proxyAuthenticator(authenticator)
+                    }
+                }
+                .build()
         return Retrofit.Builder()
                 .baseUrl(baseUrl.ensureTrailingSlash())
                 .callFactory(object : Call.Factory {
                     override fun newCall(request: Request): Call {
-                        return okHttpClient.get().newCall(request)
+                        return client.newCall(request)
                     }
                 })
                 .addConverterFactory(UnitConverterFactory)

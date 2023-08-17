@@ -21,6 +21,7 @@ import dagger.Lazy
 import io.realm.RealmConfiguration
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import org.matrix.android.sdk.api.MatrixCoroutineDispatchers
 import org.matrix.android.sdk.api.auth.data.SessionParams
@@ -63,6 +64,7 @@ import org.matrix.android.sdk.api.session.thirdparty.ThirdPartyService
 import org.matrix.android.sdk.api.session.typing.TypingUsersTracker
 import org.matrix.android.sdk.api.session.user.UserService
 import org.matrix.android.sdk.api.session.widgets.WidgetService
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.appendParamToUrl
 import org.matrix.android.sdk.internal.auth.SSO_UIA_FALLBACK_PATH
 import org.matrix.android.sdk.internal.auth.SessionParamsStore
@@ -71,12 +73,15 @@ import org.matrix.android.sdk.internal.database.tools.RealmDebugTools
 import org.matrix.android.sdk.internal.di.ContentScannerDatabase
 import org.matrix.android.sdk.internal.di.CryptoDatabase
 import org.matrix.android.sdk.internal.di.IdentityDatabase
+import org.matrix.android.sdk.internal.di.ProxyProvider
 import org.matrix.android.sdk.internal.di.SessionDatabase
 import org.matrix.android.sdk.internal.di.SessionId
 import org.matrix.android.sdk.internal.di.UnauthenticatedWithCertificate
 import org.matrix.android.sdk.internal.di.WorkManagerProvider
 import org.matrix.android.sdk.internal.network.GlobalErrorHandler
+import org.matrix.android.sdk.internal.network.HttpAuthenticator
 import org.matrix.android.sdk.internal.util.createUIHandler
+import java.net.Proxy
 import javax.inject.Inject
 
 @SessionScope
@@ -133,6 +138,7 @@ internal class DefaultSession @Inject constructor(
         @UnauthenticatedWithCertificate
         private val unauthenticatedWithCertificateOkHttpClient: Lazy<OkHttpClient>,
         private val sessionState: SessionState,
+        private val lightweightSettingsStorage: LightweightSettingsStorage
 ) : Session,
         GlobalErrorHandler.Listener {
 
@@ -232,7 +238,20 @@ internal class DefaultSession @Inject constructor(
     override fun sharedSecretStorageService(): SharedSecretStorageService = sharedSecretStorageService.get()
 
     override fun getOkHttpClient(): OkHttpClient {
+        val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
         return unauthenticatedWithCertificateOkHttpClient.get()
+                .newBuilder()
+                .proxy(proxy)
+                .apply {
+                    val username = lightweightSettingsStorage.getProxyUsername()
+                    val password = lightweightSettingsStorage.getProxyPassword()
+                    if (username.isNotEmpty() && password.isNotEmpty()) {
+                        val credentials = Credentials.basic(username, password)
+                        val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                        proxyAuthenticator(authenticator)
+                    }
+                }
+                .build()
     }
 
     override fun addListener(listener: Session.Listener) {

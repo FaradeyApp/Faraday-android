@@ -10,6 +10,7 @@
     <!-- Level 0: Root -->
 
     <bool name="settings_root_general_visible">true</bool>
+    <bool name="settings_root_connection_method_visible">true</bool>
     <bool name="settings_root_notification_visible">true</bool>
     <bool name="settings_root_preferences_visible">true</bool>
     <bool name="settings_root_voice_video_visible">true</bool>
@@ -59,5 +60,9 @@
 
     <!-- Level 3: Security & Privacy, Sessions -->
     <bool name="settings_session_manager_show_ip_address">false</bool>
+
+
+    <!-- Level 1: Connection methods -->
+    <bool name="settings_connection_methods_use_proxy_default">false</bool>
 
 </resources>

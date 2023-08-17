@@ -19,8 +19,10 @@ package im.vector.app.core.preference
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import im.vector.app.R
@@ -42,10 +44,17 @@ class VectorPreferenceCategory : PreferenceCategory {
         isIconSpaceReserved = true
     }
 
+    var isIconFrameHidden: Boolean = false
+
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
 
         val titleTextView = holder.findViewById(android.R.id.title) as? TextView
+        val iconFrame = holder.itemView.findViewById(R.id.icon_frame) as? View
+
+        if(isIconFrameHidden) {
+            iconFrame?.isGone = true
+        }
 
         titleTextView?.setTypeface(null, Typeface.BOLD)
         titleTextView?.setTextColor(ThemeUtils.getColor(context, R.attr.vctr_content_primary))

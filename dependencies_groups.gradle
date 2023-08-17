@@ -13,7 +13,7 @@ ext.groups = [
                         'com.github.UnifiedPush',
                         'com.github.vector-im',
                         'com.github.yalantis',
-                        'com.github.Zhuinden',
+                        'com.github.Zhuinden'
                 ]
         ],
         jitsi       : [
@@ -36,7 +36,7 @@ ext.groups = [
                         'com.android.ndk.thirdparty',
                         'com.android.tools',
                         'com.google.firebase',
-                        'com.google.testing.platform',
+                        'com.google.testing.platform'
                 ]
         ],
         snapshot: [
@@ -152,6 +152,8 @@ ext.groups = [
                         'io.reactivex.rxjava2',
                         'io.realm',
                         'io.sentry',
+                        'io.matthewnelson.topl-android',
+                        'info.guardianproject',
                         'it.unimi.dsi',
                         'jakarta.activation',
                         'jakarta.xml.bind',
@@ -223,6 +225,8 @@ ext.groups = [
                         'ru.noties',
                         'xerces',
                         'xml-apis',
+                        'net.i2p',
+                        'com.jakewharton'
                 ]
         ],
         jcenter     : [

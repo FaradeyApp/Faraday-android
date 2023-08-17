@@ -69,7 +69,7 @@
         </intent>
     </queries>
 
-    <application android:supportsRtl="true">
+    <application android:supportsRtl="true" android:requestLegacyExternalStorage="true">
 
         <!-- Sentry auto-initialization disable -->
         <meta-data

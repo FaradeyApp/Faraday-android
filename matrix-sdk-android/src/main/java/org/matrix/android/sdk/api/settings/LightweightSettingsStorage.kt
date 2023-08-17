@@ -16,7 +16,24 @@
 
 package org.matrix.android.sdk.api.settings
 
+import org.matrix.android.sdk.api.util.ConnectionType
+import org.matrix.android.sdk.api.util.ProxyType
+
 interface LightweightSettingsStorage {
     fun setThreadMessagesEnabled(enabled: Boolean)
     fun areThreadMessagesEnabled(): Boolean
+    fun getProxyHost(): String
+    fun setProxyHost(proxyHost: String)
+    fun setProxyPort(port: Int)
+    fun getProxyPort(): Int
+    fun getConnectionType(): ConnectionType
+    fun setConnectionType(connectionType: ConnectionType)
+    fun getProxyType(): ProxyType
+    fun setProxyType(proxyType: ProxyType)
+    fun isProxyAuthRequired(): Boolean
+    fun setProxyAuthRequired(isProxyAuthRequired: Boolean)
+    fun getProxyUsername(): String
+    fun setProxyUsername(proxyUsername: String)
+    fun getProxyPassword(): String
+    fun setProxyPassword(proxyPassword: String)
 }

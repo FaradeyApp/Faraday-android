@@ -53,6 +53,8 @@ sealed class LoginAction : VectorViewModelAction {
     object AcceptTerms : RegisterAction()
     object RegisterDummy : RegisterAction()
 
+    object OnOpenConnectionSettings: LoginAction()
+
     // Reset actions
     open class ResetAction : LoginAction()
 

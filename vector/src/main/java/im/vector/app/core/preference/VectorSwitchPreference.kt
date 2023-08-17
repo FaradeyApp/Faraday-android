@@ -23,10 +23,12 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.View
 import android.widget.TextView
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.preference.PreferenceViewHolder
 import androidx.preference.SwitchPreference
 import im.vector.app.R
@@ -58,6 +60,7 @@ class VectorSwitchPreference : SwitchPreference {
         }
 
     var currentHighlightAnimator: Animator? = null
+    var isIconFrameHidden: Boolean = false
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         // display the title in multi-line to avoid ellipsis.
@@ -65,6 +68,8 @@ class VectorSwitchPreference : SwitchPreference {
 
         // cancel existing animation (find a way to resume if happens during anim?)
         currentHighlightAnimator?.cancel()
+
+        val iconFrame = holder.itemView.findViewById(R.id.icon_frame) as? View
 
         val itemView = holder.itemView
         if (isHighlighted) {
@@ -97,5 +102,8 @@ class VectorSwitchPreference : SwitchPreference {
         }
 
         super.onBindViewHolder(holder)
+        if(isIconFrameHidden) {
+            iconFrame?.isGone = true
+        }
     }
 }

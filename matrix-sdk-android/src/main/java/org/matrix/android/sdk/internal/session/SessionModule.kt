@@ -43,6 +43,7 @@ import org.matrix.android.sdk.api.session.openid.OpenIdService
 import org.matrix.android.sdk.api.session.permalinks.PermalinkService
 import org.matrix.android.sdk.api.session.securestorage.SharedSecretStorageService
 import org.matrix.android.sdk.api.session.typing.TypingUsersTracker
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.md5
 import org.matrix.android.sdk.internal.crypto.secrets.DefaultSharedSecretStorageService
 import org.matrix.android.sdk.internal.crypto.tasks.DefaultRedactEventTask
@@ -53,6 +54,7 @@ import org.matrix.android.sdk.internal.database.SessionRealmConfigurationFactory
 import org.matrix.android.sdk.internal.di.Authenticated
 import org.matrix.android.sdk.internal.di.CacheDirectory
 import org.matrix.android.sdk.internal.di.DeviceId
+import org.matrix.android.sdk.internal.di.ProxyProvider
 import org.matrix.android.sdk.internal.di.SessionDatabase
 import org.matrix.android.sdk.internal.di.SessionDownloadsDirectory
 import org.matrix.android.sdk.internal.di.SessionFilesDirectory
@@ -66,6 +68,7 @@ import org.matrix.android.sdk.internal.network.DefaultNetworkConnectivityChecker
 import org.matrix.android.sdk.internal.network.FallbackNetworkCallbackStrategy
 import org.matrix.android.sdk.internal.network.GlobalErrorHandler
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
+import org.matrix.android.sdk.internal.network.HttpAuthenticator
 import org.matrix.android.sdk.internal.network.NetworkCallbackStrategy
 import org.matrix.android.sdk.internal.network.NetworkConnectivityChecker
 import org.matrix.android.sdk.internal.network.PreferredNetworkCallbackStrategy
@@ -98,6 +101,7 @@ import org.matrix.android.sdk.internal.session.user.accountdata.DefaultSessionAc
 import org.matrix.android.sdk.internal.session.widgets.DefaultWidgetURLFormatter
 import retrofit2.Retrofit
 import java.io.File
+import java.net.Proxy
 import javax.inject.Provider
 import javax.inject.Qualifier
 
@@ -213,10 +217,22 @@ internal abstract class SessionModule {
         fun providesOkHttpClientWithCertificate(
                 @Unauthenticated okHttpClient: OkHttpClient,
                 homeServerConnectionConfig: HomeServerConnectionConfig,
+                lightweightSettingsStorage: LightweightSettingsStorage
         ): OkHttpClient {
+            val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
             return okHttpClient
                     .newBuilder()
                     .addSocketFactory(homeServerConnectionConfig)
+                    .proxy(proxy)
+                    .apply {
+                        val username = lightweightSettingsStorage.getProxyUsername()
+                        val password = lightweightSettingsStorage.getProxyPassword()
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            val credentials = okhttp3.Credentials.basic(username, password)
+                            val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                            proxyAuthenticator(authenticator)
+                        }
+                    }
                     .build()
         }
 
@@ -230,7 +246,9 @@ internal abstract class SessionModule {
                 @SessionId sessionId: String,
                 @MockHttpInterceptor testInterceptor: TestInterceptor?,
                 matrixConfiguration: MatrixConfiguration,
+                lightweightSettingsStorage: LightweightSettingsStorage
         ): OkHttpClient {
+            val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
             return okHttpClient
                     .newBuilder()
                     .addAccessTokenInterceptor(accessTokenProvider)
@@ -241,6 +259,16 @@ internal abstract class SessionModule {
                         }
                     }
                     .applyMatrixConfiguration(matrixConfiguration)
+                    .proxy(proxy)
+                    .apply {
+                        val username = lightweightSettingsStorage.getProxyUsername()
+                        val password = lightweightSettingsStorage.getProxyPassword()
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            val credentials = okhttp3.Credentials.basic(username, password)
+                            val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                            proxyAuthenticator(authenticator)
+                        }
+                    }
                     .build()
         }
 
@@ -252,7 +280,9 @@ internal abstract class SessionModule {
                 @UnauthenticatedWithCertificate okHttpClient: OkHttpClient,
                 downloadProgressInterceptor: DownloadProgressInterceptor,
                 matrixConfiguration: MatrixConfiguration,
+                lightweightSettingsStorage: LightweightSettingsStorage
         ): OkHttpClient {
+            val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
             return okHttpClient
                     .newBuilder()
                     .apply {
@@ -268,6 +298,16 @@ internal abstract class SessionModule {
                         }
                     }
                     .applyMatrixConfiguration(matrixConfiguration)
+                    .proxy(proxy)
+                    .apply {
+                        val username = lightweightSettingsStorage.getProxyUsername()
+                        val password = lightweightSettingsStorage.getProxyPassword()
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            val credentials = okhttp3.Credentials.basic(username, password)
+                            val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                            proxyAuthenticator(authenticator)
+                        }
+                    }
                     .build()
         }
 

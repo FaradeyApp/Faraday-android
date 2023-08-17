@@ -71,6 +71,26 @@ data class MatrixConfiguration(
          */
         val threadMessagesEnabledDefault: Boolean = true,
         /**
+         * Connection default proxy host value.
+         */
+        val connectionProxyHostDefault: String = "",
+        /**
+         * Connection default proxy port value.
+         */
+        val connectionProxyPortDefault: Int = 0,
+        /**
+         * Connection default proxy auth required value.
+         */
+        val connectionProxyAuthRequired: Boolean = false,
+        /**
+         * Connection default proxy username value.
+         */
+        val connectionProxyUsernameDefault: String = "",
+        /**
+         * Connection default proxy password value..
+         */
+        val connectionProxyPasswordDefault: String = "",
+        /**
          * List of network interceptors, they will be added when building an OkHttp client.
          */
         val networkInterceptors: List<Interceptor> = emptyList(),

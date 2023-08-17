@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -30,9 +31,14 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
+import im.vector.app.core.extensions.observeEvent
 import im.vector.app.core.extensions.startSyncing
 import im.vector.app.core.extensions.vectorStore
 import im.vector.app.core.platform.VectorBaseActivity
+import im.vector.app.core.pushers.FcmHelper
+import im.vector.app.core.settings.connectionmethods.onion.TorEvent
+import im.vector.app.core.settings.connectionmethods.onion.TorEventListener
+import im.vector.app.core.settings.connectionmethods.onion.TorService
 import im.vector.app.core.utils.deleteAllFiles
 import im.vector.app.databinding.ActivityMainBinding
 import im.vector.app.features.analytics.VectorAnalytics
@@ -59,6 +65,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import org.matrix.android.sdk.api.failure.GlobalError
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import org.matrix.android.sdk.api.util.ConnectionType
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -131,20 +139,55 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
     @Inject lateinit var popupAlertManager: PopupAlertManager
     @Inject lateinit var vectorAnalytics: VectorAnalytics
     @Inject lateinit var lockScreenKeyRepository: LockScreenKeyRepository
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
+    @Inject lateinit var torService: TorService
+    @Inject lateinit var torEventListener: TorEventListener
+    @Inject lateinit var fcmHelper: FcmHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         shortcutsHandler.updateShortcutsWithPreviousIntent()
+        if (lightweightSettingsStorage.getConnectionType() == ConnectionType.ONION && !torService.isProxyRunning) {
+            torService.switchTorPrefState(true)
+            observeTorEvents()
+        } else {
+            handleActivityCreated()
+        }
+    }
 
-        startAppViewModel.onEach {
+    private fun handleActivityCreated() = with(startAppViewModel) {
+        onEach {
             renderState(it)
         }
-        startAppViewModel.observeViewEvents {
+        observeViewEvents {
             handleViewEvents(it)
         }
+        handle(StartAppAction.StartApp)
+    }
 
-        startAppViewModel.handle(StartAppAction.StartApp)
+    private fun observeTorEvents() {
+        torEventListener.torEventLiveData.observeEvent(this) { torEvent ->
+            when (torEvent) {
+                is TorEvent.ConnectionEstablished -> {
+                    Timber.i("torEventListener.torEventLiveData success onCreate")
+                    views.status.isVisible = false
+                    handleActivityCreated()
+                    fcmHelper.onEnterForeground(activeSessionHolder)
+                    activeSessionHolder.getSafeActiveSession()?.also {
+                        Timber.i("syncService onCreate")
+                        it.syncService().stopAnyBackgroundSync()
+                    }
+                }
+                is TorEvent.ConnectionFailed -> {
+                    Timber.i("torEventListener.torEventLiveData failure onCreate")
+                    handleActivityCreated()
+                }
+                is TorEvent.TorLogEvent -> {
+                    views.status.text = torEvent.message
+                    views.status.isVisible = true
+                }
+            }
+        }
     }
 
     private fun renderState(state: StartAppViewState) {

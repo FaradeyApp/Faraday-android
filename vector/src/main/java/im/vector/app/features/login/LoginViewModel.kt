@@ -132,6 +132,7 @@ class LoginViewModel @AssistedInject constructor(
             is LoginAction.UserAcceptCertificate -> handleUserAcceptCertificate(action)
             LoginAction.ClearHomeServerHistory -> handleClearHomeServerHistory()
             is LoginAction.PostViewEvent -> _viewEvents.post(action.viewEvent)
+            is LoginAction.OnOpenConnectionSettings -> _viewEvents.post(LoginViewEvents.OpenConnectionSettings)
         }
     }
 

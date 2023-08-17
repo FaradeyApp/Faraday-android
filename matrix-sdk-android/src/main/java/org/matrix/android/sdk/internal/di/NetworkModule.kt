@@ -16,23 +16,28 @@
 
 package org.matrix.android.sdk.internal.di
 
+
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import okhttp3.ConnectionSpec
+import okhttp3.Credentials
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.logging.HttpLoggingInterceptor
 import org.matrix.android.sdk.BuildConfig
 import org.matrix.android.sdk.api.MatrixConfiguration
+import org.matrix.android.sdk.internal.network.HttpAuthenticator
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.internal.network.ApiInterceptor
 import org.matrix.android.sdk.internal.network.TimeOutInterceptor
 import org.matrix.android.sdk.internal.network.UserAgentInterceptor
 import org.matrix.android.sdk.internal.network.httpclient.applyMatrixConfiguration
 import org.matrix.android.sdk.internal.network.interceptors.CurlLoggingInterceptor
 import org.matrix.android.sdk.internal.network.interceptors.FormattedJsonHttpLogger
+import java.net.Proxy
 import java.util.Collections
 import java.util.concurrent.TimeUnit
 
@@ -71,7 +76,9 @@ internal object NetworkModule {
             userAgentInterceptor: UserAgentInterceptor,
             httpLoggingInterceptor: HttpLoggingInterceptor,
             curlLoggingInterceptor: CurlLoggingInterceptor,
-            apiInterceptor: ApiInterceptor
+            apiInterceptor: ApiInterceptor,
+            lightweightSettingsStorage: LightweightSettingsStorage,
+            proxy: Proxy
     ): OkHttpClient {
         val spec = ConnectionSpec.Builder(matrixConfiguration.connectionSpec).build()
         val dispatcher = Dispatcher().apply {
@@ -100,6 +107,18 @@ internal object NetworkModule {
                 .dispatcher(dispatcher)
                 .connectionSpecs(Collections.singletonList(spec))
                 .applyMatrixConfiguration(matrixConfiguration)
+                .apply {
+                    if (proxy != Proxy.NO_PROXY) {
+                        proxy(proxy)
+                        val username = lightweightSettingsStorage.getProxyUsername()
+                        val password = lightweightSettingsStorage.getProxyPassword()
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            val credentials = Credentials.basic(username, password)
+                            val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                            proxyAuthenticator(authenticator)
+                        }
+                    }
+                }
                 .build()
     }
 
@@ -107,5 +126,11 @@ internal object NetworkModule {
     @JvmStatic
     fun providesMoshi(): Moshi {
         return MoshiProvider.providesMoshi()
+    }
+
+    @Provides
+    @JvmStatic
+    fun providesProxy(lightweightSettingsStorage: LightweightSettingsStorage): Proxy {
+        return ProxyProvider(lightweightSettingsStorage).providesProxy()
     }
 }

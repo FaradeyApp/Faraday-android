@@ -336,4 +336,13 @@ dependencies {
     debugImplementation libs.androidx.fragmentTestingManifest
     androidTestImplementation libs.androidx.fragmentTesting
     androidTestImplementation "org.jetbrains.kotlin:kotlin-reflect:1.8.10"
+
+    implementation 'io.matthewnelson.topl-android:tor-binary:0.4.6.5'
+    implementation 'io.matthewnelson.topl-android:topl-service:2.1.2'
+    implementation 'info.guardianproject:jtorctl:0.4.5.7'
+
+    implementation 'net.i2p:i2p:2.2.1'
+
+    implementation 'com.jakewharton:process-phoenix:2.1.2'
+
 }

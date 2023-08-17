@@ -23,12 +23,15 @@ import io.realm.RealmConfiguration
 import okhttp3.OkHttpClient
 import org.matrix.android.sdk.api.MatrixConfiguration
 import org.matrix.android.sdk.api.session.identity.IdentityService
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.internal.database.RealmKeysUtils
 import org.matrix.android.sdk.internal.di.AuthenticatedIdentity
 import org.matrix.android.sdk.internal.di.IdentityDatabase
+import org.matrix.android.sdk.internal.di.ProxyProvider
 import org.matrix.android.sdk.internal.di.SessionFilesDirectory
 import org.matrix.android.sdk.internal.di.UnauthenticatedWithCertificate
 import org.matrix.android.sdk.internal.di.UserMd5
+import org.matrix.android.sdk.internal.network.HttpAuthenticator
 import org.matrix.android.sdk.internal.network.httpclient.addAccessTokenInterceptor
 import org.matrix.android.sdk.internal.network.httpclient.applyMatrixConfiguration
 import org.matrix.android.sdk.internal.network.token.AccessTokenProvider
@@ -39,6 +42,7 @@ import org.matrix.android.sdk.internal.session.identity.db.IdentityRealmModule
 import org.matrix.android.sdk.internal.session.identity.db.RealmIdentityStore
 import org.matrix.android.sdk.internal.session.identity.db.RealmIdentityStoreMigration
 import java.io.File
+import java.net.Proxy
 
 @Module
 internal abstract class IdentityModule {
@@ -53,11 +57,23 @@ internal abstract class IdentityModule {
                 @UnauthenticatedWithCertificate okHttpClient: OkHttpClient,
                 @AuthenticatedIdentity accessTokenProvider: AccessTokenProvider,
                 matrixConfiguration: MatrixConfiguration,
+                lightweightSettingsStorage: LightweightSettingsStorage
         ): OkHttpClient {
+            val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
             return okHttpClient
                     .newBuilder()
                     .addAccessTokenInterceptor(accessTokenProvider)
                     .applyMatrixConfiguration(matrixConfiguration)
+                    .proxy(proxy)
+                    .apply {
+                        val username = lightweightSettingsStorage.getProxyUsername()
+                        val password = lightweightSettingsStorage.getProxyPassword()
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            val credentials = okhttp3.Credentials.basic(username, password)
+                            val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                            proxyAuthenticator(authenticator)
+                        }
+                    }
                     .build()
         }
 

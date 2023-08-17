@@ -374,6 +374,8 @@
     <!-- actions -->
     <string name="action_sign_out">Sign out</string>
     <string name="action_sign_out_confirmation_simple">Are you sure you want to sign out?</string>
+    <string name="action_add_new_account">Add new account</string>
+    <string name="action_add_new_account_confirmation_simple">Are you sure you want to add new account? App will be restarted.</string>
     <string name="action_voice_call">Voice Call</string>
     <string name="action_video_call">Video Call</string>
     <string name="action_view_threads">View Threads</string>
@@ -2694,6 +2696,7 @@
     <string name="inviting_users_to_room">Inviting users…</string>
     <string name="invite_users_to_room_title">Invite Users</string>
     <string name="invite_friends">Invite friends</string>
+    <string name="add_account">Add account</string>
     <!-- Note to translators: the translation MUST contain the string "${app_name}", which will be replaced by the application name -->
     <string name="invite_friends_text">Hey, talk to me on ${app_name}: %s</string>
     <!-- Note to translators: the translation MUST contain the string "${app_name}", which will be replaced by the application name -->
@@ -3547,4 +3550,25 @@
     <string name="pill_message_in_room">Message in %s</string>
     <string name="pill_message_in_unknown_room">Message in room</string>
     <string name="pill_message_unknown_room_or_space">Room/Space</string>
+
+    <string name="settings_connection_method">Connection method</string>
+    <string name="settings_matrix_protocol">Matrix protocol</string>
+    <string name="settings_onion_routing_protocol">Onion routing protocol</string>
+    <string name="settings_i2p_network">I2P network</string>
+    <string name="settings_use_proxy_server">Use proxy server</string>
+    <string name="settings_connection_method_password_hint">Password</string>
+    <string name="settings_connection_method_user_name_hint">User name</string>
+    <string name="settings_connection_method_user_proxy_type">Proxy type</string>
+    <string name="settings_connection_method_authentication">Authentication</string>
+    <string name="settings_connection_method_port_hint">Port</string>
+    <string name="settings_connection_method_server_ip_address_hint">Server IP address</string>
+    <string name="settings_choose_connection_method">Choose connection method</string>
+    <string name="proxy_only_for_matrix">Proxy can be only be set for Matrix protocol</string>
+    <string name="tor_connection_is_already_established">Tor connection is already established</string>
+    <string name="tor_connection_failed">Tor connection Failed</string>
+    <string name="error_in_host_address">Error in host address</string>
+    <string name="error_in_port_number">Error in port number</string>
+    <string name="error_in_proxy_provide_password">If you use authentication for proxy, please provide password</string>
+    <string name="error_in_proxy_provide_username">If you use authentication for proxy, please provide username</string>
+    <string name="error_in_proxy_provide_type">Please, set proxy type</string>
 </resources>

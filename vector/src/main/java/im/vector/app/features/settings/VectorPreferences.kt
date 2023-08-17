@@ -15,7 +15,6 @@
  */
 package im.vector.app.features.settings
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.RingtoneManager
@@ -41,6 +40,7 @@ import im.vector.app.features.themes.ThemeUtils
 import im.vector.lib.core.utils.timer.Clock
 import org.matrix.android.sdk.api.extensions.tryOrNull
 import org.matrix.android.sdk.api.session.room.model.RoomSummary
+import org.matrix.android.sdk.internal.settings.DefaultLightweightSettingsStorage
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -173,6 +173,17 @@ class VectorPreferences @Inject constructor(
 
         // notification method
         const val SETTINGS_NOTIFICATION_METHOD_KEY = "SETTINGS_NOTIFICATION_METHOD_KEY"
+
+        // Connection method
+        const val SETTINGS_CONNECTION_TYPE_KEY = "SETTINGS_CONNECTION_TYPE_KEY"
+        const val SETTINGS_USE_PROXY_SERVER_KEY = "SETTINGS_USE_PROXY_SERVER_KEY"
+        const val SETTINGS_PROXY_TYPE_KEY = "SETTINGS_PROXY_TYPE_KEY"
+        const val SETTINGS_PROXY_PORT_KEY = "SETTINGS_PROXY_PORT_KEY"
+        const val SETTINGS_PROXY_HOST_KEY = "SETTINGS_PROXY_HOST_KEY"
+        const val SETTINGS_PROXY_AUTH_REQUIRED_KEY = "SETTINGS_PROXY_AUTH_REQUIRED_KEY"
+        const val SETTINGS_PROXY_USERNAME_KEY = "SETTINGS_PROXY_USERNAME_KEY"
+        const val SETTINGS_PROXY_PASSWORD_KEY = "SETTINGS_PROXY_PASSWORD_KEY"
+        const val SETTINGS_CONNECTION_SAVE_KEY = "SETTINGS_CONNECTION_SAVE_KEY"
 
         // Calls
         const val SETTINGS_CALL_PREVENT_ACCIDENTAL_CALL_KEY = "SETTINGS_CALL_PREVENT_ACCIDENTAL_CALL_KEY"
@@ -345,6 +356,14 @@ class VectorPreferences @Inject constructor(
                 SETTINGS_SECURITY_INCOGNITO_KEYBOARD_PREFERENCE_KEY,
 
                 ShortcutsHandler.SHARED_PREF_KEY,
+
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_TYPE,
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_PROXY_HOST,
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PORT,
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_PROXY_TYPE,
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_PROXY_AUTH_REQUIRED,
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME,
+                DefaultLightweightSettingsStorage.MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD
         )
 
         // Pref keys to include in rageshake if enabled
@@ -1585,4 +1604,5 @@ class VectorPreferences @Inject constructor(
             putBoolean(SETTINGS_NEW_LOGIN_ALERT_SHOWN_FOR_DEVICE + deviceId, true)
         }
     }
+
 }
