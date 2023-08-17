@@ -92,10 +92,30 @@
             app:icon="@drawable/ic_share"
             app:iconGravity="textStart"
             app:iconSize="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/homeDrawerHeaderAvatarView"
             app:layout_constraintTop_toBottomOf="@id/homeDrawerHeaderAvatarView"
             tools:ignore="MissingPrefix" />
+
+        <Button
+            android:id="@+id/homeDrawerAddAccountButton"
+            style="@style/Widget.Vector.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
+            android:text="@string/add_account"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_add"
+            app:iconGravity="textStart"
+            app:iconSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/homeDrawerHeaderAvatarView"
+            app:layout_constraintTop_toBottomOf="@id/homeDrawerInviteFriendButton"
+            tools:ignore="MissingPrefix"/>
 
         <ImageView
             android:id="@+id/homeDrawerHeaderDebugView"
@@ -120,14 +140,21 @@
         app:layout_constraintTop_toBottomOf="@id/homeDrawerHeader" />
 
     <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/homeDrawerAccountsListContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/homeDrawerHeaderSeparator"/>
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/homeDrawerGroupListContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@id/homeDrawerBottomSeparator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/homeDrawerHeaderSeparator" />
+        app:layout_constraintTop_toBottomOf="@id/homeDrawerAccountsListContainer" />
 
     <View
         android:id="@+id/homeDrawerBottomSeparator"

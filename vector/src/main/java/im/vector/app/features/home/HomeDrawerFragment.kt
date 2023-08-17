@@ -32,12 +32,14 @@ import im.vector.app.core.resources.BuildMeta
 import im.vector.app.core.utils.startSharePlainTextIntent
 import im.vector.app.databinding.FragmentHomeDrawerBinding
 import im.vector.app.features.analytics.plan.MobileScreen
+import im.vector.app.features.home.accounts.AccountsFragment
 import im.vector.app.features.login.PromptSimplifiedModeActivity
 import im.vector.app.features.permalink.PermalinkFactory
 import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsActivity
 import im.vector.app.features.spaces.SpaceListFragment
 import im.vector.app.features.usercode.UserCodeActivity
+import im.vector.app.features.workers.addaccount.AddAccountUiWorker
 import im.vector.app.features.workers.signout.SignOutUiWorker
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.util.toMatrixItem
@@ -73,6 +75,9 @@ class HomeDrawerFragment :
                 avatarRenderer.render(user.toMatrixItem(), views.homeDrawerHeaderAvatarView)
                 views.homeDrawerUsernameView.text = user.displayName
                 views.homeDrawerUserIdView.text = user.userId
+                if (savedInstanceState == null) {
+                    replaceChildFragment(R.id.homeDrawerAccountsListContainer, AccountsFragment::class.java)
+                }
             }
         }
         // Profile
@@ -89,6 +94,11 @@ class HomeDrawerFragment :
         views.homeDrawerHeaderSignoutView.debouncedClicks {
             sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
             SignOutUiWorker(requireActivity()).perform()
+        }
+        // Add account
+        views.homeDrawerAddAccountButton.debouncedClicks {
+            sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
+            AddAccountUiWorker(requireActivity()).perform()
         }
 
         views.homeDrawerQRCodeButton.debouncedClicks {
