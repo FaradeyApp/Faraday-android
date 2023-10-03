@@ -17,7 +17,9 @@
 
 package org.matrix.android.sdk.internal.session.profile
 
+import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.util.JsonDict
+import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.auth.registration.SuccessResult
 import org.matrix.android.sdk.internal.auth.registration.ValidationCodeBody
 import org.matrix.android.sdk.internal.network.NetworkConstants
@@ -109,4 +111,24 @@ internal interface ProfileAPI {
      */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_R0 + "account/3pid/delete")
     suspend fun deleteThreePid(@Body body: DeleteThreePidBody): DeleteThreePidResponse
+
+    @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
+    suspend fun getMultiAccount(): List<AccountItemResponse>
+
+    @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account/{user}")
+    suspend fun reLoginMultiAccount(
+            @Path("user") userId: String
+    ): ReLoginInMultiAccountResponse
+
+    @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
+    suspend fun getLoginByPassword(@Body body: GetLoginByPasswordBody): GetLoginResponse
+
+    @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
+    suspend fun getLoginByToken(@Body body: GetLoginByTokenBody): GetLoginResponse
+
+    @POST(NetworkConstants.URI_API_PREFIX_PATH_R0 + "register")
+    suspend fun register(@Body registrationParams: RegistrationParams): Credentials
+
+    @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
+    suspend fun addNewAccount(@Body body: AddNewAccountBody): AddNewAccountResponse
 }

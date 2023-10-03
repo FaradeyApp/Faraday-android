@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.home.accounts
+package org.matrix.android.sdk.internal.session.profile
 
-import im.vector.app.core.platform.VectorViewEvents
-import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-sealed class AccountsViewEvents : VectorViewEvents{
-    data class SelectAccount(val account: AccountItem): AccountsViewEvents()
-}
+@JsonClass(generateAdapter = true)
+internal data class GetLoginResponse(
+        @Json(name = "user_id") val userId: String,
+        @Json(name = "access_token") val accessToken: String,
+        @Json(name = "home_server") val homeServer: String,
+        @Json(name = "device_id") val deviceId: String
+)

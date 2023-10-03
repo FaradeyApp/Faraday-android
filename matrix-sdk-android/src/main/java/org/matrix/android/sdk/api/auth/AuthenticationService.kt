@@ -23,6 +23,7 @@ import org.matrix.android.sdk.api.auth.login.LoginWizard
 import org.matrix.android.sdk.api.auth.registration.RegistrationWizard
 import org.matrix.android.sdk.api.auth.wellknown.WellknownResult
 import org.matrix.android.sdk.api.session.Session
+import org.matrix.android.sdk.internal.auth.SessionCreator
 
 /**
  * This interface defines methods to authenticate or to create an account to a matrix server.
@@ -64,6 +65,8 @@ interface AuthenticationService {
      * See [RegistrationWizard] for more details.
      */
     fun getRegistrationWizard(): RegistrationWizard
+
+    fun getSessionCreator(): SessionCreator
 
     /**
      * True when login and password has been sent with success to the homeserver.

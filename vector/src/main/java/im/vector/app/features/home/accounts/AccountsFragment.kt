@@ -26,12 +26,16 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.Uninitialized
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.core.extensions.cleanup
 import im.vector.app.core.extensions.configureWith
 import im.vector.app.core.platform.StateView
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.databinding.FragmentAccountsListBinding
+import im.vector.app.features.home.HomeDrawerFragment
+import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
+import org.matrix.android.sdk.api.session.profile.model.AccountItem
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -59,32 +63,52 @@ class AccountsFragment :
 
     private fun observeViewEvents() = viewModel.observeViewEvents {
         when (it) {
-            is AccountsViewEvents.SelectAccount -> {}
+            is AccountsViewEvents.SelectAccount -> {
+                viewModel.handle(AccountsAction.SelectAccount(it.account))
+            }
         }
     }
 
     override fun invalidate() = withState(viewModel) { state ->
+        if (state.restartApp) {
+            viewModel.handle(AccountsAction.SetRestartAppValue(false))
+            ProcessPhoenix.triggerRebirth(context)
+        }
         when (val spaces = state.asyncAccounts) {
             Uninitialized,
             is Loading -> {
                 views.stateView.state = StateView.State.Loading
                 return@withState
             }
+
             is Success -> {
                 views.stateView.state = StateView.State.Content
                 views.groupListView.isVisible = spaces.invoke().isNotEmpty()
+                (parentFragment as? HomeDrawerFragment)?.updateAddAccountButtonVisibility(isVisible = spaces.invoke().size < 4)
             }
+
             else -> Unit
         }
         accountsController.update(state)
     }
 
-    override fun onAccountSelected(account: Account) {
+    override fun onAccountSelected(account: AccountItem) {
+        ChangeAccountUiWorker(
+                requireActivity(),
+                accountItem = account,
+                onPositiveActionClicked = {
+                    viewModel.handle(AccountsAction.SelectAccount(account))
+                }
+        ).perform()
     }
 
     override fun onDestroyView() {
         accountsController.callback = null
         views.groupListView.cleanup()
         super.onDestroyView()
+    }
+
+    fun updateMultiAccount() {
+        viewModel.observeAccounts()
     }
 }

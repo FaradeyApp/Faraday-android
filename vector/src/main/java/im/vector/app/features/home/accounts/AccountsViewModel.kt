@@ -16,7 +16,7 @@
 
 package im.vector.app.features.home.accounts
 
-import androidx.lifecycle.asFlow
+
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.Success
 import dagger.assisted.Assisted
@@ -25,11 +25,17 @@ import dagger.assisted.AssistedInject
 import im.vector.app.core.di.MavericksAssistedViewModelFactory
 import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.session.Session
+import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import timber.log.Timber
 
 class AccountsViewModel @AssistedInject constructor(
         @Assisted initialState: AccountsViewState,
-        private val session: Session
+        private val session: Session,
+        private val authenticationService: AuthenticationService
 ) : VectorViewModel<AccountsViewState, AccountsAction, AccountsViewEvents>(initialState) {
 
     @AssistedFactory
@@ -45,29 +51,45 @@ class AccountsViewModel @AssistedInject constructor(
 
     override fun handle(action: AccountsAction) {
         when (action) {
-            is AccountsAction.SelectAccount -> handleSelectAccountAction()
+            is AccountsAction.SelectAccount -> handleSelectAccountAction(account = action.account)
+            is AccountsAction.SetRestartAppValue -> handleSetRestartAppValue(value = action.value)
         }
     }
 
-    private fun observeAccounts() {
-        session.userService().getUserLive(session.myUserId)
-                .asFlow()
-                .setOnEach {
-                    copy(
-                            asyncAccounts = Success(
-                                    listOf(
-                                            Account(
-                                                    userId = it.getOrNull()?.userId.orEmpty(),
-                                                    avatar = it.getOrNull()?.avatarUrl,
-                                                    username = it.getOrNull()?.displayName,
-                                                    unreadMessages = 9
-
-                                            )
-                                    )
-                            )
-                    )
-                }
+    fun observeAccounts() = viewModelScope.launch {
+        flow {
+            val result = session.profileService().getMultipleAccount(
+                    session.sessionParams.homeServerConnectionConfig
+            )
+            emit(result)
+        }.setOnEach {
+            copy(
+                    asyncAccounts = Success(it)
+            )
+        }
     }
 
-    private fun handleSelectAccountAction() {}
+    private fun handleSetRestartAppValue(value: Boolean) {
+        setState {
+            copy(
+                    restartApp = value
+            )
+        }
+    }
+
+    private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
+        try {
+            val result = session.profileService().reLoginMultiAccount(
+                    userId = account.userId,
+                    homeServerConnectionConfig = session.sessionParams.homeServerConnectionConfig,
+                    currentCredentials = session.sessionParams.credentials,
+                    sessionCreator = authenticationService.getSessionCreator()
+            )
+            Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
+        } catch (throwable: Throwable) {
+            Timber.i("Error re-login into app $throwable")
+        } finally {
+            handleSetRestartAppValue(value = true)
+        }
+    }
 }

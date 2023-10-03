@@ -17,19 +17,27 @@
 package im.vector.app.features.home
 
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
+import im.vector.app.core.extensions.hideKeyboard
+import im.vector.app.core.extensions.hidePassword
 import im.vector.app.core.extensions.observeK
 import im.vector.app.core.extensions.replaceChildFragment
+import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.resources.BuildMeta
 import im.vector.app.core.utils.startSharePlainTextIntent
+import im.vector.app.core.utils.toast
+import im.vector.app.databinding.DialogAddAccountBinding
 import im.vector.app.databinding.FragmentHomeDrawerBinding
 import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.home.accounts.AccountsFragment
@@ -39,8 +47,9 @@ import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsActivity
 import im.vector.app.features.spaces.SpaceListFragment
 import im.vector.app.features.usercode.UserCodeActivity
-import im.vector.app.features.workers.addaccount.AddAccountUiWorker
 import im.vector.app.features.workers.signout.SignOutUiWorker
+import kotlinx.coroutines.launch
+import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.util.toMatrixItem
 import javax.inject.Inject
@@ -76,7 +85,11 @@ class HomeDrawerFragment :
                 views.homeDrawerUsernameView.text = user.displayName
                 views.homeDrawerUserIdView.text = user.userId
                 if (savedInstanceState == null) {
-                    replaceChildFragment(R.id.homeDrawerAccountsListContainer, AccountsFragment::class.java)
+                    replaceChildFragment(
+                            frameId = R.id.homeDrawerAccountsListContainer,
+                            fragmentClass = AccountsFragment::class.java,
+                            tag = ACCOUNTS_FRAGMENT_TAG
+                    )
                 }
             }
         }
@@ -97,8 +110,7 @@ class HomeDrawerFragment :
         }
         // Add account
         views.homeDrawerAddAccountButton.debouncedClicks {
-            sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
-            AddAccountUiWorker(requireActivity()).perform()
+            onAddAccountClicked()
         }
 
         views.homeDrawerQRCodeButton.debouncedClicks {
@@ -147,5 +159,148 @@ class HomeDrawerFragment :
     override fun onResume() {
         super.onResume()
         views.homeDrawerHeaderDebugView.isVisible = buildMeta.isDebug && vectorPreferences.developerMode()
+    }
+
+    private fun onAddAccountClicked() {
+        activity?.let { activity ->
+            val view: ViewGroup = activity.layoutInflater.inflate(R.layout.dialog_add_account, null) as ViewGroup
+            val views = DialogAddAccountBinding.bind(view)
+
+            val dialog = MaterialAlertDialogBuilder(activity)
+                    .setView(view)
+                    .setCancelable(true)
+                    .setOnDismissListener {
+                        view.hideKeyboard()
+                    }
+                    .create()
+
+            dialog.setOnShowListener {
+                val addAccountButton = views.addAccountButton
+                val registerButton = views.registerButton
+                val header = views.header
+                val notice = views.notice
+                notice.isVisible = false
+                addAccountButton.isEnabled = false
+                var isSignUpMode = false
+
+                fun updateUi() {
+                    val username = views.accountUsernameText.text.toString()
+                    val password = views.accountPasswordText.text.toString()
+
+                    addAccountButton.isEnabled = username.isNotEmpty() && password.isNotEmpty()
+                }
+
+                views.accountUsernameText.addTextChangedListener(object : SimpleTextWatcher() {
+                    override fun afterTextChanged(s: Editable) {
+                        views.accountUsernameTil.error = null
+                        updateUi()
+                    }
+                })
+
+                views.accountPasswordText.addTextChangedListener(object : SimpleTextWatcher() {
+                    override fun afterTextChanged(s: Editable) {
+                        views.accountPasswordTil.error = null
+                        updateUi()
+                    }
+                })
+
+                fun showPasswordLoadingView(toShow: Boolean) {
+                    if (toShow) {
+                        views.accountUsernameText.isEnabled = false
+                        views.accountPasswordText.isEnabled = false
+                        views.changePasswordLoader.isVisible = true
+                        addAccountButton.isEnabled = false
+                        registerButton.isEnabled = false
+                    } else {
+                        views.accountUsernameText.isEnabled = true
+                        views.accountPasswordText.isEnabled = true
+                        views.changePasswordLoader.isVisible = false
+                        addAccountButton.isEnabled = true
+                        registerButton.isEnabled = true
+                    }
+                }
+
+                fun updateSignUpMode(isSignUpMode: Boolean) {
+                    notice.isVisible = isSignUpMode
+                    when (isSignUpMode) {
+                        true -> {
+                            header.text = getString(R.string.login_signup_to_server, session.sessionParams.homeServerUrl)
+                            registerButton.text = getString(R.string.add_existing_account)
+                            addAccountButton.text = getString(R.string.login_signup)
+                        }
+
+                        false -> {
+                            header.text = getString(R.string.add_account)
+                            registerButton.text = getString(R.string.register_new_account)
+                            addAccountButton.text = getString(R.string.add_account)
+                        }
+                    }
+                }
+
+                registerButton.debouncedClicks {
+                    isSignUpMode = !isSignUpMode
+                    updateSignUpMode(isSignUpMode)
+                }
+
+                addAccountButton.debouncedClicks {
+
+                    views.accountPasswordText.hidePassword()
+
+                    view.hideKeyboard()
+
+                    val username = views.accountUsernameText.text.toString()
+                    val password = views.accountPasswordText.text.toString()
+
+                    showPasswordLoadingView(true)
+
+                    lifecycleScope.launch {
+                        val result = runCatching {
+                            when (isSignUpMode) {
+                                true -> session.profileService().createAccount(
+                                        username, password, getString(R.string.login_mobile_device_sc),
+                                        session.sessionParams.homeServerConnectionConfig
+                                )
+
+                                false -> session.profileService().addNewAccount(
+                                        username, password
+                                )
+                            }
+                        }
+                        if (!isAdded) {
+                            return@launch
+                        }
+                        showPasswordLoadingView(false)
+                        result.fold({ success ->
+                            when (success) {
+                                true -> {
+                                    dialog.dismiss()
+                                    activity.toast(R.string.account_successfully_added)
+                                    childFragmentManager.findFragmentByTag(ACCOUNTS_FRAGMENT_TAG)?.let {
+                                        (it as? AccountsFragment)?.updateMultiAccount()
+                                    }
+                                }
+
+                                false -> activity.toast(R.string.error_adding_account)
+                            }
+                        }, { failure ->
+                            val message = when (failure) {
+                                is Failure.ServerError -> failure.error.message
+                                else -> getString(R.string.error_adding_account)
+                            }
+                            activity.toast(message)
+                        })
+                    }
+                }
+            }
+            dialog.show()
+        }
+    }
+
+    fun updateAddAccountButtonVisibility(isVisible: Boolean) {
+        views.homeDrawerAddAccountButton.isVisible = isVisible
+    }
+
+    companion object {
+        private const val ACCOUNTS_FRAGMENT_TAG = "AccountsFragment"
     }
 }

@@ -143,9 +143,11 @@
         android:id="@+id/homeDrawerAccountsListContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/homeDrawerGroupListContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/homeDrawerHeaderSeparator"/>
+        app:layout_constraintTop_toBottomOf="@id/homeDrawerHeaderSeparator"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/homeDrawerGroupListContainer"
@@ -154,7 +156,8 @@
         app:layout_constraintBottom_toTopOf="@id/homeDrawerBottomSeparator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/homeDrawerAccountsListContainer" />
+        app:layout_constraintTop_toBottomOf="@id/homeDrawerAccountsListContainer"
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/homeDrawerBottomSeparator"

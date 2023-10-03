@@ -9,7 +9,8 @@
         android:id="@+id/groupListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="50dp"
+        android:minHeight="200dp"
+        android:overScrollMode="always"
         tools:listitem="@layout/item_space" />
 
 </im.vector.app.core.platform.StateView>

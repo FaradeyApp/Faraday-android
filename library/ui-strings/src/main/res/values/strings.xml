@@ -375,7 +375,9 @@
     <string name="action_sign_out">Sign out</string>
     <string name="action_sign_out_confirmation_simple">Are you sure you want to sign out?</string>
     <string name="action_add_new_account">Add new account</string>
+    <string name="action_сhange_new_account">Change account</string>
     <string name="action_add_new_account_confirmation_simple">Are you sure you want to add new account? App will be restarted.</string>
+    <string name="action_change_account_confirmation_simple">Are you sure you want to change account? App will be restarted.</string>
     <string name="action_voice_call">Voice Call</string>
     <string name="action_video_call">Video Call</string>
     <string name="action_view_threads">View Threads</string>
@@ -2179,6 +2181,7 @@
 
     <!-- Replaced string is the homeserver url -->
     <string name="login_signup_to">Sign up to %1$s</string>
+    <string name="login_signup_to_server">Sign up to %s</string>
     <string name="login_signin_username_hint">Username or email</string>
     <string name="login_signup_username_hint">Username</string>
     <string name="login_signup_password_hint">Password</string>
@@ -2697,6 +2700,11 @@
     <string name="invite_users_to_room_title">Invite Users</string>
     <string name="invite_friends">Invite friends</string>
     <string name="add_account">Add account</string>
+    <string name="error_adding_account">An error occurred while adding account</string>
+    <string name="register_new_account">Create new account</string>
+    <string name="account_successfully_added">Account successfully added to your multi-account</string>
+    <string name="add_existing_account">Add existing account</string>
+    <string name="register_account_to_multi_account_notice">New account will be added to your current multi-account</string>
     <!-- Note to translators: the translation MUST contain the string "${app_name}", which will be replaced by the application name -->
     <string name="invite_friends_text">Hey, talk to me on ${app_name}: %s</string>
     <!-- Note to translators: the translation MUST contain the string "${app_name}", which will be replaced by the application name -->

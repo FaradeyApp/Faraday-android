@@ -33,6 +33,17 @@ sealed class MatrixItem(
         open val displayName: String?,
         open val avatarUrl: String?
 ) {
+
+    data class AccountMatrixItem(
+            override val id: String,
+            override val displayName: String? = null,
+            override val avatarUrl: String? = null
+    ): MatrixItem(id, displayName, avatarUrl) {
+        override fun updateAvatar(newAvatar: String?): MatrixItem {
+            return copy(avatarUrl = newAvatar)
+        }
+    }
+
     data class UserItem(
             override val id: String,
             override val displayName: String? = null,
@@ -143,6 +154,7 @@ sealed class MatrixItem(
         is EveryoneInRoomItem -> '!'
         is RoomAliasItem -> '#'
         is EmoteItem -> 'm'
+        is AccountMatrixItem -> '@'
     }
 
     fun firstLetterOfDisplayName(): String {

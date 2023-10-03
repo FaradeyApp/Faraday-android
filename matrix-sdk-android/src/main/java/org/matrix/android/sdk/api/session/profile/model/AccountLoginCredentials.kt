@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.home.accounts
+package org.matrix.android.sdk.api.session.profile.model
 
-import im.vector.app.core.platform.VectorViewEvents
-import org.matrix.android.sdk.api.session.profile.model.AccountItem
-
-sealed class AccountsViewEvents : VectorViewEvents{
-    data class SelectAccount(val account: AccountItem): AccountsViewEvents()
-}
+data class AccountLoginCredentials(
+        val userId: String,
+        val accessToken: String,
+        val homeServer: String,
+        val deviceId: String
+)

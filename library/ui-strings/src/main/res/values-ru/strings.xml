@@ -259,6 +259,7 @@
     <string name="action_invite">Пригласить</string>
     <string name="action_sign_out">Выйти из учётной записи</string>
     <string name="action_add_new_account">Добавить аккаунт</string>
+    <string name="action_сhange_new_account">Сменить аккаунт</string>
     <string name="action_voice_call">Голосовой вызов</string>
     <string name="action_video_call">Видео вызов</string>
     <string name="action_mark_all_as_read">Пометить все как прочитанное</string>
@@ -799,6 +800,7 @@
     <string name="sign_out_bottom_sheet_will_lose_secure_messages">Сделайте резервную копию ваших ключей или потеряете доступ к вашим зашифрованным сообщениям.</string>
     <string name="action_sign_out_confirmation_simple">Уверены, что хотите выйти?</string>
     <string name="action_add_new_account_confirmation_simple">Уверены, что хотите добавить новый аккаунт? Приложение будет перезапущено.</string>
+    <string name="action_change_account_confirmation_simple">Уверены, что хотите сменить аккаунт? Приложение будет перезапущено.</string>
     <string name="error_empty_field_enter_user_name">Пожалуйста, введите имя пользователя.</string>
     <string name="keys_backup_setup_step1_advanced">(Расширенный)</string>
     <string name="keys_backup_setup_step1_manual_export">Ручной экспорт ключей</string>
@@ -1134,6 +1136,7 @@
     <string name="login_msisdn_error_not_international">Международные телефонные номера должны начинаться с \'+\'</string>
     <string name="login_msisdn_error_other">Номер телефона выглядит недействительным. Пожалуйста, проверьте его</string>
     <string name="login_signup_to">Зарегистрироваться в %1$s</string>
+    <string name="login_signup_to_server">Зарегистрироваться на сервере %s</string>
     <string name="login_signin_username_hint">Имя пользователя или электронная почта</string>
     <string name="login_signup_username_hint">Имя пользователя</string>
     <string name="login_signup_password_hint">Пароль</string>
@@ -1813,6 +1816,11 @@
     <string name="invite_friends_text">Привет, поговори со мной в ${app_name}: %s</string>
     <string name="invite_friends">Пригласить друзей</string>
     <string name="add_account">Добавить аккаунт</string>
+    <string name="error_adding_account">Возникла ошибка при добавлении аккаунта</string>
+    <string name="account_successfully_added">Аккаунт успешно добавлен в ваш мульти-аккаунт</string>
+    <string name="register_new_account">Зарегистрировать новый аккаунт</string>
+    <string name="add_existing_account">Добавить существующий аккаунт</string>
+    <string name="register_account_to_multi_account_notice">Зарегистрированный аккаунт будет добавлен в ваш текущий мультиаккаунт</string>
     <string name="add_people">Добавить людей</string>
     <string name="topic_prefix">"Тема: "</string>
     <string name="add_a_topic_link_text">Добавьте тему</string>

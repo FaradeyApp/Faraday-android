@@ -445,4 +445,8 @@ internal class DefaultAuthenticationService @Inject constructor(
                 .addSocketFactory(homeServerConnectionConfig)
                 .build()
     }
+
+    override fun getSessionCreator(): SessionCreator {
+        return sessionCreator
+    }
 }

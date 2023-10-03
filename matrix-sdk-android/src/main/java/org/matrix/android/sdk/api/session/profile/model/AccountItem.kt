@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.home.accounts
+package org.matrix.android.sdk.api.session.profile.model
 
-import im.vector.app.core.platform.VectorViewEvents
-import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import org.matrix.android.sdk.api.util.MatrixItem
 
-sealed class AccountsViewEvents : VectorViewEvents{
-    data class SelectAccount(val account: AccountItem): AccountsViewEvents()
-}
+data class AccountItem(
+        val userId: String,
+        val displayName: String,
+        val avatarUrl: String? = null,
+        val unreadCount: Int
+)
+
+fun AccountItem.toMatrixItem() = MatrixItem.AccountMatrixItem(userId, displayName, avatarUrl)

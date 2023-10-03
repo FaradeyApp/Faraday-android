@@ -24,11 +24,18 @@ import io.realm.kotlin.where
 import kotlinx.coroutines.withContext
 import org.matrix.android.sdk.api.MatrixCoroutineDispatchers
 import org.matrix.android.sdk.api.auth.UserInteractiveAuthInterceptor
+import org.matrix.android.sdk.api.auth.data.Credentials
+import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
+import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.identity.ThreePid
 import org.matrix.android.sdk.api.session.profile.ProfileService
+import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.MimeTypes
 import org.matrix.android.sdk.api.util.Optional
+import org.matrix.android.sdk.internal.auth.SessionCreator
+import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.database.model.PendingThreePidEntity
 import org.matrix.android.sdk.internal.database.model.UserThreePidEntity
 import org.matrix.android.sdk.internal.di.SessionDatabase
@@ -49,7 +56,11 @@ internal class DefaultProfileService @Inject constructor(
         private val addThreePidTask: AddThreePidTask,
         private val validateSmsCodeTask: ValidateSmsCodeTask,
         private val finalizeAddingThreePidTask: FinalizeAddingThreePidTask,
-        private val deleteThreePidTask: DeleteThreePidTask,
+        private val deleteThreePidTask: DeleteThreePidTask, private val getMultipleAccountTask: GetMultipleAccountTask,
+        private val addNewAccountTask: AddNewAccountTask,
+        private val getLoginByTokenTask: GetLoginByTokenTask,
+        private val reLoginInMultiAccountTask: ReLoginInMultiAccountTask,
+        private val registerNewAccountTask: RegisterNewAccountTask,
         private val pendingThreePidMapper: PendingThreePidMapper,
         private val userStore: UserStore,
         private val fileUploader: FileUploader
@@ -164,6 +175,57 @@ internal class DefaultProfileService @Inject constructor(
     override suspend fun deleteThreePid(threePid: ThreePid) {
         deleteThreePidTask.execute(DeleteThreePidTask.Params(threePid))
         refreshThreePids()
+    }
+
+    override suspend fun getMultipleAccount(
+            homeServerConnectionConfig: HomeServerConnectionConfig
+    ): List<AccountItem> {
+        return getMultipleAccountTask.execute(
+                GetMultipleAccountTask.Params(
+                        homeServerConnectionConfig=homeServerConnectionConfig
+                )
+        )
+    }
+
+    override suspend fun reLoginMultiAccount(
+            userId: String,
+            homeServerConnectionConfig: HomeServerConnectionConfig,
+            currentCredentials: Credentials,
+            sessionCreator: SessionCreator): Session {
+        return reLoginInMultiAccountTask.execute(
+                ReLoginInMultiAccountTask.Params(
+                        homeServerConnectionConfig= homeServerConnectionConfig,
+                        userId = userId,
+                        currentCredentials = currentCredentials,
+                        sessionCreator = sessionCreator
+                )
+        )
+    }
+
+    override suspend fun createAccount(userName: String?, password: String?, initialDeviceDisplayName: String?, homeServerConnectionConfig: HomeServerConnectionConfig): Boolean {
+        val params = RegistrationParams(
+                username = userName,
+                password = password,
+                initialDeviceDisplayName = initialDeviceDisplayName
+        )
+        return registerNewAccountTask.execute(RegisterNewAccountTask.Params(params, homeServerConnectionConfig))
+    }
+
+    override suspend fun addNewAccount(userName: String, password: String): Boolean {
+        return addNewAccountTask.execute(
+                AddNewAccountTask.Params(
+                        username = userName,
+                        password = password
+                )
+        )
+    }
+
+    override suspend fun getLoginByToken(token: String): AccountLoginCredentials {
+        return getLoginByTokenTask.execute(
+                GetLoginByTokenTask.Params(
+                        token = token
+                )
+        )
     }
 }
 

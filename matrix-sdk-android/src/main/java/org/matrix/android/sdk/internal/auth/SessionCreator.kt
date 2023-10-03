@@ -23,7 +23,7 @@ import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.SessionManager
 import javax.inject.Inject
 
-internal interface SessionCreator {
+interface SessionCreator {
 
     suspend fun createSession(
             credentials: Credentials,

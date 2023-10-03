@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.home.accounts
+package org.matrix.android.sdk.internal.session.profile
 
-import org.matrix.android.sdk.api.util.MatrixItem
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-data class Account(
-        val userId: String,
-        val avatar: String? = null,
-        val username: String? = null,
-        val unreadMessages: Int = 0
+@JsonClass(generateAdapter = true)
+internal data class AddNewAccountBody(
+        @Json(name = "token") val token: String
 )
-
-fun Account.toMatrixItem() = MatrixItem.UserItem(userId, username, avatar)
-

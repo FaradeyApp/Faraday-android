@@ -17,16 +17,14 @@
 package im.vector.app.features.home.accounts
 
 import com.airbnb.epoxy.EpoxyController
-import im.vector.app.core.resources.StringProvider
 import im.vector.app.features.home.AvatarRenderer
 import im.vector.app.features.home.room.list.UnreadCounterBadgeView
-import im.vector.app.features.settings.VectorPreferences
+import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import org.matrix.android.sdk.api.session.profile.model.toMatrixItem
 import javax.inject.Inject
 
 class AccountsController @Inject constructor(
-        private val vectorPreferences: VectorPreferences,
-        private val avatarRenderer: AvatarRenderer,
-        private val stringProvider: StringProvider
+        private val avatarRenderer: AvatarRenderer
 ) : EpoxyController() {
 
     var callback: Callback? = null
@@ -34,7 +32,7 @@ class AccountsController @Inject constructor(
 
     override fun buildModels() {
         val nonNullViewState = viewState ?: return
-        buildAccountsModels(accounts = nonNullViewState.asyncAccounts() ?: emptyList())
+        buildAccountsModels(accounts = nonNullViewState.asyncAccounts())
     }
 
     fun update(state: AccountsViewState) {
@@ -43,14 +41,14 @@ class AccountsController @Inject constructor(
     }
 
     private fun buildAccountsModels(
-            accounts: List<Account>
+            accounts: List<AccountItem>?
     ) {
         val host = this
-        accounts.forEach { account ->
+        accounts?.forEach { account ->
             accountItem {
                 id(account.userId)
                 avatarRenderer(host.avatarRenderer)
-                countState(UnreadCounterBadgeView.State.Text("19", false))
+                countState(UnreadCounterBadgeView.State.Text(account.unreadCount.toString(), false))
                 listener { host.callback?.onAccountSelected(account) }
                 matrixItem(account.toMatrixItem())
             }
@@ -58,6 +56,6 @@ class AccountsController @Inject constructor(
     }
 
     interface Callback {
-        fun onAccountSelected(account: Account)
+        fun onAccountSelected(account: AccountItem)
     }
 }

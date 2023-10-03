@@ -20,10 +20,16 @@ package org.matrix.android.sdk.api.session.profile
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import org.matrix.android.sdk.api.auth.UserInteractiveAuthInterceptor
+import org.matrix.android.sdk.api.auth.data.Credentials
+import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
+import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.identity.ThreePid
+import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.session.user.model.User
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.Optional
+import org.matrix.android.sdk.internal.auth.SessionCreator
 
 /**
  * This interface defines methods to handling profile information. It's implemented at the session level.
@@ -134,4 +140,17 @@ interface ProfileService {
             )
         }
     }
+
+    suspend fun getMultipleAccount(homeServerConnectionConfig: HomeServerConnectionConfig): List<AccountItem>
+    suspend fun getLoginByToken(token: String): AccountLoginCredentials
+    suspend fun reLoginMultiAccount(userId: String, homeServerConnectionConfig: HomeServerConnectionConfig, currentCredentials: Credentials, sessionCreator: SessionCreator): Session
+
+    suspend fun createAccount(
+            userName: String?,
+            password: String?,
+            initialDeviceDisplayName: String?,
+            homeServerConnectionConfig: HomeServerConnectionConfig
+    ): Boolean
+
+    suspend fun addNewAccount(userName: String, password: String): Boolean
 }
