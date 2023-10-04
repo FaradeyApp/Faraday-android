@@ -23,5 +23,6 @@ import org.matrix.android.sdk.api.session.profile.model.AccountItem
 
 data class AccountsViewState(
         val asyncAccounts: Async<List<AccountItem>> = Uninitialized,
-        val restartApp: Boolean = false
+        val restartApp: Boolean = false,
+        val errorMessage: String? = null
 ): MavericksState

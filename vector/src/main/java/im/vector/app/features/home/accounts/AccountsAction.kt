@@ -22,4 +22,5 @@ import org.matrix.android.sdk.api.session.profile.model.AccountItem
 sealed class AccountsAction : VectorViewModelAction{
     data class SelectAccount(val account: AccountItem): AccountsAction()
     data class SetRestartAppValue(val value: Boolean): AccountsAction()
+    data class SetErrorMessage(val value: String?): AccountsAction()
 }

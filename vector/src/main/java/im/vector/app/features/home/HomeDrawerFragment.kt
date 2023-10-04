@@ -78,6 +78,7 @@ class HomeDrawerFragment :
         if (savedInstanceState == null) {
             replaceChildFragment(R.id.homeDrawerGroupListContainer, SpaceListFragment::class.java)
         }
+        views.homeDrawerAddAccountButton.isVisible = session.sessionParams.homeServerUrl == SERVER_WITH_ENABLED_MULTIACCOUNT
         session.userService().getUserLive(session.myUserId).observeK(viewLifecycleOwner) { optionalUser ->
             val user = optionalUser?.getOrNull()
             if (user != null) {
@@ -297,10 +298,11 @@ class HomeDrawerFragment :
     }
 
     fun updateAddAccountButtonVisibility(isVisible: Boolean) {
-        views.homeDrawerAddAccountButton.isVisible = isVisible
+        views.homeDrawerAddAccountButton.isVisible = isVisible && session.sessionParams.homeServerUrl == SERVER_WITH_ENABLED_MULTIACCOUNT
     }
 
     companion object {
         private const val ACCOUNTS_FRAGMENT_TAG = "AccountsFragment"
+        private const val SERVER_WITH_ENABLED_MULTIACCOUNT = "https://113-30-191-89.cloud-xip.com/"
     }
 }

@@ -16,7 +16,6 @@
 
 package im.vector.app.features.home.accounts
 
-
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.Success
 import dagger.assisted.Assisted
@@ -28,6 +27,7 @@ import im.vector.app.core.platform.VectorViewModel
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.auth.AuthenticationService
+import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
 import timber.log.Timber
@@ -53,6 +53,7 @@ class AccountsViewModel @AssistedInject constructor(
         when (action) {
             is AccountsAction.SelectAccount -> handleSelectAccountAction(account = action.account)
             is AccountsAction.SetRestartAppValue -> handleSetRestartAppValue(value = action.value)
+            is AccountsAction.SetErrorMessage -> handleSetErrorMessage(message = action.value)
         }
     }
 
@@ -77,6 +78,14 @@ class AccountsViewModel @AssistedInject constructor(
         }
     }
 
+    private fun handleSetErrorMessage(message: String?) {
+        setState {
+            copy(
+                    errorMessage = message
+            )
+        }
+    }
+
     private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
         try {
             val result = session.profileService().reLoginMultiAccount(
@@ -88,8 +97,11 @@ class AccountsViewModel @AssistedInject constructor(
             Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
         } catch (throwable: Throwable) {
             Timber.i("Error re-login into app $throwable")
-        } finally {
-            handleSetRestartAppValue(value = true)
+            if (throwable is Failure.ServerError) {
+                handleSetErrorMessage(throwable.error.message)
+                return@launch
+            }
         }
+        handleSetRestartAppValue(value = true)
     }
 }

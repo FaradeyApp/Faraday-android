@@ -20,6 +20,7 @@ package org.matrix.android.sdk.internal.session.profile
 import org.matrix.android.sdk.api.auth.LoginType
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
+import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
@@ -64,7 +65,8 @@ internal class DefaultReLoginInMultiAccountTask @Inject constructor(
             )
         } catch (throwable: Throwable) {
             Timber.i("ReLoginInMultiAccountTask Throwable=$throwable")
-            params.currentCredentials
+            if(throwable is Failure.ServerError) throw throwable
+            else  params.currentCredentials
         }
         Timber.i("ReLoginInMultiAccountTask result=$result")
         return params.sessionCreator.createSession(credentials, params.homeServerConnectionConfig, LoginType.DIRECT)

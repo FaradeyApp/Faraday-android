@@ -32,6 +32,7 @@ import im.vector.app.core.extensions.cleanup
 import im.vector.app.core.extensions.configureWith
 import im.vector.app.core.platform.StateView
 import im.vector.app.core.platform.VectorBaseFragment
+import im.vector.app.core.utils.toast
 import im.vector.app.databinding.FragmentAccountsListBinding
 import im.vector.app.features.home.HomeDrawerFragment
 import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
@@ -73,6 +74,10 @@ class AccountsFragment :
         if (state.restartApp) {
             viewModel.handle(AccountsAction.SetRestartAppValue(false))
             ProcessPhoenix.triggerRebirth(context)
+        }
+        state.errorMessage?.let {message ->
+            activity?.toast(message)
+            viewModel.handle(AccountsAction.SetErrorMessage(null))
         }
         when (val spaces = state.asyncAccounts) {
             Uninitialized,
