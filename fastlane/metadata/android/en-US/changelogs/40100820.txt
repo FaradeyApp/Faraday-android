@@ -1,0 +1,7 @@
+- Update codebase to Element v1.4.13
+- Follow accent color setting in the attachment preview screen
+- Use accent color for the unread marker
+- Fix redactions sometimes not shown in message bubbles
+- Attempt to fix timeline loops
+- Improvements for "Swipe chat list to switch space"
+- Fix user override color when coloring by mxid

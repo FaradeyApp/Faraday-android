@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<im.vector.app.core.preference.VectorPreferenceCategory-->
+    <!--android:key="SETTINGS_LABS_PREFERENCE_KEY"-->
+    <!--android:title="@string/room_settings_labs_pref_title">-->
+
+    <im.vector.app.core.preference.VectorPreference
+        android:focusable="false"
+        android:key="labs_warning"
+        android:summary="@string/room_settings_labs_warning_message" />
+
+
+    <!-- SC additions -->
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SYSTEM_DARK_THEME_PRE_TEN"
+        android:title="@string/settings_system_dark_theme_pre_ten"
+        android:summary="@string/settings_system_dark_theme_pre_ten_summary" />
+
+    <im.vector.app.core.preference.VectorPreferenceCategory
+        android:key="SETTINGS_LABS_TIMELINE"
+        android:title="@string/settings_labs_timeline">
+
+        <im.vector.app.core.preference.VectorSwitchPreference
+            android:defaultValue="false"
+            android:key="SETTINGS_OPEN_CHATS_AT_FIRST_UNREAD"
+            android:title="@string/settings_open_chats_at_first_unread"
+            android:summary="@string/settings_open_chats_at_first_unread_summary" />
+
+        <im.vector.app.core.preference.VectorSwitchPreference
+            android:defaultValue="false"
+            android:key="SETTINGS_READ_RECEIPT_FOLLOWS_READ_MARKER"
+            android:dependency="SETTINGS_OPEN_CHATS_AT_FIRST_UNREAD"
+            android:title="@string/settings_read_receipt_follows_read_marker"
+            android:summary="@string/settings_read_receipt_follows_read_marker_summary" />
+
+        <im.vector.app.core.preference.VectorSwitchPreference
+            android:defaultValue="false"
+            android:key="SETTINGS_ALLOW_URL_PREVIEW_IN_ENCRYPTED_ROOM_KEY"
+            android:title="@string/url_previews_in_encrypted_rooms"
+            android:summary="@string/url_previews_in_encrypted_rooms_summary" />
+
+    </im.vector.app.core.preference.VectorPreferenceCategory>
+
+    <im.vector.app.core.preference.VectorPreferenceCategory
+        android:key="SETTINGS_LABS_ROOM_OVERVIEW"
+        android:title="@string/settings_labs_room_list">
+
+        <im.vector.app.core.preference.VectorSwitchPreference
+            android:defaultValue="true"
+            android:key="SETTINGS_LABS_ALLOW_MARK_UNREAD"
+            android:title="@string/labs_mark_rooms_unread"
+            android:summary="@string/labs_mark_rooms_unread_summary" />
+
+        <im.vector.app.core.preference.VectorSwitchPreference
+            android:defaultValue="false"
+            android:key="SETTINGS_ENABLE_SPACE_PAGER"
+            android:title="@string/settings_enable_space_pager"
+            android:summary="@string/settings_enable_space_pager_summary" />
+
+        <im.vector.app.core.preference.VectorSwitchPreference
+            android:defaultValue="false"
+            android:key="SETTINGS_SHOW_OPEN_ANONYMOUS"
+            android:title="@string/settings_show_open_anonymous"
+            android:summary="@string/settings_show_open_anonymous_summary" />
+
+    </im.vector.app.core.preference.VectorPreferenceCategory>
+
+
+    <!-- Upstream -->
+
+    <im.vector.app.core.preference.VectorPreferenceCategory
+        android:key="SETTINGS_LABS_PREFERENCE_KEY"
+        android:title="@string/settings_upstream_labs">
+
+    <!--<im.vector.app.core.preference.VectorSwitchPreference-->
+    <!--android:key="SETTINGS_ROOM_SETTINGS_LABS_END_TO_END_PREFERENCE_KEY"-->
+    <!--android:title="@string/room_settings_labs_end_to_end" />-->
+
+    <!--<im.vector.app.core.preference.VectorPreference-->
+    <!--android:focusable="false"-->
+    <!--android:key="SETTINGS_ROOM_SETTINGS_LABS_END_TO_END_IS_ACTIVE_PREFERENCE_KEY"-->
+    <!--android:title="@string/room_settings_labs_end_to_end_is_active" />-->
+
+    <!--<im.vector.app.core.preference.VectorSwitchPreference-->
+    <!--android:key="SETTINGS_DATA_SAVE_MODE_PREFERENCE_KEY"-->
+    <!--android:summary="@string/settings_data_save_mode_summary"-->
+    <!--android:title="@string/settings_data_save_mode" />-->
+
+    <!--<im.vector.app.core.preference.VectorSwitchPreference-->
+    <!--android:defaultValue="true"-->
+    <!--android:key="SETTINGS_USE_JITSI_CONF_PREFERENCE_KEY"-->
+    <!--android:title="@string/settings_labs_create_conference_with_jitsi" />-->
+
+    <!--<im.vector.app.core.preference.VectorSwitchPreference-->
+    <!--android:key="SETTINGS_ENABLE_SEND_VOICE_FEATURE_PREFERENCE_KEY"-->
+    <!--android:summary="@string/settings_labs_enable_send_voice_summary"-->
+    <!--android:title="@string/settings_labs_enable_send_voice" />-->
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="true"
+        android:key="SETTINGS_LABS_ENABLE_SWIPE_TO_REPLY"
+        android:title="@string/labs_swipe_to_reply_in_timeline" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SETTINGS_LABS_UNREAD_NOTIFICATIONS_AS_TAB"
+        android:title="@string/labs_show_unread_notifications_as_tab" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SETTINGS_LABS_MSC3061_SHARE_KEYS_HISTORY"
+        android:persistent="false"
+        android:summary="@string/labs_enable_msc3061_share_history_desc"
+        android:title="@string/labs_enable_msc3061_share_history" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SETTINGS_LABS_ENABLE_LATEX_MATHS"
+        android:summary="@string/restart_the_application_to_apply_changes"
+        android:title="@string/labs_enable_latex_maths" />
+    <!--</im.vector.app.core.preference.VectorPreferenceCategory>-->
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_thread_messages_default"
+        android:key="SETTINGS_LABS_ENABLE_THREAD_MESSAGES_FINAL"
+        android:summary="@string/labs_enable_thread_messages_desc"
+        android:title="@string/labs_enable_thread_messages" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SETTINGS_LABS_AUTO_REPORT_UISI"
+        android:summary="@string/labs_auto_report_uisi_desc"
+        android:title="@string/labs_auto_report_uisi" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SETTINGS_LABS_ENABLE_LIVE_LOCATION"
+        android:summary="@string/labs_enable_live_location_summary"
+        android:title="@string/labs_enable_live_location" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="false"
+        android:key="SETTINGS_LABS_ENABLE_ELEMENT_CALL_PERMISSION_SHORTCUTS"
+        android:summary="@string/labs_enable_element_call_permission_shortcuts_summary"
+        android:title="@string/labs_enable_element_call_permission_shortcuts" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_new_app_layout_default"
+        android:key="SETTINGS_LABS_NEW_APP_LAYOUT_KEY"
+        android:summary="@string/labs_enable_new_app_layout_summary_sc"
+        android:title="@string/labs_enable_new_app_layout_title" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_deferred_dm_default"
+        android:key="SETTINGS_LABS_DEFERRED_DM_KEY"
+        android:summary="@string/labs_enable_deferred_dm_summary"
+        android:title="@string/labs_enable_deferred_dm_title"
+        app:isPreferenceVisible="@bool/settings_labs_deferred_dm_visible" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_rich_text_editor_default"
+        android:key="SETTINGS_LABS_RICH_TEXT_EDITOR_KEY"
+        android:summary="@string/labs_enable_rich_text_editor_summary"
+        android:title="@string/labs_enable_rich_text_editor_title"
+        app:isPreferenceVisible="@bool/settings_labs_rich_text_editor_visible" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_new_session_manager_default"
+        android:key="SETTINGS_LABS_NEW_SESSION_MANAGER_KEY"
+        android:summary="@string/labs_enable_session_manager_summary"
+        android:title="@string/labs_enable_session_manager_title"
+        app:isPreferenceVisible="@bool/settings_labs_new_session_manager_visible" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_client_info_recording_default"
+        android:key="SETTINGS_LABS_CLIENT_INFO_RECORDING_KEY"
+        android:summary="@string/labs_enable_client_info_recording_summary"
+        android:title="@string/labs_enable_client_info_recording_title"
+        app:isPreferenceVisible="@bool/settings_labs_client_info_recording_visible" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="@bool/settings_labs_enable_voice_broadcast_default"
+        android:key="SETTINGS_LABS_VOICE_BROADCAST_KEY"
+        android:summary="@string/labs_enable_voice_broadcast_summary"
+        android:title="@string/labs_enable_voice_broadcast_title"
+        app:isPreferenceVisible="@bool/settings_labs_enable_voice_broadcast_visible" />
+
+    </im.vector.app.core.preference.VectorPreferenceCategory>
+</androidx.preference.PreferenceScreen>

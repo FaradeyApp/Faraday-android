@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/menu_home_mark_all_as_read"
+        android:icon="@drawable/ic_material_done"
+        android:title="@string/action_mark_all_as_read" />
+
+    <item
+        android:id="@+id/menu_home_dialpad"
+        android:title="@string/call_dial_pad_title"
+        android:visible="false"
+        app:showAsAction="never"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/menu_room_sort_order"
+        android:title="@string/home_layout_preferences_sort_by"
+        app:showAsAction="never">
+        <menu>
+            <group
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_room_sort_order_activity"
+                    android:title="@string/home_layout_preferences_sort_activity" />
+                <item
+                    android:id="@+id/menu_room_sort_order_unread"
+                    android:title="@string/home_layout_preferences_sort_unread" />
+            </group>
+        </menu>
+    </item>
+</menu>

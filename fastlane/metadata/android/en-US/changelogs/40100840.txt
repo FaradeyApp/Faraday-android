@@ -1,0 +1,4 @@
+- Update codebase to Element v1.4.14
+- Support rendering inline images and custom emojis in the timeline
+- Fix some corner case timeline bugs
+- Fix read markers sometimes not updating

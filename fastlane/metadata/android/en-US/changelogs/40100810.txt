@@ -1,0 +1,7 @@
+- Update codebase to Element v1.4.11
+- Restructure labs settings
+- Open-at-unread: add option to not mark as read until fully read
+- Option to open chats without updating read status
+- Add schildi.chat to suggested room directory servers
+- Improvements for "Swipe chat list to switch space"
+- Bug fixes

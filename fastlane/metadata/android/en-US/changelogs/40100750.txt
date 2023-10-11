@@ -1,0 +1,6 @@
+- Update codebase to Element v1.3.12
+- Change rendering of notices to also allow formating and to match desktop
+- Fix some space filter for favorites
+- Add back "default" notification option
+- Hide (broken) e2e decoration for dual-side bubble layout
+- Minor sync improvements

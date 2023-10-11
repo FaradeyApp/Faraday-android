@@ -1,0 +1,4 @@
+- Update codebase to Element v1.4.32
+- Improve sizing of inline images
+- Fix crash on broken incoming media shares
+- F-Droid variant: Add back possibility to enable periodic background sync in addition to push notifications

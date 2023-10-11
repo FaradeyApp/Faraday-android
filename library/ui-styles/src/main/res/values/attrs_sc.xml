@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="VectorStylesSC">
+
+        <attr name="sc_message_bg_incoming" format="color" />
+        <attr name="sc_message_bg_outgoing" format="color" />
+        <attr name="sc_notice_bg_incoming" format="color" />
+        <attr name="sc_notice_bg_outgoing" format="color" />
+
+        <attr name="colorAccentPale" format="color" />
+        <attr name="backgroundColorLight" format="color" />
+
+        <attr name="riotx_unread_unimportant_room_badge" format="color" />
+
+        <attr name="timestamp_overlay_fg" format="color" />
+        <attr name="timestamp_overlay_bg" format="color" />
+
+        <attr name="dense_dropdown_text_input" format="reference" />
+
+        <attr name="message_highlight_bg_color" format="color" />
+        <attr name="code_block_bg_color" format="color" />
+        <attr name="quote_bar_color" format="color" />
+        <attr name="voice_message_playback_background_color" format="color" />
+
+        <attr name="user_color_pl_100" format="color" />
+        <attr name="user_color_pl_95" format="color" />
+        <attr name="user_color_pl_51" format="color" />
+        <attr name="user_color_pl_50" format="color" />
+        <attr name="user_color_pl_1" format="color" />
+        <attr name="user_color_pl_0" format="color" />
+
+        <attr name="user_color_hash_01" format="color" />
+        <attr name="user_color_hash_02" format="color" />
+        <attr name="user_color_hash_03" format="color" />
+        <attr name="user_color_hash_04" format="color" />
+        <attr name="user_color_hash_05" format="color" />
+        <attr name="user_color_hash_06" format="color" />
+        <attr name="user_color_hash_07" format="color" />
+        <attr name="user_color_hash_08" format="color" />
+        <attr name="room_color_hash_01" format="color" />
+        <attr name="room_color_hash_02" format="color" />
+        <attr name="room_color_hash_03" format="color" />
+
+        <attr name="verification_request_background" format="color" />
+        <attr name="conference_animation_from" format="color" />
+        <attr name="conference_animation_to" format="color" />
+
+        <attr name="unread_line_unimportant" format="color" />
+
+        <attr name="color_warning" format="color" />
+        <attr name="shield_color_warning" format="color" />
+
+    </declare-styleable>
+
+</resources>

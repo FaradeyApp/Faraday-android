@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Needed for VOIP call to detect and switch to headset-->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- https://developer.android.com/develop/ui/views/notifications/notification-permission#exemptions -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Call feature -->
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <!-- Commented because Google PlayStore does not like we add permission if we are not requiring it. And it was added for future use -->
+    <!--uses-permission android:name="android.permission.READ_CALL_LOG" /-->
+    <!-- Needed for voice call to toggle speaker on or off -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- READ_PHONE_STATE is needed only if your calling app reads numbers from the `PHONE_STATE`
+            intent action. -->
+
+    <!-- Needed to show incoming calls activity in lock screen-->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Needed for incoming calls  -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- To be able to install APK from the application -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Location Sharing -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Jitsi SDK is now API23+ -->
+    <uses-sdk tools:overrideLibrary="org.jitsi.meet.sdk,com.oney.WebRTCModule,com.learnium.RNDeviceInfo,com.reactnativecommunity.asyncstorage,com.ocetnik.timer,com.calendarevents,com.reactnativecommunity.netinfo,com.kevinresol.react_native_default_preference,com.rnimmersive,com.corbt.keepawake,com.BV.LinearGradient,com.horcrux.svg,com.oblador.performance,com.reactnativecommunity.slider,com.brentvatne.react,com.reactnativecommunity.clipboard,com.swmansion.gesturehandler.react,org.linusu,org.reactnative.maskedview,com.reactnativepagerview,com.swmansion.reanimated,com.th3rdwave.safeareacontext,com.swmansion.rnscreens,org.devio.rn.splashscreen,com.reactnativecommunity.webview,org.wonday.orientation" />
+
+    <!-- Adding CAMERA permission prevents Chromebooks to see the application on the PlayStore -->
+    <!-- Tell that the Camera is not mandatory to install the application -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <!-- Since Android 11, see https://developer.android.com/training/package-visibility -->
+    <queries>
+        <!-- To open URL in CustomTab (prefetch, etc.). It makes CustomTabsClient.getPackageName() work
+         see https://developer.android.com/training/package-visibility/use-cases#open-urls-custom-tabs -->
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+
+        <!-- The app can open attachments of any mime type
+        see https://developer.android.com/training/package-visibility/use-cases#open-a-file -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+    <application android:supportsRtl="true" android:requestLegacyExternalStorage="true">
+
+        <!-- Sentry auto-initialization disable -->
+        <meta-data
+            android:name="io.sentry.auto-init"
+            android:value="false" />
+
+        <!-- No limit for screen ratio: avoid black strips -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="9.9" />
+
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <activity
+            android:name=".features.MainActivity"
+            android:theme="@style/AppTheme.Launcher.SC" />
+
+        <activity android:name=".features.home.HomeActivity" />
+
+        <activity
+            android:name=".features.login.SSORedirectRouterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Vector.Black.Transparent">
+
+            <!-- Add intent filter to handle redirection URL after SSO login in external browser -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="connect"
+                    android:scheme="element" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".features.login.LoginActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".features.onboarding.OnboardingActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".features.login.PromptSimplifiedModeActivity" />
+
+        <!-- Add tools:ignore="Instantiatable" for the error reported only by CI :/ -->
+        <activity
+            android:name=".features.media.VectorAttachmentViewerActivity"
+            android:theme="@style/AppTheme.Transparent.SC"
+            tools:ignore="Instantiatable" />
+        <activity android:name=".features.media.BigImageViewerActivity" />
+        <activity
+            android:name=".features.rageshake.BugReportActivity"
+            android:label="@string/title_activity_bug_report" />
+        <activity
+            android:name=".features.settings.VectorSettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".features.crypto.keysbackup.restore.KeysBackupRestoreActivity"
+            android:label="@string/title_activity_keys_backup_setup" />
+        <activity
+            android:name=".features.crypto.keysbackup.setup.KeysBackupSetupActivity"
+            android:label="@string/title_activity_keys_backup_restore" />
+        <activity
+            android:name=".features.crypto.keysbackup.settings.KeysBackupManageActivity"
+            android:label="@string/encryption_message_recovery" />
+        <activity
+            android:name=".features.reactions.EmojiReactionPickerActivity"
+            android:label="@string/title_activity_emoji_reaction_picker" />
+        <activity android:name=".features.roomdirectory.createroom.CreateRoomActivity" />
+        <activity android:name=".features.roomdirectory.RoomDirectoryActivity" />
+        <activity android:name=".features.roomdirectory.roompreview.RoomPreviewActivity" />
+        <activity android:name=".features.home.room.filtered.FilteredRoomsActivity" />
+        <activity android:name=".features.home.room.threads.ThreadsActivity" />
+
+        <activity
+            android:name=".features.home.room.detail.RoomDetailActivity"
+            android:parentActivityName=".features.home.HomeActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.home.HomeActivity" />
+        </activity>
+        <activity android:name=".features.createdirect.CreateDirectRoomActivity" />
+        <activity android:name=".features.invite.InviteUsersToRoomActivity" />
+        <activity android:name=".features.webview.VectorWebViewActivity" />
+
+        <!-- Activity to intercept links coming from a web instance -->
+        <!-- exported="true" is required to handle android.intent.action.VIEW for URL redirection-->
+        <activity
+            android:name=".features.link.LinkHandlerActivity"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="riot.im" />
+                <data android:host="app.element.io" />
+                <data android:host="mobile.element.io" />
+                <data android:host="develop.element.io" />
+                <data android:host="staging.element.io" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity alias for matrix.to or element permalinks -->
+        <!-- exported="true" is required to handle android.intent.action.VIEW for URL redirection-->
+        <activity-alias
+            android:name=".features.permalink.PermalinkHandlerActivity"
+            android:enabled="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:targetActivity=".features.link.LinkHandlerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="matrix.to" />
+                <data
+                    android:host="user"
+                    android:scheme="element" />
+                <data
+                    android:host="room"
+                    android:scheme="element" />
+
+                <!-- No need to redefine hosts, filter will be merged with element's above:
+                     https://developer.android.com/training/app-links/deep-linking#adding-filters -->
+                <data android:scheme="schildichat" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- exported="true" is required for the share functionality-->
+        <activity
+            android:name=".features.share.IncomingShareActivity"
+            android:exported="true"
+            android:parentActivityName=".features.home.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.home.HomeActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <data android:mimeType="*/*" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <data android:mimeType="*/*" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.chooser.chooser_target_service"
+                android:value="androidx.sharetarget.ChooserTargetServiceCompat" />
+        </activity>
+        <activity android:name=".features.roomprofile.RoomProfileActivity" />
+        <activity android:name=".features.roomprofile.settings.joinrule.RoomJoinRuleActivity" />
+        <activity android:name=".features.signout.hard.SignedOutActivity" />
+        <activity
+            android:name=".features.signout.soft.SoftLogoutActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".features.roommemberprofile.RoomMemberProfileActivity"
+            android:parentActivityName=".features.home.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.home.HomeActivity" />
+        </activity>
+
+        <activity android:name=".features.qrcode.QrCodeScannerActivity" />
+        <activity android:name=".features.crypto.quads.SharedSecureStorageActivity" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".features.attachments.preview.AttachmentsPreviewActivity"
+            android:theme="@style/AppTheme.AttachmentsPreview.SC" />
+        <activity
+            android:name=".features.call.VectorCallActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:supportsPictureInPicture="true"
+            android:taskAffinity=".features.call.VectorCallActivity.${appTaskAffinitySuffix}" />
+        <!-- PIP Support https://developer.android.com/guide/topics/ui/picture-in-picture -->
+        <activity
+            android:name=".features.call.conference.VectorJitsiActivity"
+            android:configChanges="orientation|smallestScreenSize|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:supportsPictureInPicture="true" />
+
+        <activity android:name=".features.terms.ReviewTermsActivity" />
+        <activity
+            android:name=".features.widgets.WidgetActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:supportsPictureInPicture="true" />
+
+        <activity android:name=".features.pin.PinActivity" />
+        <activity android:name=".features.analytics.ui.consent.AnalyticsOptInActivity" />
+        <activity android:name=".features.home.room.detail.search.SearchActivity" />
+        <activity android:name=".features.usercode.UserCodeActivity" />
+        <activity android:name=".features.call.transfer.CallTransferActivity" />
+
+        <!-- Single instance is very important for the custom scheme callback-->
+        <activity
+            android:name=".features.auth.ReAuthActivity"
+            android:launchMode="singleInstance">
+
+            <!-- XXX: UIA SSO has only web fallback, i.e no url redirect, so for now we comment this out
+            hopefully, we would use it when finally available
+            -->
+            <!-- Add intent filter to handle redirection URL after SSO login in external browser -->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.VIEW" />-->
+
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--                <category android:name="android.intent.category.BROWSABLE" />-->
+
+            <!--                <data-->
+            <!--                    android:host="reauth"-->
+            <!--                    android:scheme="element" />-->
+            <!--            </intent-filter>-->
+        </activity>
+
+        <activity android:name=".features.devtools.RoomDevToolActivity" />
+        <activity android:name=".features.spaces.SpacePreviewActivity" />
+        <activity android:name=".features.spaces.SpaceExploreActivity" />
+        <activity android:name=".features.spaces.SpaceCreationActivity" />
+        <activity android:name=".features.spaces.manage.SpaceManageActivity" />
+        <activity android:name=".features.spaces.people.SpacePeopleActivity" />
+        <activity android:name=".features.spaces.leave.SpaceLeaveAdvancedActivity" />
+        <activity android:name=".features.poll.create.CreatePollActivity" />
+        <activity android:name=".features.location.LocationSharingActivity" />
+        <activity android:name=".features.location.live.map.LiveLocationMapViewActivity" />
+        <activity android:name=".features.settings.font.FontScaleSettingActivity" />
+        <activity android:name=".features.call.dialpad.PstnDialActivity" />
+        <activity android:name=".features.home.room.list.home.invites.InvitesActivity" />
+        <activity android:name=".features.home.room.list.home.release.ReleaseNotesActivity" />
+        <activity android:name=".features.settings.devices.v2.overview.SessionOverviewActivity" />
+        <activity android:name=".features.settings.devices.v2.othersessions.OtherSessionsActivity" />
+        <activity android:name=".features.settings.devices.v2.details.SessionDetailsActivity" />
+        <activity android:name=".features.settings.devices.v2.rename.RenameSessionActivity" />
+        <activity android:name=".features.login.qr.QrCodeLoginActivity" />
+        <activity android:name=".features.roomprofile.polls.detail.ui.RoomPollDetailActivity" />
+
+        <!-- Services -->
+
+        <service
+            android:name=".core.services.CallAndroidService"
+            android:foregroundServiceType="phoneCall"
+            android:exported="false">
+            <!-- in order to get headset button events -->
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
+
+        <!-- Add tools:ignore="Instantiatable" for the error reported only by CI and for lintGplayRelease check :/ -->
+        <service
+            android:name=".core.services.VectorSyncAndroidService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            tools:ignore="Instantiatable" />
+
+        <service
+            android:name=".features.call.telecom.VectorConnectionAndroidService"
+            android:exported="false"
+            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+            <intent-filter>
+                <action android:name="android.telecom.ConnectionService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".features.location.live.tracking.LocationSharingAndroidService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <service
+            android:name=".features.start.StartAppAndroidService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
+            android:name=".features.call.webrtc.ScreenCaptureAndroidService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection"
+            tools:targetApi="Q" />
+
+        <!-- Receivers -->
+
+        <receiver
+            android:name=".features.call.service.CallHeadsUpActionReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".features.settings.troubleshoot.TestNotificationReceiver"
+            android:exported="false" />
+
+        <!-- Exported false, should only be accessible from this app!! -->
+        <receiver
+            android:name=".features.notifications.NotificationBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!--
+        A media button receiver receives and helps translate hardware media playback buttons,
+        such as those found on wired and wireless headsets, into the appropriate callbacks in your app.
+           -->
+        <receiver
+            android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- UnifiedPush -->
+        <receiver
+            android:name=".core.pushers.VectorUnifiedPushMessagingReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.connector.MESSAGE" />
+                <action android:name="org.unifiedpush.android.connector.UNREGISTERED" />
+                <action android:name="org.unifiedpush.android.connector.NEW_ENDPOINT" />
+                <action android:name="org.unifiedpush.android.connector.REGISTRATION_FAILED" />
+                <action android:name="org.unifiedpush.android.connector.REGISTRATION_REFUSED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".core.pushers.KeepInternalDistributor"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <!--
+                This action is checked to track installed and uninstalled distributors.
+                We declare it to keep the background sync as an internal
+                unifiedpush distributor.
+                -->
+                <action android:name="org.unifiedpush.android.distributor.REGISTER" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

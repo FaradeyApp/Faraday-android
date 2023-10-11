@@ -1,0 +1,4 @@
+- Update codebase to Element v1.4.36
+- Fix pills appearing twice for nested inline images
+- Inline images: Use alt text in room previews and notifications
+- Use light navigation bar in light SC themes

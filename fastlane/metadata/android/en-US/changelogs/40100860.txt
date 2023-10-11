@@ -1,0 +1,9 @@
+- Update codebase to Element v1.4.16
+- Floating date in the timeline
+- Allow sending freeform reactions
+- Render image reactions
+- Improved rendering of notices in some layouts
+- Improved room list preview generation
+- Fix FCM push on some old devices
+- "Swipe to switch space" improvements
+- Bug fixes

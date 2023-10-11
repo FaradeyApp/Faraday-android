@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/reaction_rounded_rect_shape"
+    android:clipChildren="false"
+    android:gravity="center"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <!--<View-->
+    <!--android:id="@+id/reactionSelector"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@drawable/rounded_rect_shape" />-->
+
+    <ImageView
+        android:id="@+id/reactionImage"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginHorizontal="4dp"
+        android:gravity="center"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/reactionText"
+        style="@style/Widget.Vector.TextView.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:gravity="center"
+        android:maxEms="10"
+        android:singleLine="true"
+        android:textColor="?vctr_content_primary"
+        tools:text="* Party Parrot Again * 👀" />
+
+    <TextView
+        android:id="@+id/reactionCount"
+        style="@style/Widget.Vector.TextView.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="?vctr_content_secondary"
+        android:textStyle="bold"
+        tools:text="13450" />
+
+</merge>

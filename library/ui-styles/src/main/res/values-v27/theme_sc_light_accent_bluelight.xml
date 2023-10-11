@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.SC.Light.BlueLight.v27" parent="AppTheme.SC.Light.BlueLight.v23">
+        <item name="android:navigationBarColor">@color/background_sc_light_toolbar</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarDividerColor">@color/list_divider_color_sc_light</item>
+    </style>
+
+    <style name="AppTheme.SC.Light.BlueLight" parent="AppTheme.SC.Light.BlueLight.v27" />
+
+</resources>

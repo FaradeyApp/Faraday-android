@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Accent colors -->
+    <color name="accent_sc">#8BC34A</color>
+    <color name="accent_sc_alpha25">#3F8BC34A</color>
+    <color name="accent_sc_alpha12">#1E8BC34A</color>
+    <color name="accent_sc_noalpha12">#edf4e6</color> <!-- same as accent_sc_alpha12 when displayed on #fafafa -->
+    <color name="accent_sc_dark">#689F38</color>
+    <color name="accent_sc_50">#F1F8E9</color>
+    <color name="accent_sc_100">#DCEDC8</color>
+    <color name="accent_sc_200">#C5E1A5</color>
+    <color name="accent_sc_300">#AED581</color>
+    <color name="accent_sc_900">#33691E</color>
+    <color name="accent_sc_pale">@color/accent_sc_300</color>
+    <color name="direct_chat_ring_color_sc">@color/accent_sc_dark</color>
+
+    <!-- Blue accent for notifications, unread marker, links -->
+    <color name="sc_blue">#2196F3</color>
+
+    <!-- Username/avatar colors -->
+    <color name="avatar_fill_sc_1">@color/accent_sc</color>
+    <color name="username_sc_1">@color/accent_sc</color>
+
+    <!-- Dark theme text/foreground colors -->
+    <color name="text_color_primary_sc">#ffffff</color>
+    <color name="text_color_secondary_sc">#b3ffffff</color>
+    <color name="text_color_tertiary_sc">#80ffffff</color>
+    <color name="text_color_disabled_sc">#80ffffff</color>
+
+    <!-- Dark theme background colors -->
+    <color name="background_sc">#ff303030</color>
+    <color name="background_dark_sc">#ff212121</color>
+    <color name="background_black_sc">#ff000000</color>
+    <color name="background_floating_sc">#ff424242</color>
+    <color name="background_sc_bright">#ff616161</color>
+    <color name="background_touch_guard_sc">#bf000000</color>
+
+    <!-- Light theme text/foreground colors -->
+    <color name="text_color_primary_sc_light">#de000000</color>
+    <color name="text_color_secondary_sc_light">#8a000000</color>
+    <color name="text_color_tertiary_sc_light">#4c000000</color>
+    <color name="text_color_disabled_sc_light">#4c000000</color>
+
+    <!-- Light theme background colors -->
+    <color name="background_sc_light_bright">#ffffffff</color>
+    <color name="background_sc_light">#fffafafa</color>
+    <color name="background_sc_light_secondary">#ffeeeeee</color>
+    <color name="background_sc_light_toolbar">#fff5f5f5</color>
+    <color name="background_sc_light_statusbar">#ffe0e0e0</color>
+    <color name="background_floating_sc_light">#ffffffff</color>
+    <color name="background_touch_guard_sc_light">#61000000</color>
+
+    <!-- List divider colors -->
+    <color name="list_divider_color_sc">#1fffffff</color>
+    <color name="list_divider_color_sc_light">#1f000000</color>
+
+    <!-- Timestamp colors -->
+    <color name="timestamp_overlay_fg">#ffffff</color>
+    <color name="timestamp_overlay_bg">#80000000</color>
+
+    <!-- Reaction colors -->
+    <color name="sc_reaction_background_on_light">@color/accent_sc_50</color>
+    <color name="sc_reaction_background_on_dark">@color/accent_sc_900</color>
+
+    <!-- Power-level based username colors -->
+    <color name="user_color_sc_pl_100">#F44336</color>
+    <color name="user_color_sc_pl_95">#FF5722</color>
+    <color name="user_color_sc_pl_51">#03A9F4</color>
+    <color name="user_color_sc_pl_50">#2196F3</color>
+    <color name="user_color_sc_pl_1">#CDDC39</color>
+    <color name="user_color_sc_pl_0">#8bc34a</color>
+    <!--
+    <color name="user_color_sc_pl_100">#F44336</color>
+    <color name="user_color_sc_pl_95">#FF5722</color>
+    <color name="user_color_sc_pl_51">#FF9800</color>
+    <color name="user_color_sc_pl_50">#2196F3</color>
+    <color name="user_color_sc_pl_1">#03A9F4</color>
+    <color name="user_color_sc_pl_0">#8bc34a</color>
+    -->
+    <color name="user_color_sc_mxid_1">#4189c9</color>
+    <color name="user_color_sc_mxid_2">#aa43a7</color>
+    <color name="user_color_sc_mxid_3">#48a188</color>
+    <color name="user_color_sc_mxid_4">#b3526d</color>
+    <color name="user_color_sc_mxid_5">#be6a31</color>
+    <color name="user_color_sc_mxid_6">#299ea0</color>
+    <color name="user_color_sc_mxid_7">#5c57df</color>
+    <color name="user_color_sc_mxid_8">#69a011</color>
+
+    <!-- Code background colors -->
+    <color name="code_background_sc">#121212</color>
+    <color name="code_background_sc_light">#10000000</color>
+
+    <!-- Exposed Element colors -->
+    <!-- This is actually not an SC color, but the one found in element for ic_material_play_circle PNGs -->
+    <color name="element_accent_pale">#76cfa6</color>
+    <color name="user_color_element_pl_100">@color/palette_polly</color>
+    <color name="user_color_element_pl_95">@color/palette_grape</color>
+    <color name="user_color_element_pl_51">@color/palette_azure</color>
+    <color name="user_color_element_pl_50">@color/palette_azure</color>
+    <color name="user_color_element_pl_1">@color/palette_kiwi</color>
+    <color name="user_color_element_pl_0">@color/palette_element_green</color>
+
+    <color name="sc_alert">#E53935</color>
+    <color name="sc_alert_light">@color/sc_alert</color>
+    <color name="sc_alert_dark">@color/sc_alert</color>
+    <color name="color_warning_sc">@color/sc_alert</color>
+    <color name="shield_color_warning_sc">@color/color_warning_sc</color>
+
+</resources>

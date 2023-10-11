@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/messageFileLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:viewBindingIgnore="true">
+
+    <im.vector.app.features.home.room.detail.timeline.reply.InReplyToView
+        android:id="@+id/inReplyToContainer"
+        style="@style/InReplyToViewParams"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageFileMainLayout"
+        style="@style/TimelineContentMediaPillStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:viewBindingIgnore="true">
+
+        <FrameLayout
+            android:id="@+id/messageFileImageView"
+            android:layout_width="@dimen/file_icon_size"
+            android:layout_height="@dimen/file_icon_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <include layout="@layout/view_file_icon" />
+
+        </FrameLayout>
+
+        <!-- the file name-->
+        <TextView
+            android:id="@+id/messageFilenameView"
+            style="@style/Widget.Vector.TextView.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:autoLink="none"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/messageFileImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="A filename here" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <im.vector.app.core.ui.views.FooteredTextView
+        android:id="@+id/messageCaptionView"
+        style="@style/Widget.Vector.TextView.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:textColor="?vctr_content_primary"
+        android:layout_gravity="left"
+        tools:text="@sample/messages.json/data/message"
+        tools:ignore="RtlHardcoded" />
+
+    <include
+        android:id="@+id/messageFileUploadProgressLayout"
+        layout="@layout/media_upload_download_progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+
+</LinearLayout>

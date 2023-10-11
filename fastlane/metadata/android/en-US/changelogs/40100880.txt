@@ -1,0 +1,10 @@
+- Update codebase to Element v1.4.20
+- Fix some notifications never getting dismissed
+- Fix loading threads with "open at unread" enabled
+- Tweak red color used in SC themes
+- Make spaces back navigation a setting, disabled by default
+- Fix suggesting chats to the system's share menu
+- Fix space swipes not persisting across tab changes
+- Experimental: Allow sending custom emojis
+- Fix crash for huge inline pictures
+- Improve DM filter for showing orphans in home

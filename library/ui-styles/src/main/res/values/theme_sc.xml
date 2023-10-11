@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- SC THEME COLORS -->
+    <style name="AppTheme.Base.SC" parent="Base.Theme.Vector.Black">
+        <!-- Element attribute for palette -->
+        <!-- content colors -->
+        <item name="vctr_content_primary">@color/text_color_primary_sc</item>
+        <item name="vctr_content_secondary">@color/text_color_secondary_sc</item>
+        <item name="vctr_content_tertiary">@color/text_color_tertiary_sc</item>
+        <item name="vctr_content_quaternary">@color/text_color_disabled_sc</item>
+        <item name="vctr_content_quinary">@color/text_color_disabled_sc</item>
+
+        <!-- system colors -->
+        <item name="vctr_system">@color/background_dark_sc</item>
+
+        <!-- other colors -->
+        <item name="vctr_fab_label_bg">@color/background_floating_sc</item>
+        <item name="vctr_fab_label_stroke">@android:color/black</item>
+        <item name="vctr_fab_label_color">@android:color/white</item>
+        <item name="vctr_touch_guard_bg">@color/background_touch_guard_sc</item>
+        <item name="vctr_keys_backup_banner_accent_color">@color/background_floating_sc</item>
+        <item name="vctr_room_active_widgets_banner_bg">@color/background_floating_sc</item>
+        <item name="vctr_room_active_widgets_banner_text">?vctr_content_secondary</item>
+        <item name="vctr_reaction_background_off">@color/background_sc</item>
+        <item name="vctr_reaction_background_on">@color/sc_reaction_background_on_dark</item>
+        <item name="vctr_waiting_background_color">#55555555</item>
+        <item name="vctr_chat_effect_snow_background">@android:color/transparent</item>
+        <item name="vctr_toolbar_background">?android:colorBackground</item>
+
+        <!-- room message colors -->
+        <item name="vctr_notice_secondary">?vctr_content_secondary</item>
+        <item name="vctr_unsent_message_text_color">?colorError</item>
+        <item name="vctr_message_text_color">?vctr_content_primary</item>
+        <item name="vctr_notice_text_color">?vctr_content_primary</item>
+        <item name="vctr_encrypting_message_text_color">@color/accent_sc</item>
+        <item name="vctr_sending_message_text_color">?vctr_content_secondary</item>
+        <item name="vctr_markdown_block_background_color">@android:color/black</item>
+        <item name="vctr_spoiler_background_color">#FFFFFFFF</item>
+
+        <!-- Presence Indicator colors -->
+        <item name="vctr_presence_indicator_offline">#ffdddddd</item>
+        <item name="vctr_presence_indicator_online">?colorAccent</item>
+
+        <!-- Some alias -->
+        <item name="vctr_header_background">?android:colorBackground</item>
+        <item name="vctr_list_separator">@color/list_divider_color_sc</item>
+        <item name="vctr_list_separator_system">?vctr_list_separator</item>
+        <item name="vctr_list_separator_on_surface">?vctr_list_separator</item>
+        <item name="vctr_unread_background">?colorAccent</item>
+
+        <!-- Material color -->
+        <item name="colorPrimary">?colorAccent</item>
+        <item name="colorPrimaryVariant">?colorAccent</item>
+        <item name="colorOnPrimary">?vctr_content_primary</item>
+        <item name="colorSecondary">?colorAccent</item>
+        <item name="colorSecondaryVariant">?colorAccent</item>
+        <item name="colorOnSecondary">?vctr_content_primary</item>
+        <item name="colorError">@color/sc_alert_dark</item>
+        <item name="colorOnError">?vctr_content_primary</item>
+        <item name="colorSurface">@color/background_black_sc</item> <!-- same as android:colorBackground, but using attr crashes actionMode? -->
+        <item name="colorOnSurface">?vctr_content_primary</item>
+        <item name="android:colorBackground">@color/background_black_sc</item>
+        <item name="colorOnBackground">?vctr_content_primary</item>
+
+        <!-- TODO styles? -->
+
+        <item name="android:textColorLink">@color/sc_blue</item>
+
+        <!-- Menu text color -->
+        <item name="android:actionMenuTextColor">?colorSecondary</item>
+
+        <!-- Default color for text View -->
+        <item name="android:textColorTertiary">?vctr_content_tertiary</item>
+
+
+        <!-- custom action bar -->
+        <item name="android:actionBarStyle">@style/Vector.Styled.ActionBar.SC</item>
+        <item name="actionBarStyle">@style/Vector.Styled.ActionBar.SC</item>
+
+        <item name="bottomSheetDialogTheme">@style/Vector.BottomSheet.SC</item>
+
+        <!-- SC additions -->
+        <item name="colorBackgroundFloating">@color/background_floating_sc</item>
+        <item name="colorAccent">@color/accent_sc</item>
+        <item name="android:colorAccent">@color/accent_sc</item>
+        <item name="sc_message_bg_incoming">@color/background_floating_sc</item>
+        <item name="sc_message_bg_outgoing">@color/background_sc</item>
+        <item name="sc_notice_bg_incoming">@android:color/transparent</item>
+        <item name="sc_notice_bg_outgoing">@android:color/transparent</item>
+        <item name="riotx_unread_unimportant_room_badge">@color/background_floating_sc</item>
+        <item name="colorAccentPale">@color/accent_sc_pale</item>
+        <item name="message_highlight_bg_color">@color/accent_sc_alpha25</item>
+        <item name="code_block_bg_color">@color/code_background_sc</item>
+        <item name="quote_bar_color">?vctr_content_quaternary</item>
+        <item name="user_color_pl_0">@color/user_color_sc_pl_0</item>
+        <item name="user_color_pl_1">@color/user_color_sc_pl_1</item>
+        <item name="user_color_pl_50">@color/user_color_sc_pl_50</item>
+        <item name="user_color_pl_51">@color/user_color_sc_pl_51</item>
+        <item name="user_color_pl_95">@color/user_color_sc_pl_95</item>
+        <item name="user_color_pl_100">@color/user_color_sc_pl_100</item>
+        <item name="voice_message_playback_background_color">#1fffffff</item>
+        <item name="verification_request_background">?colorBackgroundFloating</item>
+        <item name="backgroundColorLight">@color/background_sc_light</item>
+        <item name="conference_animation_from">?colorAccent</item>
+        <item name="conference_animation_to">?colorAccentPale</item>
+        <item name="user_color_hash_01">@color/user_color_sc_mxid_1</item>
+        <item name="user_color_hash_02">@color/user_color_sc_mxid_2</item>
+        <item name="user_color_hash_03">@color/user_color_sc_mxid_3</item>
+        <item name="user_color_hash_04">@color/user_color_sc_mxid_4</item>
+        <item name="user_color_hash_05">@color/user_color_sc_mxid_5</item>
+        <item name="user_color_hash_06">@color/user_color_sc_mxid_6</item>
+        <item name="user_color_hash_07">@color/user_color_sc_mxid_7</item>
+        <item name="user_color_hash_08">@color/user_color_sc_mxid_8</item>
+        <item name="color_warning">@color/color_warning_sc</item>
+        <item name="shield_color_warning">@color/shield_color_warning_sc</item>
+
+        <item name="android:statusBarColor">@color/background_black_sc</item>
+        <item name="android:navigationBarColor">@color/background_black_sc</item>
+
+        <!-- Broken login screen outline color on dark theme  otherwise? -->
+        <item name="textInputStyle">@style/Widget.Vector.TextInputLayout.Dark.SC</item>
+
+        <item name="vctr_jump_to_unread_style">@style/Widget.Vector.JumpToUnread.SC.Dark</item>
+
+        <!-- Voice Message -->
+        <item name="vctr_toast_background">?colorBackgroundFloating</item>
+
+        <!-- Location sharing -->
+        <item name="vctr_live_location">?colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Base.SC.Dark">
+        <item name="vctr_toolbar_background">@color/background_sc</item>
+        <item name="android:colorBackground">@color/background_dark_sc</item>
+        <item name="colorSurface">@color/background_dark_sc</item> <!-- same as android:colorBackground, but using attr crashes actionMode? -->
+        <item name="vctr_header_background">@color/background_sc</item>
+
+        <item name="android:statusBarColor">@color/background_dark_sc</item>
+        <item name="android:navigationBarColor">@color/background_black_sc</item>
+    </style>
+
+
+    <style name="AppTheme.Base.SC.Colored">
+        <item name="sc_message_bg_incoming">@color/background_floating_sc</item>
+        <item name="sc_message_bg_outgoing">@color/accent_sc_alpha25</item>
+        <item name="message_highlight_bg_color">@color/background_sc_bright</item>
+    </style>
+
+    <style name="AppTheme.Base.SC.Dark.Colored">
+        <item name="sc_message_bg_incoming">@color/background_floating_sc</item>
+        <item name="sc_message_bg_outgoing">@color/accent_sc_alpha25</item>
+        <item name="message_highlight_bg_color">@color/background_sc_bright</item>
+    </style>
+
+
+    <style name="AppTheme.SC" parent="AppTheme.Base.SC" />
+
+    <style name="AppTheme.SC.Dark" parent="AppTheme.Base.SC.Dark" />
+
+    <style name="AppTheme.SC.Colored" parent="AppTheme.Base.SC.Colored" />
+
+    <style name="AppTheme.SC.Dark.Colored" parent="AppTheme.Base.SC.Dark.Colored" />
+
+
+    <style name="AppTheme.AttachmentsPreview.SC" parent="AppTheme.Base.SC"/>
+
+    <style name="AppTheme.Transparent.SC" parent="AppTheme.Base.SC">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <!--        <item name="android:windowIsFloating">true</item>-->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="AppTheme.Launcher.SC" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+</resources>

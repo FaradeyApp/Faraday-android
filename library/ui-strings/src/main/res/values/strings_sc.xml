@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="normal_priority_header">Normal priority</string>
+
+    <string name="settings_home_overview">Overview</string>
+
+    <string name="settings_single_overview">Combined chat overview</string>
+    <string name="settings_single_overview_summary">View both direct messages and rooms on one page</string>
+
+    <string name="settings_room_unread_kind_dm">Direct chat preview content</string>
+    <string name="settings_room_unread_kind_group">Group chat preview content</string>
+    <string name="settings_room_unread_kind_default">Show all events</string>
+    <string name="settings_room_unread_kind_content">Hide member changes</string>
+    <string name="settings_room_unread_kind_original_content">Hide member changes and reactions</string>
+
+    <string name="settings_simplified_mode">Easy mode</string>
+    <string name="settings_simplified_mode_summary">Hide advanced functionality, including public room directories and chat encryption settings</string>
+    <string name="prompt_simplified_mode_title">Select user interface</string>
+    <string name="prompt_simplified_mode_text">You can change this later in the settings.</string>
+    <string name="prompt_simplified_mode_on">Easy</string>
+    <string name="prompt_simplified_mode_on_text">I only plan to chat with people I know, and consider extra options confusing.</string>
+    <string name="prompt_simplified_mode_off">Complete</string>
+    <string name="prompt_simplified_mode_off_text">I\'m looking for full functionality, including discovery of public rooms and fine-grained room and encryption settings.</string>
+
+    <string name="settings_light_theme">Light theme</string>
+    <string name="settings_dark_theme">Dark theme</string>
+    <string name="settings_system_dark_theme_pre_ten">Follow system dark theme</string>
+    <string name="settings_system_dark_theme_pre_ten_summary">Provide separate theme settings for light and dark themes. Your current Android version might not support switching light and dark themes!</string>
+    <string name="sc_light_theme">SC Light</string>
+    <string name="sc_theme">SC Black</string>
+    <string name="sc_dark_theme">SC Dark</string>
+    <string name="sc_colored_theme">SC Black, colored bubbles</string>
+    <string name="sc_dark_colored_theme">SC Dark, colored bubbles</string>
+    <string name="element_light_theme">Element Light</string>
+    <string name="element_dark_theme">Element Dark</string>
+    <string name="element_black_theme">Element Black</string>
+
+    <string name="bubble_style">Message bubbles</string>
+    <string name="bubble_style_none">None</string>
+    <string name="bubble_style_start">Same side</string>
+    <string name="bubble_style_both">Both sides</string>
+    <string name="bubble_style_element">Element</string>
+    <string name="bubble_time_location">Timestamp location</string>
+    <string name="bubble_time_location_top">Top</string>
+    <string name="bubble_time_location_bottom">Bottom</string>
+
+    <string name="bubble_appearance">Bubble appearance</string>
+    <string name="bubble_rounded_corners">Corners</string>
+    <string name="bubble_rounded_corners_default">Default</string>
+    <string name="bubble_rounded_corners_r1">Round</string>
+    <string name="bubble_rounded_corners_r2">Extra round</string>
+    <string name="bubble_tail">Bubble tail</string>
+    <string name="bubble_tail_summary">Include bubble tail for a sender\'s first message</string>
+
+    <string name="settings_unread_counter">Unread counter</string>
+    <string name="settings_unimportant_counter_badge_v2">Count muted messages</string>
+    <string name="settings_unimportant_counter_badge_summary_v2">Show counts for muted messages in the chat overview</string>
+    <string name="settings_aggregate_unread_counts">Count chats instead of messages</string>
+    <string name="settings_aggregate_unread_counts_summary">Whether to count unread chats instead of individual messages in spaces and room categories</string>
+
+    <string name="labs_mark_rooms_unread">Mark chats as unread</string>
+    <string name="labs_mark_rooms_unread_summary">Allow marking chats as unread. Other Matrix clients might not support this yet.</string>
+    <string name="url_previews_in_encrypted_rooms">URL previews in encrypted chats</string>
+    <string name="url_previews_in_encrypted_rooms_summary">This will leak URLs from your messages to your homeserver!</string>
+
+    <string name="login_mobile_device_sc">SchildiChat Android</string>
+    <string name="bottom_action_all">Overview</string>
+    <string name="all_list_rooms_empty_title">SchildiChat</string>
+    <string name="all_list_rooms_empty_body">Chats will be displayed here</string>
+
+    <!-- Login screen -->
+    <string name="login_connect_using_matrix_id_text_sc">e.g. @user:domain.com</string>
+    <string name="login_server_other_title_sc">Custom server</string>
+    <string name="login_server_other_text_sc">Enter server address to log in or register</string>
+
+    <string name="show_room_info_sc">Room details</string>
+    <string name="show_participants_sc">Participants</string>
+    <string name="room_list_quick_actions_mark_room_unread">Mark as unread</string>
+    <string name="room_list_quick_actions_mark_room_read">Mark as read</string>
+    <string name="room_list_quick_actions_open_at_bottom">Open at recent messages</string>
+
+    <string name="footer_read_receipt_content_description">Message status</string>
+
+    <!-- Username colors -->
+    <string name="settings_user_colors_in_dm">User colors in direct chats</string>
+    <string name="settings_user_colors_in_default">User colors in group chats</string>
+    <string name="settings_user_colors_in_public_rooms">User colors in public rooms</string>
+    <string name="user_colors_uniform">Uniform</string>
+    <string name="user_colors_from_pl">Based on power level</string>
+    <string name="user_colors_from_id">Based on Matrix ID</string>
+
+    <string name="settings_advanced_theme_settings">Advanced theme settings</string>
+    <string name="settings_user_colors">User colors</string>
+    <string name="settings_theme_colors">Theme colors</string>
+    <string name="setting_sc_accent_color">Accent color</string>
+    <string name="setting_sc_accent_color_light">Accent color for light themes</string>
+    <string name="setting_sc_accent_color_dark">Accent color for dark themes</string>
+    <string name="settings_sc_accent_disclaimer">Note that these color settings only apply to SC themes, and not Element themes.</string>
+
+    <string name="settings_open_chats_at_first_unread">Open at first unread</string>
+    <string name="settings_open_chats_at_first_unread_summary">Open chats at the first unread message instead of at the bottom.</string>
+
+    <string name="settings_show_voice_message_recorder_ui">Voice messages</string>
+    <string name="settings_show_voice_message_recorder_ui_summary">Show a button to record voice messages</string>
+
+    <!-- Accent colors -->
+    <string name="sc_accent_greenlight">Light green</string>
+    <string name="sc_accent_greendark">Dark green</string>
+    <string name="sc_accent_amber">Amber</string>
+    <string name="sc_accent_bluelight">Light blue</string>
+    <string name="sc_accent_cyan">Cyan</string>
+    <string name="sc_accent_gold">Gold</string>
+    <string name="sc_accent_lime">Lime</string>
+    <string name="sc_accent_orange">Orange</string>
+    <string name="sc_accent_pink">Pink</string>
+    <string name="sc_accent_purple">Purple</string>
+    <string name="sc_accent_red">Red</string>
+    <string name="sc_accent_teal">Teal</string>
+    <string name="sc_accent_turquoise">Turquoise</string>
+    <string name="sc_accent_yellow">Yellow</string>
+    <string name="sc_accent_carnation">Carnation</string>
+    <string name="sc_accent_denim">Denim</string>
+    <string name="sc_accent_indigo">Indigo</string>
+    <string name="sc_accent_lava">Lava</string>
+    <string name="sc_accent_blue">Blue</string>
+    <!-- do not change this comment for accent generation -->
+
+    <string name="send_bug_report_sc_extra">To increase the visibility of your issue, you may want to reference this report (by providing your matrix ID and the approximate time when it was sent) in an issue at https://github.com/SchildiChat/SchildiChat-android/issues (check first if one already exists for your issue, and only create a new one if there is not).</string>
+
+
+    <string name="settings_apply_sc_default_settings">Do not click this setting</string>
+    <string name="settings_apply_sc_default_settings_dialog_title">Mess up settings</string>
+    <string name="settings_apply_sc_default_settings_dialog_summary">If you continue, this will mess with your app settings!</string>
+
+    <!-- Advanced notification/unifiedpush settings -->
+    <string name="settings_unifiedpush_force_custom_gateway">Force custom push gateway</string>
+    <string name="settings_unifiedpush_force_custom_gateway_summary">Only enable this if your push endpoint does not require an external gateway.</string>
+    <string name="settings_force_allow_background_sync">Allow background sync in addition to push</string>
+    <string name="settings_force_allow_background_sync_summary">Only meaningful while debugging your push setup!</string>
+
+    <string name="settings_jump_to_bottom_on_send">Jump to bottom on send</string>
+    <string name="settings_jump_to_bottom_on_send_summary">Automatically scroll down when sending a message</string>
+    <string name="settings_include_space_members_as_rooms">Show people in spaces</string>
+    <string name="settings_include_space_members_as_rooms_summary">If disabled, you can still add Direct Messages to Personal Spaces. If enabled, you\'ll automatically see everyone who is a member of the Space.</string>
+
+    <string name="settings_enable_space_pager">Swipe chat list to switch space</string>
+    <string name="settings_enable_space_pager_summary">Allow to switch between root spaces by swiping horizontally in the chat list</string>
+
+    <string name="settings_notif_only_alert_once">Only alert once</string>
+    <string name="settings_notif_only_alert_once_summary">Omit alert sounds for new messages if there is already an open notification for that chat</string>
+    <string name="settings_hide_call_buttons">Hide call buttons</string>
+    <string name="settings_hide_call_buttons_summary">Never show buttons in the room toolbar to start voice or video calls</string>
+
+    <!-- Default notification rule -->
+    <string name="room_settings_default">Default</string>
+
+    <!-- SC debugging -->
+    <string name="settings_sc_debugging">Schildi-debugging</string>
+    <string name="settings_sc_debugging_summary">Enable additional logs or debugging features</string>
+    <string name="settings_sc_debugging_category_logs">Additional logs</string>
+    <string name="settings_sc_debugging_category_visuals">Visual debugging info</string>
+    <string name="settings_sc_dbg_read_marker">Read marker debugging</string>
+    <string name="settings_sc_dbg_timeline_chunks">Timeline consistency debugging</string>
+    <string name="settings_sc_dbg_show_display_index">Show displayIndex in timeline</string>
+    <string name="settings_sc_dbg_show_read_tracking">Show read tracking</string>
+    <string name="settings_sc_dbg_read_receipts">Read receipt debugging</string>
+    <string name="settings_sc_dbg_view_pager">ViewPager debugging</string>
+    <string name="settings_sc_dbg_view_pager_visuals">Show ViewPager debugging information</string>
+    <string name="settings_sc_dbg_show_duplicate_read_receipts">Duplicate read receipts</string>
+
+    <!-- SC labs -->
+    <string name="settings_upstream_labs">Element features</string>
+    <string name="settings_labs_room_list">Room list</string>
+    <string name="settings_labs_timeline">Timeline</string>
+
+    <string name="settings_read_receipt_follows_read_marker">Only mark chats as read if fully read</string>
+    <string name="settings_read_receipt_follows_read_marker_summary">Do not update your read receipt when opening the room, but only gradually while reading</string>
+
+    <string name="room_list_quick_actions_open_anonymous">Open without reading</string>
+    <string name="settings_show_open_anonymous">Open without reading</string>
+    <string name="settings_show_open_anonymous_summary">Show option to open a room without automatically marking it read</string>
+
+    <string name="settings_floating_date">Floating date</string>
+    <string name="settings_floating_date_summary">Show the date on top of messages while scrolling</string>
+
+    <string name="freeform_react_with">React with \"%1$s\"</string>
+    <string name="freeform_reaction_summary">Free-form reaction</string>
+    <string name="custom_emotes_this_room">Room emojis</string>
+    <string name="custom_emotes_other_room">Emojis from %1$s</string>
+    <string name="custom_emotes_named_other_room">\"%1$s\" from %2$s</string>
+    <string name="custom_emotes_account_data">Own emojis</string>
+    <string name="standard_emojis">Standard emojis</string>
+
+    <string name="dev_tools_menu_hidden_events">Hidden events</string>
+    <string name="dev_tools_menu_event_visibilities">Event visibilities</string>
+    <string name="dev_tools_menu_membership_changes">Membership changes</string>
+    <string name="dev_tools_menu_display_name_changes">Account events</string>
+    <string name="dev_tools_menu_redacted">Deleted messages</string>
+    <string name="dev_tools_menu_new_layout">New layout</string>
+
+    <string name="settings_space_back_navigation">Spaces back stack</string>
+    <string name="settings_space_back_navigation_summary">Press back to show the previously selected space</string>
+
+    <string name="settings_follow_system_locale">Follow system language</string>
+    <string name="settings_follow_system_locale_summary">When changing the system language, also change the app\'s language</string>
+
+    <string name="labs_enable_new_app_layout_summary_sc">Element\'s new simplified layout with optional tabs</string>
+
+    <string name="home_layout_preferences_sort_unread">Unread</string>
+
+    <string name="in_reply_to_loading">Loading replied-to message…</string>
+    <string name="in_reply_to_error">Failed to load replied-to message</string>
+
+    <string name="settings_enable_member_name_click">Clickable names</string>
+    <string name="settings_enable_member_name_click_summary">Click on a username to mention them</string>
+
+    <string name="settings_initial_sync">Initial sync</string>
+    <string name="settings_initial_sync_summary">Clear cache and reload from server</string>
+
+    <!-- Note to translators: the translation MUST contain the string "${app_name_sc_stable}", which will be replaced by the application name -->
+    <string name="use_other_session_content_description_sc">Use the latest ${app_name_sc_stable} on your other devices, ${app_name_sc_stable} Web, ${app_name_sc_stable} Desktop, ${app_name_sc_stable} for Android, or another cross-signing capable Matrix client</string>
+    <!-- Note to translators: the translation MUST contain the string "${app_name}", which will be replaced by the application name -->
+    <string name="app_desktop_web_sc">${app_name_sc_stable} Web\n${app_name_sc_stable} Desktop</string>
+    <!-- Note to translators: the translation MUST contain the string "${app_name_sc_stable}", which will be replaced by the application name -->
+    <string name="app_ios_android_sc">${app_name_sc_stable} Android</string>
+    <!-- Note to translators: the translation MUST contain the string "${app_name_sc_stable}", which will be replaced by the application name -->
+    <string name="use_latest_app_sc">Use the latest ${app_name_sc_stable} on your other devices:</string>
+
+    <string name="action_send_as_sticker">Send as sticker</string>
+
+</resources>

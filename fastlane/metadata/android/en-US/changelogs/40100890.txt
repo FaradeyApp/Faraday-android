@@ -1,0 +1,7 @@
+- Update codebase to Element v1.4.31
+- Add a setting to always follow the system language
+- Fix sometimes clipped display names in bubbles
+- Fix crash on no camera app found
+- Render collapsible details tags in messages
+- Generate missing video thumbnails locally
+- Various bug fixes

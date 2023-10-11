@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- SC THEME COLORS -->
+    <style name="AppTheme.Base.SC.Light" parent="Base.Theme.Vector.Light">
+        <!-- Element attribute for palette -->
+        <!-- content colors -->
+        <item name="vctr_content_primary">@color/text_color_primary_sc_light</item>
+        <item name="vctr_content_secondary">@color/text_color_secondary_sc_light</item>
+        <item name="vctr_content_tertiary">@color/text_color_tertiary_sc_light</item>
+        <item name="vctr_content_quaternary">@color/text_color_tertiary_sc_light</item>
+        <item name="vctr_content_quinary">@color/text_color_disabled_sc_light</item>
+
+        <!-- system colors -->
+        <item name="vctr_system">@color/background_sc_light</item>
+
+        <!-- other colors -->
+        <item name="vctr_fab_label_bg">@color/background_floating_sc_light</item>
+        <item name="vctr_fab_label_stroke">@color/background_floating_sc_light</item>
+        <item name="vctr_fab_label_color">?vctr_content_primary</item>
+        <item name="vctr_touch_guard_bg">@color/background_touch_guard_sc_light</item>
+        <item name="vctr_keys_backup_banner_accent_color">@color/background_floating_sc_light</item>
+        <item name="vctr_room_active_widgets_banner_bg">@color/background_floating_sc_light</item>
+        <item name="vctr_room_active_widgets_banner_text">?vctr_content_secondary</item>
+        <item name="vctr_reaction_background_off">@color/background_sc_light_secondary</item>
+        <item name="vctr_reaction_background_on">@color/sc_reaction_background_on_light</item>
+        <item name="vctr_waiting_background_color">#AAAAAAAA</item>
+        <item name="vctr_chat_effect_snow_background">@color/black_alpha</item>
+        <item name="vctr_toolbar_background">@color/background_sc_light_toolbar</item>
+
+        <!-- room message colors -->
+        <item name="vctr_notice_secondary">?vctr_content_secondary</item>
+        <item name="vctr_unsent_message_text_color">?colorError</item>
+        <item name="vctr_message_text_color">?vctr_content_primary</item>
+        <item name="vctr_notice_text_color">?vctr_content_primary</item>
+        <item name="vctr_encrypting_message_text_color">@color/accent_sc</item>
+        <item name="vctr_sending_message_text_color">?vctr_content_secondary</item>
+        <item name="vctr_markdown_block_background_color">@color/background_sc_light</item> <!-- needs contrast on background_sc_light_bright for no-bubble case, and background_sc_light_secondary for bubble case -->
+        <item name="vctr_spoiler_background_color">#FF000000</item>
+
+        <!-- Presence Indicator colors -->
+        <item name="vctr_presence_indicator_offline">@color/background_sc_bright</item>
+        <item name="vctr_presence_indicator_online">?colorAccent</item>
+
+        <!-- Some alias -->
+        <item name="vctr_header_background">@color/background_sc_light_secondary</item>
+        <item name="vctr_list_separator">@color/list_divider_color_sc_light</item>
+        <item name="vctr_list_separator_system">?vctr_list_separator</item>
+        <item name="vctr_list_separator_on_surface">?vctr_list_separator</item>
+        <item name="vctr_unread_background">?colorAccent</item>
+
+        <!-- Material color -->
+        <item name="colorPrimary">?colorAccent</item>
+        <item name="colorPrimaryVariant">?colorAccent</item>
+        <item name="colorOnPrimary">@color/text_color_primary_sc</item><!-- primary = accent -> better to use a light text color -->
+        <item name="colorSecondary">?colorAccent</item>
+        <item name="colorSecondaryVariant">?colorAccent</item>
+        <item name="colorOnSecondary">?colorOnPrimary</item><!-- primary = accent -> better to use a light text color -->
+        <item name="colorError">@color/sc_alert_light</item>
+        <item name="colorOnError">@color/text_color_primary_sc</item> <!-- needs light text, e.g. used for unread counter badges -->
+        <item name="colorSurface">@color/background_sc_light</item> <!-- same as android:colorBackground, but using attr crashes actionMode (but for dark themes only?)? -->
+        <item name="colorOnSurface">?vctr_content_primary</item>
+        <item name="android:colorBackground">@color/background_sc_light</item>
+        <item name="colorOnBackground">?vctr_content_primary</item>
+
+
+
+        <item name="android:textColorLink">@color/sc_blue</item>
+
+        <!-- Menu text color -->
+        <item name="android:actionMenuTextColor">?colorSecondary</item>
+
+        <!-- Default color for text View -->
+        <item name="android:textColorTertiary">?vctr_content_tertiary</item>
+
+
+        <!-- custom action bar -->
+        <item name="android:actionBarStyle">@style/Vector.Styled.ActionBar.SC</item>
+        <item name="actionBarStyle">@style/Vector.Styled.ActionBar.SC</item>
+
+        <item name="bottomSheetDialogTheme">@style/Vector.BottomSheet.SC.Light</item>
+
+        <!-- SC additions -->
+        <item name="colorBackgroundFloating">@color/background_floating_sc_light</item>
+        <item name="colorAccent">@color/accent_sc</item>
+        <item name="android:colorAccent">@color/accent_sc</item>
+        <item name="sc_message_bg_incoming">@color/background_sc_light_secondary</item>
+        <item name="sc_message_bg_outgoing">@color/accent_sc_noalpha12</item>
+        <item name="sc_notice_bg_incoming">@android:color/transparent</item>
+        <item name="sc_notice_bg_outgoing">@android:color/transparent</item>
+        <item name="riotx_unread_unimportant_room_badge">#737373</item><!-- like text_color_secondary_sc_light, but without transparency -->
+        <item name="colorAccentPale">@color/accent_sc_pale</item>
+        <item name="message_highlight_bg_color">#ffe0e0e0</item>
+        <item name="code_block_bg_color">@color/code_background_sc_light</item>
+        <item name="quote_bar_color">?vctr_content_quaternary</item>
+        <item name="user_color_pl_0">@color/user_color_sc_pl_0</item>
+        <item name="user_color_pl_1">@color/user_color_sc_pl_1</item>
+        <item name="user_color_pl_50">@color/user_color_sc_pl_50</item>
+        <item name="user_color_pl_51">@color/user_color_sc_pl_51</item>
+        <item name="user_color_pl_95">@color/user_color_sc_pl_95</item>
+        <item name="user_color_pl_100">@color/user_color_sc_pl_100</item>
+        <item name="voice_message_playback_background_color">#1f000000</item>
+        <item name="backgroundColorLight">@color/background_sc_light</item>
+        <item name="conference_animation_from">?colorAccent</item>
+        <item name="conference_animation_to">?colorAccentPale</item>
+        <item name="user_color_hash_01">@color/user_color_sc_mxid_1</item>
+        <item name="user_color_hash_02">@color/user_color_sc_mxid_2</item>
+        <item name="user_color_hash_03">@color/user_color_sc_mxid_3</item>
+        <item name="user_color_hash_04">@color/user_color_sc_mxid_4</item>
+        <item name="user_color_hash_05">@color/user_color_sc_mxid_5</item>
+        <item name="user_color_hash_06">@color/user_color_sc_mxid_6</item>
+        <item name="user_color_hash_07">@color/user_color_sc_mxid_7</item>
+        <item name="user_color_hash_08">@color/user_color_sc_mxid_8</item>
+        <item name="color_warning">@color/color_warning_sc</item>
+        <item name="shield_color_warning">@color/shield_color_warning_sc</item>
+
+        <item name="android:statusBarColor">@color/background_black_sc</item>
+        <item name="android:navigationBarColor">@color/background_black_sc</item>
+
+        <item name="vctr_jump_to_unread_style">@style/Widget.Vector.JumpToUnread.SC.Light</item>
+
+        <!-- Voice Message -->
+        <item name="vctr_toast_background">@color/background_floating_sc</item> <!-- needs dark background -->
+
+        <!-- Location sharing -->
+        <item name="vctr_live_location">?colorAccent</item>
+    </style>
+
+    <!-- Default AppTheme for usage where settings don't apply -->
+    <style name="AppTheme.SC.Light" parent="AppTheme.Base.SC.Light" />
+
+</resources>

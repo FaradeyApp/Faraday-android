@@ -1,0 +1,4 @@
+- Update codebase to Element v1.5.2
+- Add spaces bottom bar to experimental swipe-to-switch-space navigation
+- Add option to show unreads on top (only in the "old" app layout)
+- Fix persisting collapsed room sections

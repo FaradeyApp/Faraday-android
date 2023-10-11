@@ -1,0 +1,5 @@
+- Update codebase to Element v1.5.8
+- Rework reply rendering, to follow the rich replies specification
+- Render captions (MSC2530)
+- Allow sending custom emotes stored directly in account data (MSC2545)
+- Various bug fixes

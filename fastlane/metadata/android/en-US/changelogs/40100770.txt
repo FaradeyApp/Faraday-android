@@ -1,0 +1,6 @@
+- Update codebase to Element v1.4.4
+- Setting for more rounded bubbles
+- Setting whether chat notifications should repeatedly play sounds on new messages
+- Setting to hide "start call" buttons from the toolbar
+- Various bug fixes
+- FCM variant: Switch to our own FCM gateway, so we're independent of matrix.org's performance for push notifications

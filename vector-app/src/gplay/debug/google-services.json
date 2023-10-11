@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "326900467720",
+    "firebase_url": "https://schildichat.firebaseio.com",
+    "project_id": "schildichat",
+    "storage_bucket": "schildichat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326900467720:android:675ae0d20ab67aa73b29bd",
+        "android_client_info": {
+          "package_name": "de.spiritcroc.riotx.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326900467720-7vdgc93sq5hchr7a2ep8359i4rmtg66n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYXiSw2MspKgBkVStRPAVi6jRdrrRweEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326900467720-7vdgc93sq5hchr7a2ep8359i4rmtg66n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

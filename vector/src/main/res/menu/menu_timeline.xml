@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/timeline_setting"
+        android:icon="@drawable/ic_settings_x"
+        android:title="@string/settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/invite"
+        android:title="@string/action_invite"
+        app:showAsAction="never" />
+
+    <!-- We always want to show this item as an icon -->
+    <item
+        android:id="@+id/video_call"
+        android:icon="@drawable/ic_video"
+        android:title="@string/action_video_call"
+        android:visible="false"
+        app:iconTint="?colorPrimary"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <!-- We always want to show this item as an icon -->
+    <item
+        android:id="@+id/voice_call"
+        android:icon="@drawable/ic_phone"
+        android:title="@string/action_voice_call"
+        android:visible="false"
+        app:iconTint="?colorPrimary"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <!-- We always want to show this item as an icon -->
+    <item
+        android:id="@+id/menu_timeline_thread_list"
+        android:title="@string/action_view_threads"
+        android:visible="false"
+        app:actionLayout="@layout/view_thread_notification_badge"
+        app:iconTint="?colorPrimary"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/join_conference"
+        android:title="@string/action_join"
+        app:actionLayout="@layout/layout_join_conference_action"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/open_matrix_apps"
+        android:title="@string/room_add_matrix_apps"
+        app:actionLayout="@layout/custom_action_item_layout_badge"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/show_participants"
+        android:title="@string/show_participants_sc"
+        android:visible="true"
+        app:showAsAction="never"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/show_room_info"
+        android:title="@string/show_room_info_sc"
+        android:visible="true"
+        app:showAsAction="never"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/dev_tools"
+        android:icon="@drawable/ic_settings_root_general"
+        android:title="@string/dev_tools_menu_name"
+        android:visible="false"
+        app:showAsAction="never"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/dev_bubble_style"
+        android:title="@string/bubble_style"
+        android:visible="false"
+        app:showAsAction="never"
+        tools:visible="true">
+        <!-- Programmatically inflated menu -->
+        <menu>
+            <group
+                android:id="@+id/dev_bubble_style_group"
+                android:checkableBehavior="single" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/dev_theming"
+        android:title="@string/settings_theme"
+        android:visible="false"
+        tools:visible="true"
+        app:showAsAction="never">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/dev_base_theme"
+                    android:title="@string/settings_theme">
+                    <!-- Programmatically inflated menu -->
+                    <menu>
+                        <group
+                            android:id="@+id/dev_base_theme_group"
+                            android:checkableBehavior="single" />
+                    </menu>
+                </item>
+                <item
+                    android:id="@+id/dev_theme_accent"
+                    android:title="@string/setting_sc_accent_color">
+                    <!-- Programmatically inflated menu -->
+                    <menu>
+                        <group
+                            android:id="@+id/dev_theme_accent_group"
+                            android:checkableBehavior="single" />
+                    </menu>
+                </item>
+                <item
+                    android:id="@+id/dev_bubble_rounded_corners"
+                    android:title="@string/bubble_rounded_corners">
+                    <!-- Programmatically inflated menu -->
+                    <menu>
+                        <group
+                            android:id="@+id/dev_bubble_rounded_corners_group"
+                            android:checkableBehavior="single" />
+                    </menu>
+                </item>
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/dev_composer_features"
+        android:title="@string/settings_category_composer"
+        android:visible="false"
+        tools:visible="true"
+        app:showAsAction="never">
+        <menu>
+            <group android:checkableBehavior="all">
+                <item
+                    android:id="@+id/dev_composer_voice_message_button"
+                    android:title="@string/settings_show_voice_message_recorder_ui" />
+                <item
+                    android:id="@+id/dev_composer_emoji_button"
+                    android:title="@string/settings_show_emoji_keyboard" />
+                <item
+                    android:id="@+id/dev_composer_rich"
+                    android:title="@string/labs_enable_rich_text_editor_title" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/dev_hidden_events"
+        android:title="@string/dev_tools_menu_hidden_events"
+        android:visible="false"
+        app:showAsAction="never"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/dev_event_visibilities"
+        android:title="@string/dev_tools_menu_event_visibilities"
+        android:visible="false"
+        tools:visible="true"
+        app:showAsAction="never">
+        <menu>
+            <group android:checkableBehavior="all">
+                <item
+                    android:id="@+id/dev_membership_changes"
+                    android:title="@string/dev_tools_menu_membership_changes" />
+                <item
+                    android:id="@+id/dev_display_name_changes"
+                    android:title="@string/dev_tools_menu_display_name_changes" />
+                <item
+                    android:id="@+id/dev_redacted"
+                    android:title="@string/dev_tools_menu_redacted" />
+                <item
+                    android:id="@+id/dev_duplicated_read_receipts"
+                    android:title="@string/settings_sc_dbg_show_duplicate_read_receipts" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_mark_as_read"
+        android:title="@string/room_list_quick_actions_mark_room_read"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_thread_timeline_view_in_room"
+        android:icon="@drawable/ic_threads_view_in_room_24"
+        android:title="@string/action_thread_view_in_room"
+        app:iconTint="?vctr_content_secondary"
+        app:showAsAction="withText" />
+
+    <item
+        android:id="@+id/menu_thread_timeline_copy_link"
+        android:icon="@drawable/ic_thread_link_menu_item"
+        android:title="@string/action_thread_copy_link_to_thread"
+        app:iconTint="?vctr_content_secondary"
+        app:showAsAction="withText" />
+
+    <item
+        android:id="@+id/menu_thread_timeline_share"
+        android:icon="@drawable/ic_thread_share_menu_item"
+        android:title="@string/action_share"
+        app:iconTint="?vctr_content_secondary"
+        app:showAsAction="withText" />
+</menu>

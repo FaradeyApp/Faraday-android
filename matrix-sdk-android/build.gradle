@@ -1,0 +1,232 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'realm-android'
+apply plugin: "org.jetbrains.dokka"
+
+if (project.hasProperty("coverage")) {
+    apply plugin: 'jacoco'
+}
+
+buildscript {
+    repositories {
+        // Do not use `mavenCentral()`, it prevents Dependabot from working properly
+        maven {
+            url 'https://repo1.maven.org/maven2'
+        }
+    }
+    dependencies {
+        classpath "io.realm:realm-gradle-plugin:10.11.1"
+    }
+}
+
+dokkaHtml {
+    dokkaSourceSets {
+        configureEach {
+            // Emit warnings about not documented members.
+            // reportUndocumented.set(true)
+            // Suppress legacy Riot's packages.
+            perPackageOption {
+                matchingRegex.set("org.matrix.android.sdk.internal.legacy.riot")
+                suppress.set(true)
+            }
+            perPackageOption {
+                matchingRegex.set("org.matrix.androidsdk.crypto.data")
+                suppress.set(true)
+            }
+            // List of files with module and package documentation
+            // https://kotlinlang.org/docs/reference/kotlin-doc.html#module-and-package-documentation
+            includes.from("./docs/modules.md", "./docs/packages.md")
+        }
+    }
+}
+
+android {
+    namespace "org.matrix.android.sdk"
+
+    testOptions.unitTests.includeAndroidResources = true
+
+    compileSdk versions.compileSdk
+
+    defaultConfig {
+        minSdk versions.minSdk
+        targetSdk versions.targetSdk
+
+        // Multidex is useful for tests
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // The following argument makes the Android Test Orchestrator run its
+        // "pm clear" command after each test invocation. This command ensures
+        // that the app's state is completely cleared between tests.
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+
+        buildConfigField "String", "SDK_VERSION", "\"1.5.30\""
+
+        buildConfigField "String", "GIT_SDK_REVISION", "\"${gitRevision()}\""
+        buildConfigField "String", "GIT_SDK_REVISION_UNIX_DATE", "\"${gitRevisionUnixDate()}\""
+        buildConfigField "String", "GIT_SDK_REVISION_DATE", "\"${gitRevisionDate()}\""
+
+        defaultConfig {
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        // Comment to run on Android 12
+//        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
+
+    buildTypes {
+        debug {
+            if (project.hasProperty("coverage")) {
+                testCoverageEnabled = coverage == "true"
+            }
+            // Set to true to log privacy or sensible data, such as token
+            buildConfigField "boolean", "LOG_PRIVATE_DATA", project.property("vector.debugPrivateData")
+            // Set to BODY instead of NONE to enable logging
+            buildConfigField "okhttp3.logging.HttpLoggingInterceptor.Level", "OKHTTP_LOGGING_LEVEL", "okhttp3.logging.HttpLoggingInterceptor.Level." + project.property("vector.httpLogLevel")
+        }
+
+        release {
+            buildConfigField "boolean", "LOG_PRIVATE_DATA", "false"
+            buildConfigField "okhttp3.logging.HttpLoggingInterceptor.Level", "OKHTTP_LOGGING_LEVEL", "okhttp3.logging.HttpLoggingInterceptor.Level.BASIC"
+        }
+    }
+
+    adbOptions {
+        installOptions "-g"
+//        timeOutInMs 350 * 1000
+    }
+
+    compileOptions {
+        sourceCompatibility versions.sourceCompat
+        targetCompatibility versions.targetCompat
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        freeCompilerArgs += [
+                // Disabled for now, there are too many errors. Could be handled in another dedicated PR
+                // '-Xexplicit-api=strict', // or warning
+                "-opt-in=kotlin.RequiresOptIn",
+                // Opt in for kotlinx.coroutines.FlowPreview
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+        ]
+    }
+
+    sourceSets {
+        androidTest {
+            java.srcDirs += "src/sharedTest/java"
+        }
+        test {
+            java.srcDirs += "src/sharedTest/java"
+        }
+    }
+}
+
+static def gitRevision() {
+    def cmd = "git rev-parse --short=8 HEAD"
+    return cmd.execute().text.trim()
+}
+
+static def gitRevisionUnixDate() {
+    def cmd = "git show -s --format=%ct HEAD^{commit}"
+    return cmd.execute().text.trim()
+}
+
+static def gitRevisionDate() {
+    def cmd = "git show -s --format=%ci HEAD^{commit}"
+    return cmd.execute().text.trim()
+}
+
+dependencies {
+    implementation libs.jetbrains.coroutinesCore
+    implementation libs.jetbrains.coroutinesAndroid
+
+    implementation libs.androidx.core
+
+    // Lifecycle
+    implementation libs.androidx.lifecycleCommon
+    implementation libs.androidx.lifecycleProcess
+
+    // Network
+    implementation libs.squareup.retrofit
+    implementation libs.squareup.retrofitMoshi
+
+    // When version of okhttp is updated (current is 4.9.3), consider removing the workaround
+    // to force usage of Protocol.HTTP_1_1. Check the status of:
+    // - https://github.com/square/okhttp/issues/3278
+    // - https://github.com/square/okhttp/issues/4455
+    // - https://github.com/square/okhttp/issues/3146
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
+    implementation 'com.squareup.okhttp3:okhttp'
+    implementation 'com.squareup.okhttp3:logging-interceptor'
+
+    implementation libs.squareup.moshi
+    implementation libs.squareup.moshiAdapters
+    kapt libs.squareup.moshiKotlin
+
+    api "com.atlassian.commonmark:commonmark:0.13.0"
+
+    // Image
+    implementation libs.androidx.exifinterface
+
+    // Database
+    implementation 'com.github.Zhuinden:realm-monarchy:0.7.1'
+
+    kapt 'dk.ilios:realmfieldnameshelper:2.0.0'
+
+    // Shared Preferences
+    implementation libs.androidx.preferenceKtx
+
+    // Work
+    implementation libs.androidx.work
+
+    // olm lib is now hosted in MavenCentral
+    implementation 'org.matrix.android:olm-sdk:3.2.12'
+
+    // DI
+    implementation libs.dagger.dagger
+    kapt libs.dagger.daggerCompiler
+
+    // Logging
+    implementation libs.jakewharton.timber
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
+
+    // Video compression
+    implementation 'com.otaliastudios:transcoder:0.10.5'
+
+    // Exif data handling
+    implementation libs.apache.commonsImaging
+
+    implementation libs.google.phonenumber
+
+    testImplementation libs.tests.junit
+    // Note: version sticks to 1.9.2 due to https://github.com/mockk/mockk/issues/281
+    testImplementation libs.mockk.mockk
+    testImplementation libs.tests.kluent
+    testImplementation libs.jetbrains.coroutinesTest
+    // Plant Timber tree for test
+    testImplementation 'net.lachlanmckee:timber-junit-rule:1.0.1'
+    // Transitively required for mocking realm as monarchy doesn't expose Rx
+    testImplementation libs.rx.rxKotlin
+
+    kaptAndroidTest libs.dagger.daggerCompiler
+    androidTestImplementation libs.androidx.testCore
+    androidTestImplementation libs.androidx.testRunner
+    androidTestImplementation libs.androidx.testRules
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espressoCore
+    androidTestImplementation libs.tests.kluent
+    androidTestImplementation libs.mockk.mockkAndroid
+    androidTestImplementation libs.androidx.coreTesting
+    androidTestImplementation libs.jetbrains.coroutinesAndroid
+    androidTestImplementation libs.jetbrains.coroutinesTest
+
+    // Plant Timber tree for test
+    androidTestImplementation libs.tests.timberJunitRule
+
+    androidTestUtil libs.androidx.orchestrator
+}

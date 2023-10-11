@@ -1,0 +1,54 @@
+# Features and changes compared to upstream
+
+Here you can find some extra features and changes compared to Element Android (without guarantees on correctness or up-to-dateness).
+
+- Different (optional) styles for message bubbles, with selectable corner radius and optional tail
+- Optional unified chat list instead of dividing group chats and direct messages
+- SchildiChat light, dark and black themes with multiple choices for accent colors
+- Possibility to color usernames by power level, allowing for different settings depending on whether it's a public chat, a group chat or a direct chat
+- Possibility to select themes for both light and dark system mode individually
+- [UnifiedPush](https://unifiedpush.org/) support
+- "Easy mode" which disables public room functionality
+- Floating date
+- Setting for room previews: show all events, hide membership changes, hide membership changes and reactions (individual settings for direct chats and groups)
+- More prominent unread counter for chats in the room overview (bigger, different placement, more noticeable color in SchildiChat designs)
+- Mark chats as unread ([MSC2867](https://github.com/matrix-org/matrix-spec-proposals/pull/2867), only works with compatible clients (SchildiChat, FluffyChat))
+- Optionally count unread messages also for muted chats, displayed with a different color (requires server-side [MSC2654](https://github.com/matrix-org/matrix-spec-proposals/pull/2654) support)
+- Possibility to not show people in spaces based on their space membership, but only if the chat is actually part of the space
+- Setting to jump to bottom on send
+- Setting to also enable URL previews in encrypted chats (for users who trust their homeserver or who don't care about leaked message content in this case)
+- Possibility to open rooms at first unread message instead of at the bottom of the chat
+- Possibility to hide the voice message button in the composer
+- Experimental feature to switch between top-level spaces by swiping the room list
+- Option to open a room without marking anything as read automatically
+- Remember across app restarts which categories in the chat overview are expanded or collapsed
+- Message count passed to the notification badge (visible next to the launcher icon on recent Android versions)
+- Don't always repeat sender name for multiple stickers by the same sender
+- Chat options menu: add entry for member list (to skip the step of clicking on the room name, to enter room settings), and hide the less frequently used invite option (which is still available from the member list)
+- Smaller compose area (as before Element 1.0.12)
+- Compose area: emoji button on the left, attachments button on the right (flipped compared to Element, but what most other messengers do, thus more familiar to most users)
+- Setting to not alert for new messages if there's still an old notification for that room
+- Setting to hide start call buttons from the room's toolbar
+- Render inline images / custom emojis in the timeline
+- Allow sending custom emotes (and partly stickers), if they have been set up with another compatible client ([MSC2545](https://github.com/matrix-org/matrix-spec-proposals/pull/2545))
+- Render image reactions
+- Send freeform reactions
+- Render media captions ([MSC2530](https://github.com/matrix-org/matrix-spec-proposals/pull/2530))
+- Escape @room in the reply fallback to avoid unintentional room pings when replying
+
+- Branding (name, app icon, links)
+- Show a toast instead of a snackbar after copying text, in order to not block the input area right after copying
+- Change some default settings (e.g., hide deleted messages by default)
+- Disable bug reporting to Element, report to SchildiChat instead
+- Login screen: more prominent login via Matrix-ID, removed login via EMS
+- Hide "help" text that tells users to long-press a room, which users reported to be rather confusing than helpful
+- Hide trailing newlines in text messages
+- More lines of the room topic shown by default (without the need to expand) in the room information screen
+- Re-arrange room profile
+- Some different icons
+- Emoji-only messages with increased size: also for messages that have spaces between emojis
+- Also fallback to other user's avatar for 2-person-rooms not marked as DM
+- Pass theme to stickerpicker (tested with maunium-stickerpicker)
+- ...
+- Sometimes bug fixes for issues in Element, when found during internal testing
+- Sometimes additional bugs ;)

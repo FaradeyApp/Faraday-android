@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <im.vector.app.core.preference.VectorListPreference
+        android:defaultValue="default"
+        android:key="SETTINGS_SC_BUBBLE_ROUNDED_CORNERS"
+        android:title="@string/bubble_rounded_corners"
+        android:summary="%s"
+        android:entries="@array/bubble_appearance_roundness_entries"
+        android:entryValues="@array/bubble_appearance_roundness_values" />
+
+    <im.vector.app.core.preference.VectorSwitchPreference
+        android:defaultValue="true"
+        android:key="SETTINGS_SC_BUBBLE_TAIL"
+        android:title="@string/bubble_tail"
+        android:summary="@string/bubble_tail_summary" />
+
+</androidx.preference.PreferenceScreen>
