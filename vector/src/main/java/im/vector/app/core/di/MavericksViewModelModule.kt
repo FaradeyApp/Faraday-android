@@ -111,6 +111,8 @@ import im.vector.app.features.settings.legals.LegalsViewModel
 import im.vector.app.features.settings.locale.LocalePickerViewModel
 import im.vector.app.features.settings.notifications.VectorSettingsNotificationViewModel
 import im.vector.app.features.settings.notifications.VectorSettingsPushRuleNotificationViewModel
+import im.vector.app.features.settings.passwordmanagement.changepassword.VectorSettingsChangePasswordViewModel
+import im.vector.app.features.settings.passwordmanagement.passwordmanagementmain.VectorSettingsPasswordManagementViewModel
 import im.vector.app.features.settings.push.PushGatewaysViewModel
 import im.vector.app.features.settings.threepids.ThreePidsSettingsViewModel
 import im.vector.app.features.share.IncomingShareViewModel
@@ -349,6 +351,16 @@ interface MavericksViewModelModule {
     @IntoMap
     @MavericksViewModelKey(HomeserverSettingsViewModel::class)
     fun homeserverSettingsViewModelFactory(factory: HomeserverSettingsViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @MavericksViewModelKey(VectorSettingsPasswordManagementViewModel::class)
+    fun vectorSettingsPasswordManagementViewModelFactory(factory: VectorSettingsPasswordManagementViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @MavericksViewModelKey(VectorSettingsChangePasswordViewModel::class)
+    fun vectorSettingsChangePasswordViewModelFactory(factory: VectorSettingsChangePasswordViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap

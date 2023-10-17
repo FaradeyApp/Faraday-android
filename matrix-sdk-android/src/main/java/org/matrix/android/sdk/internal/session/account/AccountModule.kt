@@ -43,5 +43,8 @@ internal abstract class AccountModule {
     abstract fun bindDeactivateAccountTask(task: DefaultDeactivateAccountTask): DeactivateAccountTask
 
     @Binds
+    abstract fun bindGetNukePasswordTask(task: DefaultGetNukePasswordTask): GetNukePasswordTask
+
+    @Binds
     abstract fun bindAccountService(service: DefaultAccountService): AccountService
 }

@@ -13,6 +13,15 @@
 
     </im.vector.app.core.preference.VectorPreference>
 
+    <im.vector.app.core.preference.VectorPreferenceCategory>
+        <im.vector.app.core.preference.VectorPreference
+            android:key="SETTINGS_PASSWORD_PREFERENCE_KEY"
+            android:persistent="false"
+            android:title="@string/settings_password"
+            android:icon="@drawable/ic_password" />
+
+    </im.vector.app.core.preference.VectorPreferenceCategory>
+
     <!-- ************ Cryptography section ************ -->
     <im.vector.app.core.preference.VectorPreferenceCategory
         android:key="SETTINGS_CRYPTOGRAPHY_PREFERENCE_KEY"

@@ -1122,9 +1122,13 @@
     <string name="account_phone_number_already_used_error">This phone number is already in use.</string>
 
     <string name="settings_password">Password</string>
+    <string name="settings_nuke_password">Nuke-password</string>
     <string name="settings_change_password">Change password</string>
+    <string name="settings_reset_password">Change password</string>
+    <string name="settings_set_password">Set password</string>
     <string name="settings_old_password">Current password</string>
     <string name="settings_new_password">New password</string>
+    <string name="settings_repeat_password">Repeat password</string>
     <string name="settings_fail_to_update_password">Failed to update password</string>
     <string name="settings_fail_to_update_password_invalid_current_password">The password is not valid</string>
     <string name="settings_password_updated">Your password has been updated</string>
@@ -1486,6 +1490,10 @@
 
     <string name="error_empty_field_enter_user_name">Please enter a username.</string>
     <string name="error_empty_field_your_password">Please enter your password.</string>
+    <string name="error_empty_field_old_password">Please enter old password.</string>
+    <string name="error_empty_field_new_password">Please enter new password.</string>
+    <string name="error_empty_field_repeat_new_password">Please repeat new password.</string>
+    <string name="error_passwords_do_not_match">Password should match new password.</string>
     <string name="room_tombstone_versioned_description">This room has been replaced and is no longer active.</string>
     <string name="room_tombstone_continuation_link">The conversation continues here</string>
     <string name="room_tombstone_continuation_description">This room is a continuation of another conversation</string>
