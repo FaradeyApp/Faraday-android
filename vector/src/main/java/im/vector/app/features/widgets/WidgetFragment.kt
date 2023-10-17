@@ -320,7 +320,7 @@ class WidgetFragment :
                 context = requireContext(),
                 activityResultLauncher = termsActivityResultLauncher,
                 serviceType = TermsService.ServiceType.IntegrationManager,
-                baseUrl = displayTerms.url,
+                baseUrl = if(fragmentArgs.kind == WidgetKind.ROOM) INTEGRATION_DEFAULT_URL else displayTerms.url,
                 token = displayTerms.token
         )
     }
@@ -368,5 +368,9 @@ class WidgetFragment :
 
     private fun revokeWidget() {
         viewModel.handle(WidgetAction.RevokeWidget)
+    }
+
+    companion object {
+        private const val INTEGRATION_DEFAULT_URL = "https://scalar.vector.im"
     }
 }

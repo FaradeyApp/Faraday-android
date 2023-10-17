@@ -82,6 +82,7 @@ import im.vector.app.core.animations.play
 import im.vector.app.core.dialogs.ConfirmationDialogBuilder
 import im.vector.app.core.dialogs.GalleryOrCameraDialogHelper
 import im.vector.app.core.dialogs.GalleryOrCameraDialogHelperFactory
+import im.vector.app.core.dialogs.KanbanBoardDialog
 import im.vector.app.core.epoxy.LayoutManagerStateRestorer
 import im.vector.app.core.extensions.cleanup
 import im.vector.app.core.extensions.commitTransaction
@@ -285,7 +286,7 @@ class TimelineFragment :
     companion object {
         const val MAX_TYPING_MESSAGE_USERS_COUNT = 4
 
-        const val TARGET_SCROLL_OUT_FACTOR = 7f/8f
+        const val TARGET_SCROLL_OUT_FACTOR = 7f / 8f
         const val FLOATING_DATE_HIDE_DELAY = 1500L
     }
 
@@ -451,6 +452,7 @@ class TimelineFragment :
                 RoomDetailViewEvents.DisplayPromptToStopVoiceBroadcast -> displayPromptToStopVoiceBroadcast()
                 RoomDetailViewEvents.JumpToBottom -> doJumpToBottom()
                 is RoomDetailViewEvents.SetInitialForceScroll -> setInitialForceScrollEnabled(it.enabled, stickToBottom = it.stickToBottom)
+                RoomDetailViewEvents.ShowKanbanBoardDialog -> displayKanbanBoardDialog()
             }
         }
 
@@ -1006,6 +1008,10 @@ class TimelineFragment :
                 timelineViewModel.handle(RoomDetailAction.ManageIntegrations)
                 true
             }
+            R.id.add_kanban_board -> {
+                timelineViewModel.handle(RoomDetailAction.AddKanbanBoard)
+                true
+            }
             R.id.voice_call -> {
                 callActionsHandler.onVoiceCallClicked()
                 true
@@ -1097,7 +1103,8 @@ class TimelineFragment :
                 }
                 true
             }
-            else -> ArrayOptionsMenuHelper.handleSubmenu(item,
+            else -> ArrayOptionsMenuHelper.handleSubmenu(
+                    item,
                     R.id.dev_base_theme,
                     R.id.dev_bubble_style,
                     R.id.dev_theme_accent,
@@ -1326,7 +1333,7 @@ class TimelineFragment :
             it.dispatchTo(scrollOnHighlightedEventCallback)
         }
         timelineEventController.addModelBuildListener(modelBuildListener)
-        views.timelineRecyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        views.timelineRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) {
                     // User has scrolled, stop force scrolling.
@@ -1608,6 +1615,14 @@ class TimelineFragment :
                 }
     }
 
+    private fun displayKanbanBoardDialog() {
+        KanbanBoardDialog().show(requireActivity(), object : KanbanBoardDialog.KanbanBoardDialogListener {
+            override fun onKanbanBoardAdded(url: String) {
+                timelineViewModel.handle(RoomDetailAction.SendAddKanbanBoardRequest(url = url))
+            }
+        })
+    }
+
     private fun displayRoomDetailActionFailure(result: RoomDetailViewEvents.ActionFailure) {
         @StringRes val titleResId = when (result.action) {
             RoomDetailAction.VoiceBroadcastAction.Recording.Start -> R.string.error_voice_broadcast_unauthorized_title
@@ -1817,7 +1832,7 @@ class TimelineFragment :
     }
 
     override fun onLoadMore(direction: Timeline.Direction) {
-        rmDimber.i{"on load more $direction"}
+        rmDimber.i { "on load more $direction" }
         timelineViewModel.handle(RoomDetailAction.LoadMoreTimelineEvents(direction))
     }
 
@@ -2399,7 +2414,7 @@ class TimelineFragment :
                 (!enabled &&
                         !views.timelineRecyclerView.canScrollVertically(1) &&
                         !timelineViewModel.timeline?.hasMoreToLoad(Timeline.Direction.FORWARDS).orFalse()
-                )
+                        )
         scrollOnNewMessageCallback.initialForceScroll = enabled
         if (shouldStickToBottom) {
             layoutManager.disablePreferredAnchorPlacement()

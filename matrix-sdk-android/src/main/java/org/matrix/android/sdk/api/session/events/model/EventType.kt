@@ -51,6 +51,7 @@ object EventType {
     const val STATE_ROOM_JOIN_RULES = "m.room.join_rules"
     const val STATE_ROOM_GUEST_ACCESS = "m.room.guest_access"
     const val STATE_ROOM_POWER_LEVELS = "m.room.power_levels"
+    const val STATE_ROOM_VECTOR_MODULAR_WIDGETS = "im.vector.modular.widgets"
     val STATE_ROOM_BEACON_INFO = StableUnstableId(stable = "m.beacon_info", unstable = "org.matrix.msc3672.beacon_info")
     val BEACON_LOCATION_DATA = StableUnstableId(stable = "m.beacon", unstable = "org.matrix.msc3672.beacon")
 

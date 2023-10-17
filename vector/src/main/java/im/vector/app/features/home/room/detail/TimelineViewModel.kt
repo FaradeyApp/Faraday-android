@@ -26,6 +26,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.Uninitialized
 import com.airbnb.mvrx.withState
+import com.squareup.moshi.Types
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -136,6 +137,8 @@ import org.matrix.android.sdk.api.session.sync.SyncRequestState
 import org.matrix.android.sdk.api.session.threads.ThreadNotificationBadgeState
 import org.matrix.android.sdk.api.session.threads.ThreadNotificationState
 import org.matrix.android.sdk.api.session.widgets.model.WidgetType
+import org.matrix.android.sdk.api.util.JsonDict
+import org.matrix.android.sdk.api.util.MatrixJsonParser
 import org.matrix.android.sdk.api.util.toOptional
 import org.matrix.android.sdk.flow.flow
 import org.matrix.android.sdk.flow.unwrap
@@ -241,6 +244,7 @@ class TimelineViewModel @AssistedInject constructor(
 
         // The larger the number the faster the results, COUNT=200 for 500 thread messages its x4 faster than COUNT=50
         const val PAGINATION_COUNT_THREADS_PERMALINK = 200
+        const val KANBAN_STATE_KEY = "KANBAN_STATE_KEY"
     }
 
     init {
@@ -601,6 +605,8 @@ class TimelineViewModel @AssistedInject constructor(
             is RoomDetailAction.EndPoll -> handleEndPoll(action.eventId)
             RoomDetailAction.StopLiveLocationSharing -> handleStopLiveLocationSharing()
             RoomDetailAction.OpenElementCallWidget -> handleOpenElementCallWidget()
+            RoomDetailAction.AddKanbanBoard -> handleAddKanbanBoard()
+            is RoomDetailAction.SendAddKanbanBoardRequest -> handleSendAddKanbanBoardRequest(url = action.url)
         }
     }
 
@@ -608,6 +614,14 @@ class TimelineViewModel @AssistedInject constructor(
         if (state.hasActiveElementCallWidget()) {
             _viewEvents.post(RoomDetailViewEvents.OpenElementCallWidget)
         }
+    }
+
+    private fun handleAddKanbanBoard() = withState { state ->
+        if (state.activeRoomWidgets.invoke()?.any { it.name == "Kanban Board" } == true) {
+            _viewEvents.post(RoomDetailViewEvents.ShowInfoOkDialog(stringProvider.getString(R.string.kanban_board_ia_already_added)))
+            return@withState
+        }
+        _viewEvents.post(RoomDetailViewEvents.ShowKanbanBoardDialog)
     }
 
     private fun handleJitsiCallJoinStatus(action: RoomDetailAction.UpdateJoinJitsiCallStatus) = withState { state ->
@@ -845,11 +859,11 @@ class TimelineViewModel @AssistedInject constructor(
         if (trackUnreadMessages.getAndSet(false)) {
             mostRecentDisplayedEvent?.root?.eventId?.also {
                 session.coroutineScope.launch(NonCancellable) {
-                    rmDimber.i{"set RM and RR to $it"}
+                    rmDimber.i { "set RM and RR to $it" }
                     tryOrNullAnon { room.readService().setReadMarker(it) }
                     //if (loadRoomAtFirstUnread()) {
-                        val threadId = initialState.rootThreadEventId ?: ReadService.THREAD_ID_MAIN
-                        tryOrNullAnon { room.readService().setReadReceipt(it, threadId) }
+                    val threadId = initialState.rootThreadEventId ?: ReadService.THREAD_ID_MAIN
+                    tryOrNullAnon { room.readService().setReadReceipt(it, threadId) }
                     //}
                 }
             }
@@ -945,6 +959,7 @@ class TimelineViewModel @AssistedInject constructor(
                     R.id.timeline_setting -> false // replaced by show_room_info (downstream)
                     R.id.invite -> false // state.canInvite // SC: disabled, we can do that over show_participants as well
                     R.id.open_matrix_apps -> session.integrationManagerService().isIntegrationEnabled()
+                    R.id.add_kanban_board -> session.integrationManagerService().isIntegrationEnabled() && state.isAllowedToManageWidgets
                     R.id.voice_call -> !vectorPreferences.hideCallButtons() && (state.isCallOptionAvailable() || state.hasActiveElementCallWidget())
                     R.id.video_call -> !vectorPreferences.hideCallButtons() && (state.isCallOptionAvailable() || state.jitsiState.confId == null || state.jitsiState.hasJoined)
                     // Show Join conference button only if there is an active conf id not joined. Otherwise fallback to default video disabled. ^
@@ -961,7 +976,7 @@ class TimelineViewModel @AssistedInject constructor(
                     R.id.dev_event_visibilities,
                     R.id.dev_composer_features,
                     R.id.dev_theming,
-                    // SC dev end
+                        // SC dev end
                     R.id.dev_tools -> vectorPreferences.developerMode()
                     else -> false
                 }
@@ -1365,6 +1380,30 @@ class TimelineViewModel @AssistedInject constructor(
         room.sendService().endPoll(eventId)
     }
 
+    private fun handleSendAddKanbanBoardRequest(url: String) = viewModelScope.launch {
+        try {
+            val adapter = MatrixJsonParser.getMoshi()
+                    .adapter<JsonDict>(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
+
+            val content = "{\"avatar_url\": \"mxc://integrations.ems.host/14b405c441e0fcc3c9034034d94ea555e37f84fc\",\n" +
+                    "\"data\": {\"url\":\"$url\"},\n" +
+                    "\"name\": \"Kanban Board\",\n" +
+                    "\"type\": \"m.custom\",\n" +
+                    "\"url\": \"https://scalar.vector.im/api/widgets/generic.html?url=\$url\"}"
+
+            val json = adapter.fromJson(content)
+                    ?: throw IllegalArgumentException(stringProvider.getString(R.string.dev_tools_error_no_content))
+
+            room?.stateService()?.sendStateEvent(
+                    eventType = EventType.STATE_ROOM_VECTOR_MODULAR_WIDGETS,
+                    KANBAN_STATE_KEY,
+                    json
+            )
+        } catch (failure: Throwable) {
+            _viewEvents.post(RoomDetailViewEvents.ActionFailure(RoomDetailAction.AddKanbanBoard, failure))
+        }
+    }
+
     private fun observeSyncState() {
         session.flow()
                 .liveSyncState()
@@ -1454,22 +1493,22 @@ class TimelineViewModel @AssistedInject constructor(
                     }
                 }
                 .setOnEach {
-                    rmDimber.i{"update unreadState = $it"}
+                    rmDimber.i { "update unreadState = $it" }
                     copy(unreadState = it)
                 }
     }
 
     private fun computeUnreadState(events: List<TimelineEvent>, roomSummary: RoomSummary): UnreadState {
         if (timeline == null) return UnreadState.Unknown
-        rmDimber.i{"computeUnreadState, empty = ${events.isEmpty()}, markerId = ${roomSummary.readMarkerId}"}
+        rmDimber.i { "computeUnreadState, empty = ${events.isEmpty()}, markerId = ${roomSummary.readMarkerId}" }
         if (events.isEmpty()) return UnreadState.Unknown
         val readMarkerIdSnapshot = roomSummary.readMarkerId ?: return UnreadState.Unknown
         val firstDisplayableEventIndex = timeline.getIndexOfEvent(readMarkerIdSnapshot)
                 ?: return if (timeline.isLive) {
-                    rmDimber.i{"is live, but did not get index"}
+                    rmDimber.i { "is live, but did not get index" }
                     UnreadState.ReadMarkerNotLoaded(readMarkerIdSnapshot)
                 } else {
-                    rmDimber.i{"not live"}
+                    rmDimber.i { "not live" }
                     UnreadState.Unknown
                 }
         // If the read marker is at the bottom-most event, this doesn't mean we read all, in case we just haven't loaded more events.
@@ -1481,14 +1520,16 @@ class TimelineViewModel @AssistedInject constructor(
             val timelineEvent = events.getOrNull(i) ?: return UnreadState.Unknown
             val eventId = timelineEvent.root.eventId ?: return UnreadState.Unknown
             val isFromMe = timelineEvent.root.senderId == session.myUserId
-            rmDimber.i{"isFromMe = $isFromMe"}
+            rmDimber.i { "isFromMe = $isFromMe" }
             if (!isFromMe) {
                 return UnreadState.HasUnread(eventId, readMarkerIdSnapshot)
             }
         }
-        rmDimber.i{"hasNoUnread / firstDisplayableEventIndex: $firstDisplayableEventIndex / " +
-                "latest previewable from summary ${roomSummary.latestPreviewableOriginalContentEvent?.eventId} - ${timeline.getIndexOfEvent(roomSummary.latestPreviewableOriginalContentEvent?.eventId)} / " +
-                "event-0 ${events.getOrNull(0)?.eventId}"}
+        rmDimber.i {
+            "hasNoUnread / firstDisplayableEventIndex: $firstDisplayableEventIndex / " +
+                    "latest previewable from summary ${roomSummary.latestPreviewableOriginalContentEvent?.eventId} - ${timeline.getIndexOfEvent(roomSummary.latestPreviewableOriginalContentEvent?.eventId)} / " +
+                    "event-0 ${events.getOrNull(0)?.eventId}"
+        }
         return UnreadState.HasNoUnread
     }
 
@@ -1561,7 +1602,7 @@ class TimelineViewModel @AssistedInject constructor(
     }
 
     override fun onTimelineUpdated(snapshot: List<TimelineEvent>) {
-        rmDimber.i{"onTimelineUpdated"}
+        rmDimber.i { "onTimelineUpdated" }
         viewModelScope.launch {
             // tryEmit doesn't work with SharedFlow without cache
             timelineEvents.emit(snapshot)
@@ -1616,7 +1657,7 @@ class TimelineViewModel @AssistedInject constructor(
         return initialState.openAtFirstUnread ?: vectorPreferences.loadRoomAtFirstUnread()
     }
 
-    private inline fun <A>tryOrNullAnon(forceAllow: Boolean = false, operation: () -> A): A? {
+    private inline fun <A> tryOrNullAnon(forceAllow: Boolean = false, operation: () -> A): A? {
         if (initialState.openAnonymously && !forceAllow) {
             return null
         }

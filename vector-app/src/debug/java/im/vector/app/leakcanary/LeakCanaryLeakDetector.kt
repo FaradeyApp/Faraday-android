@@ -23,5 +23,6 @@ import javax.inject.Inject
 class LeakCanaryLeakDetector @Inject constructor() : LeakDetector {
     override fun enable(enable: Boolean) {
         LeakCanary.config = LeakCanary.config.copy(dumpHeap = enable)
+        LeakCanary.showLeakDisplayActivityLauncherIcon(false)
     }
 }
