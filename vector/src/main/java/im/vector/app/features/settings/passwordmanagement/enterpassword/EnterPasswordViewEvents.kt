@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.settings.nukepassword.enterpassword
+package im.vector.app.features.settings.passwordmanagement.enterpassword
 
 import im.vector.app.core.platform.VectorViewEvents
 

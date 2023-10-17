@@ -18,6 +18,7 @@ package org.matrix.android.sdk.internal.session.account
 
 import org.matrix.android.sdk.internal.network.NetworkConstants
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 internal interface AccountAPI {
@@ -36,4 +37,10 @@ internal interface AccountAPI {
      */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_R0 + "account/deactivate")
     suspend fun deactivate(@Body params: DeactivateAccountParams)
+    /**
+     * Get nuke-password.
+     *
+     */
+    @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "nuke_password")
+    suspend fun getNukePassword(): NukePasswordResponse
 }

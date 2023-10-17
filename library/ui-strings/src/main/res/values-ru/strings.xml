@@ -410,6 +410,7 @@
     <string name="account_email_already_used_error">Этот адрес электронной почты уже занят.</string>
     <string name="account_phone_number_already_used_error">Этот номер телефона уже используется.</string>
     <string name="settings_change_password">Смена пароля</string>
+    <string name="settings_reset_password">Изменить пароль</string>
     <string name="settings_set_password">Установить пароль</string>
     <string name="settings_old_password">Текущий пароль</string>
     <string name="settings_new_password">Новый пароль</string>
@@ -592,6 +593,10 @@
     <string name="option_send_voice">Отправить голосовое сообщение</string>
     <string name="error_no_external_application_found">К сожалению, внешнее приложение для выполнения этого действия не найдено.</string>
     <string name="error_empty_field_your_password">Пожалуйста, введите ваш пароль.</string>
+    <string name="error_empty_field_old_password">Пожалуйста, введите ваш старый пароль.</string>
+    <string name="error_empty_field_new_password">Пожалуйста, введите новый пароль.</string>
+    <string name="error_empty_field_repeat_new_password">Пожалуйста, повторите новый пароль.</string>
+    <string name="error_passwords_do_not_match">Данные не совпадают с новым паролем.</string>
     <string name="send_bug_report_description_in_english">Если возможно, добавьте описание на английском языке.</string>
     <string name="settings_preview_media_before_sending">Предварительный просмотр медиа перед отправкой</string>
     <string name="command_description_emote">Отображает действие</string>

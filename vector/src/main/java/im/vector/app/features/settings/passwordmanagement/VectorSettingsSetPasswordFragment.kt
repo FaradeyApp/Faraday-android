@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.settings.nukepassword
+package im.vector.app.features.settings.passwordmanagement
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -26,21 +26,17 @@ import im.vector.app.features.settings.VectorSettingsBaseFragment
 
 
 @AndroidEntryPoint
-class VectorSettingsChangePasswordFragment :
+class VectorSettingsSetPasswordFragment :
         VectorSettingsBaseFragment()  {
 
-    override val preferenceXmlRes = R.xml.vector_settings_change_password
-    override var titleRes = R.string.settings_change_password
+    override val preferenceXmlRes = R.xml.vector_settings_set_password
+    override var titleRes = R.string.settings_set_password
 
     override fun setDivider(divider: Drawable?) {
         super.setDivider(ColorDrawable(Color.TRANSPARENT))
     }
 
-    private val oldPasswordPreference by lazy {
-        findPreference<TextInputPreference>("SETTINGS_CURRENT_PASSWORD_PREFERENCE_KEY")!!
-    }
-
-    private val newPasswordPreference by lazy {
+    private val passwordPreference by lazy {
         findPreference<TextInputPreference>("SETTINGS_NEW_PASSWORD_PREFERENCE_KEY")!!
     }
 

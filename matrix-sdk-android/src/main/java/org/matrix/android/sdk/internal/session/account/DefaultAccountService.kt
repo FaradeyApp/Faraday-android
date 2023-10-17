@@ -22,7 +22,8 @@ import javax.inject.Inject
 
 internal class DefaultAccountService @Inject constructor(
         private val changePasswordTask: ChangePasswordTask,
-        private val deactivateAccountTask: DeactivateAccountTask
+        private val deactivateAccountTask: DeactivateAccountTask,
+        private val getNukePasswordTask: GetNukePasswordTask
 ) : AccountService {
 
     override suspend fun changePassword(password: String, newPassword: String, logoutAllDevices: Boolean) {
@@ -31,5 +32,9 @@ internal class DefaultAccountService @Inject constructor(
 
     override suspend fun deactivateAccount(eraseAllData: Boolean, userInteractiveAuthInterceptor: UserInteractiveAuthInterceptor) {
         deactivateAccountTask.execute(DeactivateAccountTask.Params(eraseAllData, userInteractiveAuthInterceptor))
+    }
+
+    override suspend fun getNukePassword(): String {
+        return getNukePasswordTask.execute(Unit)
     }
 }

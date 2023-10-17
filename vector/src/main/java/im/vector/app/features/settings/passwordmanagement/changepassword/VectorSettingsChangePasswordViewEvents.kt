@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.settings.nukepassword.enterpassword
+package im.vector.app.features.settings.passwordmanagement.changepassword
 
-import im.vector.app.core.platform.VectorViewModelAction
+import im.vector.app.core.platform.VectorViewEvents
 
-sealed class EnterPasswordAction : VectorViewModelAction
+sealed class VectorSettingsChangePasswordViewEvents : VectorViewEvents {
+    object OnPasswordReset: VectorSettingsChangePasswordViewEvents()
+    data class RestorePasswords(val oldPassword: String, val newPassword: String, val repeatPassword: String): VectorSettingsChangePasswordViewEvents()
+    data class ShowError(val message: String, val location: ErrorLocation) : VectorSettingsChangePasswordViewEvents()
+}
+
+enum class ErrorLocation {
+    OLD_PASSWORD,
+    GENERAL
+}

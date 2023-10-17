@@ -68,7 +68,7 @@ import im.vector.app.features.pin.PinCodeStore
 import im.vector.app.features.pin.PinMode
 import im.vector.app.features.raw.wellknown.getElementWellknown
 import im.vector.app.features.raw.wellknown.isE2EByDefault
-import im.vector.app.features.settings.nukepassword.VectorSettingsNukePasswordFragment
+import im.vector.app.features.settings.passwordmanagement.passwordmanagementmain.VectorSettingsPasswordManagementFragment
 import im.vector.app.features.themes.ThemeUtils
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -456,7 +456,7 @@ class VectorSettingsSecurityPrivacyFragment :
     }
 
     private fun openPasswordEnterScreen() {
-        (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsNukePasswordFragment::class.java)
+        (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsPasswordManagementFragment::class.java)
     }
 
 

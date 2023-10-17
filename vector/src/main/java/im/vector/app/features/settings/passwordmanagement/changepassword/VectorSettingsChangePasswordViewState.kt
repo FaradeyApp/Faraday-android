@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.settings.nukepassword.enterpassword
+package im.vector.app.features.settings.passwordmanagement.changepassword
 
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
-import im.vector.app.core.platform.VectorViewModel
+import com.airbnb.mvrx.MavericksState
 
-class EnterPasswordViewModel @AssistedInject constructor(
-        @Assisted private val initialState: EnterPasswordViewState
-) : VectorViewModel<EnterPasswordViewState, EnterPasswordAction, EnterPasswordViewEvents>(initialState) {
-    override fun handle(action: EnterPasswordAction) {
-    }
-}
+data class VectorSettingsChangePasswordViewState(
+        val oldPassword: String = "",
+        val newPassword: String = "",
+        val repeatPassword: String = ""
+) : MavericksState

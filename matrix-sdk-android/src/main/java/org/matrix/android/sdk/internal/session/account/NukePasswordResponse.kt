@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.settings.nukepassword.enterpassword
+package org.matrix.android.sdk.internal.session.account
 
-import com.airbnb.mvrx.MavericksState
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-class EnterPasswordViewState : MavericksState
+@JsonClass(generateAdapter = true)
+internal data class NukePasswordResponse (
+    @Json(name = "password")
+    val password: String
+)

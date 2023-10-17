@@ -14,61 +14,87 @@
  * limitations under the License.
  */
 
-package im.vector.app.features.settings.nukepassword
+package im.vector.app.features.settings.passwordmanagement.passwordmanagementmain
 
+import android.os.Bundle
+import android.view.View
 import androidx.preference.Preference
+import com.airbnb.mvrx.fragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
 import im.vector.app.core.dialogs.NukePasswordDialog
+import im.vector.app.core.preference.ButtonPreference
 import im.vector.app.core.preference.VectorPreference
 import im.vector.app.core.preference.VectorSwitchPreference
 import im.vector.app.features.settings.VectorSettingsActivity
 import im.vector.app.features.settings.VectorSettingsBaseFragment
+import im.vector.app.features.settings.passwordmanagement.changepassword.VectorSettingsChangePasswordFragment
+import im.vector.app.features.settings.passwordmanagement.VectorSettingsSetPasswordFragment
 
 @AndroidEntryPoint
-class VectorSettingsNukePasswordFragment :
+class VectorSettingsPasswordManagementFragment :
         VectorSettingsBaseFragment() {
+
+    private val viewModel: VectorSettingsPasswordManagementViewModel by fragmentViewModel()
 
     override var titleRes = R.string.settings_password
 
-    override val preferenceXmlRes = R.xml.vector_settings_password
+    override val preferenceXmlRes = R.xml.vector_password_management
 
     private val passwordPreference by lazy {
-        findPreference<VectorSwitchPreference>("SETTINGS_PASSWORD_PREFERENCE_KEY")!!
+        findPreference<VectorSwitchPreference>("SETTINGS_PASSWORD_PREFERENCE_KEY")
     }
 
     private val changePasswordPreference by lazy {
-        findPreference<VectorPreference>("SETTINGS_PASSWORD_CHANGE_PREFERENCE_KEY")!!
+        findPreference<VectorPreference>("SETTINGS_PASSWORD_CHANGE_PREFERENCE_KEY")
     }
 
     private val nukePasswordPreference by lazy {
-        findPreference<VectorPreference>("SETTINGS_NUKE_PASSWORD_PREFERENCE_KEY")!!
+        findPreference<VectorPreference>("SETTINGS_NUKE_PASSWORD_PREFERENCE_KEY")
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeViewEvents()
     }
 
     override fun bindPref() {
-        passwordPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            changePasswordPreference.isVisible = passwordPreference.isChecked
-            nukePasswordPreference.isVisible = passwordPreference.isChecked
+        passwordPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            changePasswordPreference?.isVisible = passwordPreference?.isChecked ?: false
+            nukePasswordPreference?.isVisible = passwordPreference?.isChecked ?: false
             true
         }
-        changePasswordPreference.apply {
+        changePasswordPreference?.apply {
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 goToChangePasswordScreen()
                 true
             }
-            isVisible = passwordPreference.isChecked
+            isVisible = passwordPreference?.isChecked ?: false
         }
-        nukePasswordPreference.apply {
+        nukePasswordPreference?.apply {
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 showNukePassword()
                 true
             }
-            isVisible = passwordPreference.isChecked
+            isVisible = passwordPreference?.isChecked ?: false
+        }
+    }
+
+    private fun observeViewEvents() {
+        viewModel.observeViewEvents { event ->
+            when(event) {
+                is VectorSettingsPasswordManagementViewEvents.ShowPasswordDialog -> {
+                    activity?.let {
+                        NukePasswordDialog().show(it, event.nukePassword)
+                    }
+                }
+            }
         }
     }
 
     private fun showNukePassword() {
-        NukePasswordDialog().show(activity ?: return, "1234567")
+        viewModel.handle(VectorSettingsPasswordManagementAction.OnClickNukePassword)
     }
 
     private fun goToChangePasswordScreen() {
@@ -78,4 +104,6 @@ class VectorSettingsNukePasswordFragment :
     private fun goToSetPasswordScreen() {
         (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsSetPasswordFragment::class.java)
     }
+
+
 }
