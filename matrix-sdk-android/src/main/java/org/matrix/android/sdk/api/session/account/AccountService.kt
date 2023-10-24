@@ -52,6 +52,4 @@ interface AccountService {
             eraseAllData: Boolean,
             userInteractiveAuthInterceptor: UserInteractiveAuthInterceptor
     )
-
-    suspend fun getNukePassword(): String
 }

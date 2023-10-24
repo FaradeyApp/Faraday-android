@@ -130,5 +130,5 @@ internal interface ProfileAPI {
     suspend fun register(@Body registrationParams: RegistrationParams): Credentials
 
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
-    suspend fun addNewAccount(@Body body: AddNewAccountBody): AddNewAccountResponse
+    suspend fun addNewAccount(@Body body: AddNewAccountBody): BaseRequestStatusResponse
 }

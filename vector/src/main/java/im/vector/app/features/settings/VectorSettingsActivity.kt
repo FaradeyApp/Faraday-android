@@ -33,6 +33,7 @@ import im.vector.app.features.discovery.DiscoverySettingsFragment
 import im.vector.app.features.navigation.SettingsActivityPayload
 import im.vector.app.features.settings.devices.VectorSettingsDevicesFragment
 import im.vector.app.features.settings.notifications.VectorSettingsNotificationFragment
+import im.vector.app.features.settings.passwordmanagement.passwordmanagementmain.VectorSettingsPasswordManagementFragment
 import im.vector.app.features.settings.threepids.ThreePidsSettingsFragment
 import im.vector.lib.core.utils.compat.getParcelableExtraCompat
 import org.matrix.android.sdk.api.failure.GlobalError
@@ -73,10 +74,13 @@ class VectorSettingsActivity : VectorBaseActivity<ActivityVectorSettingsBinding>
             when (val payload = readPayload<SettingsActivityPayload>(SettingsActivityPayload.Root)) {
                 SettingsActivityPayload.General ->
                     replaceFragment(views.vectorSettingsPage, VectorSettingsGeneralFragment::class.java, null, FRAGMENT_TAG)
+
                 SettingsActivityPayload.AdvancedSettings ->
                     replaceFragment(views.vectorSettingsPage, VectorSettingsAdvancedSettingsFragment::class.java, null, FRAGMENT_TAG)
+
                 SettingsActivityPayload.SecurityPrivacy ->
                     replaceFragment(views.vectorSettingsPage, VectorSettingsSecurityPrivacyFragment::class.java, null, FRAGMENT_TAG)
+
                 SettingsActivityPayload.SecurityPrivacyManageSessions -> {
                     val fragmentClass = if (vectorPreferences.isNewSessionManagerEnabled()) {
                         im.vector.app.features.settings.devices.v2.VectorSettingsDevicesFragment::class.java
@@ -90,13 +94,16 @@ class VectorSettingsActivity : VectorBaseActivity<ActivityVectorSettingsBinding>
                             FRAGMENT_TAG
                     )
                 }
+
                 SettingsActivityPayload.Notifications -> {
                     requestHighlightPreferenceKeyOnResume(VectorPreferences.SETTINGS_ENABLE_THIS_DEVICE_PREFERENCE_KEY)
                     replaceFragment(views.vectorSettingsPage, VectorSettingsNotificationFragment::class.java, null, FRAGMENT_TAG)
                 }
+
                 is SettingsActivityPayload.DiscoverySettings -> {
                     replaceFragment(views.vectorSettingsPage, DiscoverySettingsFragment::class.java, payload, FRAGMENT_TAG)
                 }
+
                 else ->
                     replaceFragment(views.vectorSettingsPage, VectorSettingsRootFragment::class.java, null, FRAGMENT_TAG)
             }
@@ -161,12 +168,34 @@ class VectorSettingsActivity : VectorBaseActivity<ActivityVectorSettingsBinding>
         }
     }
 
-    fun <T : Fragment> navigateTo(fragmentClass: Class<T>, arguments: Bundle? = null) {
+    fun <T : Fragment> navigateTo(fragmentClass: Class<T>, arguments: Bundle? = null, tag: String? = null) {
         supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.right_in, R.anim.fade_out, R.anim.fade_in, R.anim.right_out)
-                .replace(views.vectorSettingsPage.id, fragmentClass, arguments)
-                .addToBackStack(null)
+                .replace(views.vectorSettingsPage.id, fragmentClass, arguments, tag)
+                .addToBackStack(tag)
                 .commit()
+    }
+
+    override fun onBackPressed() {
+        back()
+    }
+
+    private fun back() {
+        val handled = recursivelyDispatchOnBackPressed(supportFragmentManager)
+        if (!handled) {
+            @Suppress("DEPRECATION")
+            super.onBackPressed()
+        }
+    }
+
+    private fun recursivelyDispatchOnBackPressed(fm: FragmentManager): Boolean {
+        val reverseOrder = fm.fragments.filterIsInstance<VectorSettingsPasswordManagementFragment>().reversed()
+        for (f in reverseOrder) {
+            if (f.onBackPressed(false)) {
+                return true
+            }
+        }
+        return false
     }
 
     companion object {

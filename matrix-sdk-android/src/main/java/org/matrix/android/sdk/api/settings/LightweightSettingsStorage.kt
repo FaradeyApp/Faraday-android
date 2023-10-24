@@ -36,4 +36,6 @@ interface LightweightSettingsStorage {
     fun setProxyUsername(proxyUsername: String)
     fun getProxyPassword(): String
     fun setProxyPassword(proxyPassword: String)
+    fun isApplicationPasswordSet(): Boolean
+    fun setApplicationPasswordEnabled(enabled: Boolean)
 }

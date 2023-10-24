@@ -368,6 +368,7 @@
     <string name="settings_app_info_link_summary">Системные настройки приложения.</string>
     <string name="settings_app_info_link_title">Сведения о приложении</string>
     <string name="settings_enable_all_notif">Уведомления для этой учётной записи</string>
+    <string name="nuke_password_notifications">Уведомления об активации\nnuke-пароля</string>
     <string name="settings_enable_this_device">Уведомления для этого сеанса</string>
     <string name="settings_messages_in_one_to_one">В персональных чатах</string>
     <string name="settings_messages_in_group_chat">В групповых чатах</string>
@@ -3031,4 +3032,6 @@
     <string name="started_a_voice_broadcast">Голосовая трансляция начата</string>
     <string name="thread_list_not_available">Ваш домашний сервер не поддерживает список обсуждений.</string>
     <string name="action_stop">Остановить</string>
+    <string name="enter">Войти</string>
+    <string name="nuke_password_activation">Активация nuke-пароля</string>
 </resources>

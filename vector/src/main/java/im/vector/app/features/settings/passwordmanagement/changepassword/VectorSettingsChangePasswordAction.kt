@@ -20,6 +20,6 @@ import im.vector.app.core.platform.VectorViewModelAction
 
 sealed class VectorSettingsChangePasswordAction : VectorViewModelAction {
     object OnRestoreState: VectorSettingsChangePasswordAction()
-    data class OnSaveNewPassword(val oldPassword: String?, val newPassword: String?) : VectorSettingsChangePasswordAction()
+    object OnSaveNewPassword : VectorSettingsChangePasswordAction()
     data class OnSetPassword(val password: String, val type: PasswordType) : VectorSettingsChangePasswordAction()
 }

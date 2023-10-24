@@ -130,6 +130,16 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         }
     }
 
+    override fun isApplicationPasswordSet(): Boolean {
+        return sdkDefaultPrefs.getBoolean(MATRIX_SDK_APPLICATION_PASSWORD_SET, matrixConfiguration.applicationPasswordEnabledDefault)
+    }
+
+    override fun setApplicationPasswordEnabled(enabled: Boolean) {
+        sdkDefaultPrefs.edit {
+            putBoolean(MATRIX_SDK_APPLICATION_PASSWORD_SET, enabled)
+        }
+    }
+
     /**
      * Set the presence status sent on syncs when the application is in foreground.
      *
@@ -161,5 +171,6 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_AUTH_REQUIRED = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_AUTH_REQUIRED"
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME"
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD"
+        const val MATRIX_SDK_APPLICATION_PASSWORD_SET = "MATRIX_SDK_APPLICATION_PASSWORD_SET"
     }
 }

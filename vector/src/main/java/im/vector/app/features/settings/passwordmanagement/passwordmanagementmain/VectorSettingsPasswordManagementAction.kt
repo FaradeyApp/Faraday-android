@@ -19,5 +19,6 @@ package im.vector.app.features.settings.passwordmanagement.passwordmanagementmai
 import im.vector.app.core.platform.VectorViewModelAction
 
 sealed class VectorSettingsPasswordManagementAction : VectorViewModelAction {
+    object DeletePassword: VectorSettingsPasswordManagementAction()
     object OnClickNukePassword: VectorSettingsPasswordManagementAction()
 }

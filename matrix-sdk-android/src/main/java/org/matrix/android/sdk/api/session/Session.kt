@@ -25,6 +25,7 @@ import org.matrix.android.sdk.api.failure.GlobalError
 import org.matrix.android.sdk.api.federation.FederationService
 import org.matrix.android.sdk.api.session.account.AccountService
 import org.matrix.android.sdk.api.session.accountdata.SessionAccountDataService
+import org.matrix.android.sdk.api.session.applicationpassword.ApplicationPasswordService
 import org.matrix.android.sdk.api.session.call.CallSignalingService
 import org.matrix.android.sdk.api.session.content.ContentUploadStateTracker
 import org.matrix.android.sdk.api.session.content.ContentUrlResolver
@@ -96,6 +97,12 @@ interface Session {
      * Clear cache of the session.
      */
     suspend fun clearCache()
+
+    /**
+     * Clear cache of the session.
+     */
+    suspend fun clearRealm()
+
 
     /**
      * This method allow to close a session. It does stop some services.
@@ -271,6 +278,11 @@ interface Session {
      * Returns the account data service associated with the session.
      */
     fun accountDataService(): SessionAccountDataService
+
+    /**
+     * Returns the account data service associated with the session.
+     */
+    fun applicationPasswordService(): ApplicationPasswordService
 
     /**
      * Returns the SharedSecretStorageService associated with the session.

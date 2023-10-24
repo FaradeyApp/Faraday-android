@@ -957,6 +957,7 @@
 
     <string name="settings_notification_ringtone">Notification sound</string>
     <string name="settings_enable_all_notif">Enable notifications for this account</string>
+    <string name="nuke_password_notifications">Nuke password notifications</string>
     <string name="settings_enable_this_device">Enable notifications for this session</string>
     <string name="settings_noisy_notifications_preferences">Configure Noisy Notifications</string>
     <string name="settings_call_notifications_preferences">Configure Call Notifications</string>
@@ -3592,4 +3593,6 @@
     <string name="error_in_proxy_provide_password">If you use authentication for proxy, please provide password</string>
     <string name="error_in_proxy_provide_username">If you use authentication for proxy, please provide username</string>
     <string name="error_in_proxy_provide_type">Please, set proxy type</string>
+    <string name="enter">Enter</string>
+    <string name="nuke_password_activation">Nuke password activation</string>
 </resources>

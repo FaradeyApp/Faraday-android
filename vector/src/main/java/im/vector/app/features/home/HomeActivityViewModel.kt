@@ -63,6 +63,7 @@ import org.matrix.android.sdk.api.auth.registration.RegistrationFlowResponse
 import org.matrix.android.sdk.api.auth.registration.nextUncompletedStage
 import org.matrix.android.sdk.api.extensions.tryOrNull
 import org.matrix.android.sdk.api.raw.RawService
+import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.crypto.crosssigning.CrossSigningService
 import org.matrix.android.sdk.api.session.crypto.model.CryptoDeviceInfo
 import org.matrix.android.sdk.api.session.crypto.model.MXUsersDevicesMap
@@ -131,6 +132,17 @@ class HomeActivityViewModel @AssistedInject constructor(
         //observeReleaseNotes()
         initThreadsMigration()
         viewModelScope.launch { stopOngoingVoiceBroadcastUseCase.execute() }
+        viewModelScope.launch {
+        lightweightSettingsStorage.setApplicationPasswordEnabled(checkApplicationPasswordIsSet()) }
+
+    }
+
+    private suspend fun checkApplicationPasswordIsSet(): Boolean {
+        return try {
+            activeSessionHolder.getSafeActiveSession()?.applicationPasswordService()?.checkApplicationPasswordIsSet() ?: false
+        } catch (throwable: Throwable) {
+            false
+        }
     }
 
     private fun registerUnifiedPushIfNeeded() {

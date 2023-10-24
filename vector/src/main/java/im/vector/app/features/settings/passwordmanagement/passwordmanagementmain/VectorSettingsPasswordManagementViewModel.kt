@@ -39,12 +39,13 @@ class VectorSettingsPasswordManagementViewModel @AssistedInject constructor(
     companion object : MavericksViewModelFactory<VectorSettingsPasswordManagementViewModel, VectorSettingsPasswordManagementViewState> by hiltMavericksViewModelFactory()
 
     override fun handle(action: VectorSettingsPasswordManagementAction) {
-        when(action) {
+        when (action) {
             is VectorSettingsPasswordManagementAction.OnClickNukePassword -> {
                 withState {
                     _viewEvents.post(VectorSettingsPasswordManagementViewEvents.ShowPasswordDialog(it.nukePassword))
                 }
             }
+            is VectorSettingsPasswordManagementAction.DeletePassword -> deletePassword()
         }
     }
 
@@ -55,7 +56,7 @@ class VectorSettingsPasswordManagementViewModel @AssistedInject constructor(
     private fun fetchNukePassword() {
         viewModelScope.launch {
             try {
-                val nukePassword = session.accountService().getNukePassword()
+                val nukePassword = session.applicationPasswordService().getNukePassword()
                 setState {
                     copy(
                             nukePassword = nukePassword
@@ -68,6 +69,17 @@ class VectorSettingsPasswordManagementViewModel @AssistedInject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun deletePassword() = viewModelScope.launch {
+        try {
+            val isPasswordDeleted = session.applicationPasswordService().deleteApplicationPassword()
+            if (isPasswordDeleted) {
+                _viewEvents.post(VectorSettingsPasswordManagementViewEvents.OnPasswordDeleted)
+            }
+        } catch (failure: Throwable) {
+            _viewEvents.post(VectorSettingsPasswordManagementViewEvents.ShowError(message = failure.message.orEmpty()))
         }
     }
 }

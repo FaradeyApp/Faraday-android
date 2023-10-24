@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.session.profile
+package im.vector.app.features.settings.passwordmanagement.setpassword
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import im.vector.app.core.platform.VectorViewModelAction
+import im.vector.app.features.settings.passwordmanagement.changepassword.PasswordType
 
-@JsonClass(generateAdapter = true)
-internal data class AddNewAccountResponse(
-        @Json(name = "status") val status: String
-)
+sealed class VectorSettingsSetPasswordAction : VectorViewModelAction {
+    object OnRestoreState: VectorSettingsSetPasswordAction()
+    object OnSavePassword : VectorSettingsSetPasswordAction()
+    data class OnSetPassword(val password: String, val type: PasswordType) : VectorSettingsSetPasswordAction()
+}

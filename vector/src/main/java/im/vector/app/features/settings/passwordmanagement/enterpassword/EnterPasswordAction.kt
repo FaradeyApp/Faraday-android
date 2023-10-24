@@ -18,4 +18,8 @@ package im.vector.app.features.settings.passwordmanagement.enterpassword
 
 import im.vector.app.core.platform.VectorViewModelAction
 
-sealed class EnterPasswordAction : VectorViewModelAction
+sealed class EnterPasswordAction : VectorViewModelAction {
+    object RestoreState: EnterPasswordAction()
+    object OnClickNext: EnterPasswordAction()
+    data class OnChangePassword(val password: String): EnterPasswordAction()
+}

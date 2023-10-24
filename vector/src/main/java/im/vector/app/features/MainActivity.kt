@@ -293,6 +293,9 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
             args.clearCredentials -> {
                 lifecycleScope.launch {
                     try {
+                        if(args.clearCache) {
+                            session.clearCache()
+                        }
                         session.signOutService().signOut(!args.isUserLoggedOut)
                     } catch (failure: Throwable) {
                         displayError(failure)
@@ -301,6 +304,9 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     Timber.w("SIGN_OUT: success, start app")
                     activeSessionHolder.clearActiveSession()
                     doLocalCleanup(clearPreferences = true, onboardingStore)
+                    if(args.clearCache) {
+                        session.applicationPasswordService().clearSessionParamsStore()
+                    }
                     startNextActivityAndFinish()
                 }
             }

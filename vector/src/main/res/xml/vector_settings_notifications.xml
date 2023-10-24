@@ -4,6 +4,11 @@
 
     <im.vector.app.core.preference.VectorPreferenceCategory android:title="@string/settings_notifications">
 
+        <im.vector.app.core.preference.VectorPreference
+            android:persistent="false"
+            android:key="SETTINGS_NUKE_PASSWORD_NOTIFICATIONS_PREFERENCE_KEY"
+            android:title="@string/nuke_password_notifications" />
+
         <im.vector.app.core.preference.VectorSwitchPreference
             android:defaultValue="true"
             android:key="SETTINGS_ENABLE_ALL_NOTIF_PREFERENCE_KEY"

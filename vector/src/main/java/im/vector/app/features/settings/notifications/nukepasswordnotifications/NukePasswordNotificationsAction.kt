@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.session.account
+package im.vector.app.features.settings.notifications.nukepasswordnotifications
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import im.vector.app.core.platform.VectorViewModelAction
 
-@JsonClass(generateAdapter = true)
-internal data class NukePasswordResponse (
-    @Json(name = "password")
-    val password: String
-)
+sealed class NukePasswordNotificationsAction : VectorViewModelAction {
+    data class OnNotificationSelected(val notification: NukeNotificationModel): NukePasswordNotificationsAction()
+}

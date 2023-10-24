@@ -33,6 +33,7 @@ import org.matrix.android.sdk.api.session.SessionLifecycleObserver
 import org.matrix.android.sdk.api.session.ToDeviceService
 import org.matrix.android.sdk.api.session.account.AccountService
 import org.matrix.android.sdk.api.session.accountdata.SessionAccountDataService
+import org.matrix.android.sdk.api.session.applicationpassword.ApplicationPasswordService
 import org.matrix.android.sdk.api.session.cache.CacheService
 import org.matrix.android.sdk.api.session.call.CallSignalingService
 import org.matrix.android.sdk.api.session.content.ContentUploadStateTracker
@@ -122,6 +123,7 @@ internal class DefaultSession @Inject constructor(
         private val contentDownloadStateTracker: ContentDownloadStateTracker,
         private val homeServerCapabilitiesService: Lazy<HomeServerCapabilitiesService>,
         private val accountDataService: Lazy<SessionAccountDataService>,
+        private val applicationPasswordService: Lazy<ApplicationPasswordService>,
         private val sharedSecretStorageService: Lazy<SharedSecretStorageService>,
         private val accountService: Lazy<AccountService>,
         private val eventService: Lazy<EventService>,
@@ -194,6 +196,12 @@ internal class DefaultSession @Inject constructor(
         workManagerProvider.cancelAllWorks()
     }
 
+    override suspend fun clearRealm() {
+        withContext(NonCancellable) {
+            cacheService.get().clearCache()
+        }
+    }
+
     override fun onGlobalError(globalError: GlobalError) {
         dispatchTo(sessionListeners) { session, listener ->
             listener.onGlobalError(session, globalError)
@@ -235,6 +243,7 @@ internal class DefaultSession @Inject constructor(
     override fun spaceService(): SpaceService = spaceService.get()
     override fun openIdService(): OpenIdService = openIdService.get()
     override fun accountDataService(): SessionAccountDataService = accountDataService.get()
+    override fun applicationPasswordService(): ApplicationPasswordService = applicationPasswordService.get()
     override fun sharedSecretStorageService(): SharedSecretStorageService = sharedSecretStorageService.get()
 
     override fun getOkHttpClient(): OkHttpClient {

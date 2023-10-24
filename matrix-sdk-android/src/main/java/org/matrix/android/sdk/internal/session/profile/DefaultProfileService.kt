@@ -61,6 +61,7 @@ internal class DefaultProfileService @Inject constructor(
         private val getLoginByTokenTask: GetLoginByTokenTask,
         private val reLoginInMultiAccountTask: ReLoginInMultiAccountTask,
         private val registerNewAccountTask: RegisterNewAccountTask,
+        private val verifyEnterPasswordTask: VerifyEnterPasswordTask,
         private val pendingThreePidMapper: PendingThreePidMapper,
         private val userStore: UserStore,
         private val fileUploader: FileUploader
@@ -214,6 +215,15 @@ internal class DefaultProfileService @Inject constructor(
     override suspend fun addNewAccount(userName: String, password: String): Boolean {
         return addNewAccountTask.execute(
                 AddNewAccountTask.Params(
+                        username = userName,
+                        password = password
+                )
+        )
+    }
+
+    override suspend fun verifyEnterPassword(userName: String, password: String): Credentials? {
+        return verifyEnterPasswordTask.execute(
+                VerifyEnterPasswordTask.Params(
                         username = userName,
                         password = password
                 )

@@ -16,9 +16,12 @@
 
 package im.vector.app.features.widgets
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -27,7 +30,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.PermissionRequest
+import android.webkit.ValueCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.airbnb.mvrx.Fail
@@ -81,17 +87,70 @@ class WidgetFragment :
 
     private val fragmentArgs: WidgetArgs by args()
     private val viewModel: WidgetViewModel by activityViewModel()
+    private var fileUploader: WebViewFileUploader? = null
+    private lateinit var getImage: ActivityResultLauncher<String>
+    private lateinit var permissionListenerGetImages: ActivityResultLauncher<String>
 
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentRoomWidgetBinding {
         return FragmentRoomWidgetBinding.inflate(inflater, container, false)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getImage = registerForActivityResult(
+                ActivityResultContracts.GetContent(),
+                ::onImageSelected
+        )
+    }
+
+    private fun onImageSelected(uri: Uri?) {
+        fileUploader?.setActivityResult(uri = uri)
+    }
+
+    private fun requestPermissionToGetFiles() =
+            permissionListenerGetImages.launch(
+                    when (Build.VERSION.SDK_INT >= 33) {
+                        true -> READ_MEDIA_IMAGES_PERMISSION
+                        false -> READ_FILE_PERMISSION
+                    }
+            )
+
+    private fun setPermissionListeners() {
+        permissionListenerGetImages = registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                getImage.launch("image/*")
+            }
+        }
+    }
+
+    private fun checkPermissionToGetFiles() =
+            ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    when (Build.VERSION.SDK_INT >= 33) {
+                        true -> READ_MEDIA_IMAGES_PERMISSION
+                        false -> READ_FILE_PERMISSION
+                    }
+            ) == PackageManager.PERMISSION_GRANTED
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setPermissionListeners()
+        fileUploader = WebViewFileUploader(requireActivity())
+
         views.widgetWebView.setupForWidget(requireActivity(), checkWebViewPermissionsUseCase, this)
         if (fragmentArgs.kind.isAdmin()) {
             viewModel.getPostAPIMediator().setWebView(views.widgetWebView)
         }
+        fileUploader?.initFileUploader(views.widgetWebView, object : WebViewFileUploader.CallBackListener {
+            override fun onOpenedChooser(filePathCallback: ValueCallback<Array<Uri>>) {
+                if (checkPermissionToGetFiles())
+                    getImage.launch("image/*")
+                else
+                    requestPermissionToGetFiles()
+            }
+        })
         viewModel.observeViewEvents {
             Timber.v("Observed view events: $it")
             when (it) {
@@ -179,28 +238,33 @@ class WidgetFragment :
                     )
                     true
                 }
+
                 R.id.action_delete -> {
                     deleteWidget()
                     true
                 }
+
                 R.id.action_refresh -> {
                     if (state.formattedURL.complete) {
                         views.widgetWebView.reload()
                     }
                     true
                 }
+
                 R.id.action_widget_open_ext -> {
                     if (state.formattedURL.complete) {
                         openUrlInExternalBrowser(requireContext(), state.formattedURL.invoke())
                     }
                     true
                 }
+
                 R.id.action_revoke -> {
                     if (state.status == WidgetStatus.WIDGET_ALLOWED) {
                         revokeWidget()
                     }
                     true
                 }
+
                 else -> false
             }
         }
@@ -226,6 +290,7 @@ class WidgetFragment :
                 views.widgetProgressBar.isIndeterminate = true
                 views.widgetProgressBar.isVisible = true
             }
+
             is Success -> {
                 if (views.widgetWebView.url == null) {
                     loadFormattedUrl(formattedUrl())
@@ -235,23 +300,27 @@ class WidgetFragment :
                     Uninitialized -> {
                         views.widgetWebView.isInvisible = true
                     }
+
                     is Loading -> {
                         setStateError(null)
                         views.widgetWebView.isInvisible = false
                         views.widgetProgressBar.isIndeterminate = true
                         views.widgetProgressBar.isVisible = true
                     }
+
                     is Success -> {
                         views.widgetWebView.isInvisible = false
                         views.widgetProgressBar.isVisible = false
                         setStateError(null)
                     }
+
                     is Fail -> {
                         views.widgetProgressBar.isInvisible = true
                         setStateError(state.webviewLoadedUrl.error.message)
                     }
                 }
             }
+
             is Fail -> {
                 // we need to show Error
                 views.widgetWebView.isInvisible = true
@@ -320,7 +389,7 @@ class WidgetFragment :
                 context = requireContext(),
                 activityResultLauncher = termsActivityResultLauncher,
                 serviceType = TermsService.ServiceType.IntegrationManager,
-                baseUrl = if(fragmentArgs.kind == WidgetKind.ROOM) INTEGRATION_DEFAULT_URL else displayTerms.url,
+                baseUrl = if (fragmentArgs.kind == WidgetKind.ROOM) INTEGRATION_DEFAULT_URL else displayTerms.url,
                 token = displayTerms.token
         )
     }
@@ -371,6 +440,8 @@ class WidgetFragment :
     }
 
     companion object {
+        private const val READ_FILE_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
+        private const val READ_MEDIA_IMAGES_PERMISSION = Manifest.permission.READ_MEDIA_IMAGES
         private const val INTEGRATION_DEFAULT_URL = "https://scalar.vector.im"
     }
 }

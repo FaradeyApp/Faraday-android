@@ -42,6 +42,7 @@ import im.vector.app.core.di.ActiveSessionHolder
 import im.vector.app.core.dialogs.ExportKeysDialog
 import im.vector.app.core.extensions.queryExportKeys
 import im.vector.app.core.extensions.registerStartForActivityResult
+import im.vector.app.core.extensions.toMvRxBundle
 import im.vector.app.core.intent.ExternalIntentData
 import im.vector.app.core.intent.analyseIntent
 import im.vector.app.core.intent.getFilenameFromUri
@@ -50,6 +51,7 @@ import im.vector.app.core.preference.VectorPreference
 import im.vector.app.core.preference.VectorPreferenceCategory
 import im.vector.app.core.preference.VectorSwitchPreference
 import im.vector.app.core.utils.copyToClipboard
+import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.openFileSelection
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.DialogImportE2eKeysBinding
@@ -68,6 +70,9 @@ import im.vector.app.features.pin.PinCodeStore
 import im.vector.app.features.pin.PinMode
 import im.vector.app.features.raw.wellknown.getElementWellknown
 import im.vector.app.features.raw.wellknown.isE2EByDefault
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordFragment
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenArgs
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenType
 import im.vector.app.features.settings.passwordmanagement.passwordmanagementmain.VectorSettingsPasswordManagementFragment
 import im.vector.app.features.themes.ThemeUtils
 import kotlinx.coroutines.flow.launchIn
@@ -77,9 +82,11 @@ import me.gujun.android.span.span
 import org.matrix.android.sdk.api.MatrixCallback
 import org.matrix.android.sdk.api.extensions.getFingerprintHumanReadable
 import org.matrix.android.sdk.api.raw.RawService
+import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.crypto.crosssigning.isVerified
 import org.matrix.android.sdk.api.session.crypto.model.DeviceInfo
 import org.matrix.android.sdk.api.session.crypto.model.DevicesListResponse
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -94,6 +101,7 @@ class VectorSettingsSecurityPrivacyFragment :
     @Inject lateinit var navigator: Navigator
     @Inject lateinit var analyticsConfig: AnalyticsConfig
     @Inject lateinit var vectorPreferences: VectorPreferences
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
 
     override var titleRes = R.string.settings_security_and_privacy
     override val preferenceXmlRes = R.xml.vector_settings_security_privacy
@@ -111,7 +119,7 @@ class VectorSettingsSecurityPrivacyFragment :
     }
 
     private val passwordPreference by lazy {
-        findPreference<VectorPreference>("SETTINGS_PASSWORD_PREFERENCE_KEY")!!
+        findPreference<VectorPreference>("SETTINGS_PASSWORD_PREFERENCE_KEY")
     }
 
     private val cryptoInfoDeviceNamePreference by lazy {
@@ -355,9 +363,12 @@ class VectorSettingsSecurityPrivacyFragment :
     }
 
     private fun setUpNukePassword() {
-        passwordPreference.setOnPreferenceClickListener {
-            openPasswordEnterScreen()
-            true
+        passwordPreference?.let {
+            it.isVisible = session.sessionParams.homeServerUrl.isCustomServer()
+            it.setOnPreferenceClickListener {
+                openPasswordManagementScreen()
+                true
+            }
         }
     }
 
@@ -455,8 +466,11 @@ class VectorSettingsSecurityPrivacyFragment :
         (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsPinFragment::class.java)
     }
 
-    private fun openPasswordEnterScreen() {
-        (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsPasswordManagementFragment::class.java)
+    private fun openPasswordManagementScreen() {
+        when(lightweightSettingsStorage.isApplicationPasswordSet()) {
+            true -> (vectorActivity as? VectorSettingsActivity)?.navigateTo(EnterPasswordFragment::class.java, EnterPasswordScreenArgs(EnterPasswordScreenType.SETTINGS).toMvRxBundle(), EnterPasswordFragment.TAG)
+            false -> (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsPasswordManagementFragment::class.java)
+        }
     }
 
 

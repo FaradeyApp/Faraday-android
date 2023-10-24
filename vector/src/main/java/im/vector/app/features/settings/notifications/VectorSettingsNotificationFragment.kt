@@ -47,6 +47,7 @@ import im.vector.app.core.pushers.PushersManager
 import im.vector.app.core.pushers.UnifiedPushHelper
 import im.vector.app.core.services.GuardServiceStarter
 import im.vector.app.core.utils.combineLatest
+import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.isIgnoringBatteryOptimizations
 import im.vector.app.core.utils.registerForPermissionsResult
 import im.vector.app.core.utils.requestDisablingBatteryOptimization
@@ -58,8 +59,10 @@ import im.vector.app.features.notifications.NotificationUtils
 import im.vector.app.features.settings.BackgroundSyncMode
 import im.vector.app.features.settings.BackgroundSyncModeChooserDialog
 import im.vector.app.features.settings.VectorPreferences
+import im.vector.app.features.settings.VectorSettingsActivity
 import im.vector.app.features.settings.VectorSettingsBaseFragment
 import im.vector.app.features.settings.VectorSettingsFragmentInteractionListener
+import im.vector.app.features.settings.notifications.nukepasswordnotifications.NukePasswordNotificationsFragment
 import im.vector.lib.core.utils.compat.getParcelableExtraCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -127,6 +130,13 @@ class VectorSettingsNotificationFragment :
     }
 
     override fun bindPref() {
+        findPreference<VectorPreference>(VectorPreferences.SETTINGS_NUKE_PASSWORD_NOTIFICATIONS_PREFERENCE_KEY)?.let {
+            it.isVisible = session.sessionParams.homeServerUrl.isCustomServer()
+            it.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                (vectorActivity as? VectorSettingsActivity)?.navigateTo(NukePasswordNotificationsFragment::class.java)
+                true
+            }
+        }
         findPreference<VectorSwitchPreference>(VectorPreferences.SETTINGS_ENABLE_ALL_NOTIF_PREFERENCE_KEY)!!.let { pref ->
             val pushRuleService = session.pushRuleService()
             val mRuleMaster = pushRuleService.getPushRules().getAllRules()

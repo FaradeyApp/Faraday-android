@@ -16,6 +16,7 @@
 
 package im.vector.app.features.settings.passwordmanagement.changepassword
 
+
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -29,6 +30,7 @@ import im.vector.app.R
 import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.preference.ButtonPreference
 import im.vector.app.core.preference.TextInputPreference
+import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsBaseFragment
 
 @AndroidEntryPoint
@@ -45,24 +47,25 @@ class VectorSettingsChangePasswordFragment :
     }
 
     private val oldPasswordPreference by lazy {
-        findPreference<TextInputPreference>("SETTINGS_CURRENT_PASSWORD_PREFERENCE_KEY")?.editTextView
+        findPreference<TextInputPreference>(VectorPreferences.SETTINGS_CURRENT_PASSWORD_PREFERENCE_KEY)
     }
 
     private val newPasswordPreference by lazy {
-        findPreference<TextInputPreference>("SETTINGS_NEW_PASSWORD_PREFERENCE_KEY")?.editTextView
+        findPreference<TextInputPreference>(VectorPreferences.SETTINGS_NEW_PASSWORD_PREFERENCE_KEY)
     }
 
     private val repeatPasswordPreference by lazy {
-        findPreference<TextInputPreference>("SETTINGS_REPEAT_PASSWORD_PREFERENCE_KEY")?.editTextView
+        findPreference<TextInputPreference>(VectorPreferences.SETTINGS_REPEAT_PASSWORD_PREFERENCE_KEY)
     }
 
     private val savePreference by lazy {
-        findPreference<ButtonPreference>("SETTINGS_PROXY_SAVE_KEY")
+        findPreference<ButtonPreference>(SETTINGS_SAVE_KEY)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewEvents()
+        viewModel.handle(VectorSettingsChangePasswordAction.OnRestoreState)
     }
 
     override fun bindPref() {
@@ -70,45 +73,24 @@ class VectorSettingsChangePasswordFragment :
             pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 if (checkFieldsAreValid()) {
                     viewModel.handle(
-                            VectorSettingsChangePasswordAction.OnSaveNewPassword(
-                                    oldPassword = oldPasswordPreference?.text.toString(),
-                                    newPassword = newPasswordPreference?.text.toString()
-                            )
+                            VectorSettingsChangePasswordAction.OnSaveNewPassword
                     )
                 }
                 true
             }
         }
-        oldPasswordPreference?.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                super.onTextChanged(s, start, before, count)
-                viewModel.handle(
-                        VectorSettingsChangePasswordAction.OnSetPassword(
-                                password = s.toString(), type = PasswordType.OLD
-                        )
-                )
-            }
-        })
-        newPasswordPreference?.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                super.onTextChanged(s, start, before, count)
-                viewModel.handle(
-                        VectorSettingsChangePasswordAction.OnSetPassword(
-                                password = s.toString(), type = PasswordType.NEW
-                        )
-                )
-            }
-        })
-        repeatPasswordPreference?.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                super.onTextChanged(s, start, before, count)
-                viewModel.handle(
-                        VectorSettingsChangePasswordAction.OnSetPassword(
-                                password = s.toString(), type = PasswordType.REPEAT
-                        )
-                )
-            }
-        })
+        oldPasswordPreference?.let { pref ->
+            pref.passwordMode = true
+            pref.setTextWatcher(type = PasswordType.OLD)
+        }
+        newPasswordPreference?.let { pref ->
+            pref.passwordMode = true
+            pref.setTextWatcher(type = PasswordType.NEW)
+        }
+        repeatPasswordPreference?.let { pref ->
+            pref.passwordMode = true
+            pref.setTextWatcher(type = PasswordType.REPEAT)
+        }
     }
 
     private fun observeViewEvents() {
@@ -121,23 +103,18 @@ class VectorSettingsChangePasswordFragment :
                 is VectorSettingsChangePasswordViewEvents.ShowError -> {
                     when (event.location) {
                         ErrorLocation.OLD_PASSWORD -> {
-                            oldPasswordPreference?.error = getString(R.string.settings_fail_to_update_password_invalid_current_password)
+                            oldPasswordPreference?.textInputLayout?.error = event.message
                         }
 
                         ErrorLocation.GENERAL -> {
-                            Toast.makeText(activity, R.string.settings_fail_to_update_password, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, event.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
-
                 is VectorSettingsChangePasswordViewEvents.RestorePasswords -> {
-                    listOf(
-                            oldPasswordPreference,
-                            newPasswordPreference,
-                            repeatPasswordPreference
-                    ).forEach {
-                        it?.setText(event.oldPassword)
-                    }
+                    oldPasswordPreference?.text = event.oldPassword
+                    newPasswordPreference?.text = event.newPassword
+                    repeatPasswordPreference?.text = event.repeatPassword
                 }
             }
         }
@@ -145,22 +122,39 @@ class VectorSettingsChangePasswordFragment :
 
     private fun checkFieldsAreValid(): Boolean {
         var allFieldsAreValid = true
-        if (oldPasswordPreference?.text?.isEmpty() == true) {
-            oldPasswordPreference?.error = getString(R.string.error_empty_field_old_password)
+        if (oldPasswordPreference?.editTextView?.text?.isEmpty() == true) {
+            oldPasswordPreference?.textInputLayout?.error = getString(R.string.error_empty_field_old_password)
             allFieldsAreValid = false
         }
-        if (newPasswordPreference?.text?.isEmpty() == true) {
-            newPasswordPreference?.error = getString(R.string.error_empty_field_new_password)
+        if (newPasswordPreference?.editTextView?.text?.isEmpty() == true) {
+            newPasswordPreference?.textInputLayout?.error = getString(R.string.error_empty_field_new_password)
             allFieldsAreValid = false
         }
-        if (repeatPasswordPreference?.text?.isEmpty() == true) {
-            repeatPasswordPreference?.error = getString(R.string.error_empty_field_repeat_new_password)
+        if (repeatPasswordPreference?.editTextView?.text?.isEmpty() == true) {
+            repeatPasswordPreference?.textInputLayout?.error = getString(R.string.error_empty_field_repeat_new_password)
             allFieldsAreValid = false
         }
-        if (repeatPasswordPreference?.text.toString() != newPasswordPreference?.text.toString()) {
-            repeatPasswordPreference?.error = getString(R.string.error_passwords_do_not_match)
+        if (repeatPasswordPreference?.editTextView?.text.toString() != newPasswordPreference?.editTextView?.text.toString()) {
+            repeatPasswordPreference?.textInputLayout?.error = getString(R.string.error_passwords_do_not_match)
             allFieldsAreValid = false
         }
         return allFieldsAreValid
+    }
+
+    private fun TextInputPreference.setTextWatcher(type: PasswordType) {
+        textWatcher = object : SimpleTextWatcher() {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                viewModel.handle(
+                        VectorSettingsChangePasswordAction.OnSetPassword(
+                                password = s.toString(), type = type
+                        )
+                )
+                textInputLayout?.error = null
+            }
+        }
+    }
+
+    companion object {
+        private const val SETTINGS_SAVE_KEY = "SETTINGS_SAVE_KEY"
     }
 }

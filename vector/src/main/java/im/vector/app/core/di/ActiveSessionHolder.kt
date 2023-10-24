@@ -29,7 +29,6 @@ import im.vector.app.features.session.SessionListener
 import kotlinx.coroutines.runBlocking
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.session.Session
-import org.matrix.android.sdk.api.session.sync.SyncState
 import org.matrix.android.sdk.api.util.Optional
 import org.matrix.android.sdk.api.util.toOption
 import timber.log.Timber

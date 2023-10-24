@@ -153,4 +153,6 @@ interface ProfileService {
     ): Boolean
 
     suspend fun addNewAccount(userName: String, password: String): Boolean
+
+    suspend fun verifyEnterPassword(userName: String, password: String): Credentials?
 }

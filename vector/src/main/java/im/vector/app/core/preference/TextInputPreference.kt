@@ -18,13 +18,13 @@ package im.vector.app.core.preference
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.text.InputType
+import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
 import androidx.preference.PreferenceViewHolder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textfield.TextInputLayout.END_ICON_PASSWORD_TOGGLE
-import com.vanniktech.ui.Color
 import im.vector.app.R
 
 class TextInputPreference @JvmOverloads constructor(
@@ -45,8 +45,11 @@ class TextInputPreference @JvmOverloads constructor(
             notifyChanged()
         }
 
+    var textWatcher: TextWatcher? = null
+
     var editTextView: TextInputEditText? = null
     var textInputLayout: TextInputLayout? = null
+    var passwordMode: Boolean = false
 
     init {
         layoutResource = R.layout.vector_preference_text_input
@@ -63,15 +66,20 @@ class TextInputPreference @JvmOverloads constructor(
         super.onBindViewHolder(holder)
         editTextView = holder.findViewById(R.id.text_input_edit_text) as? TextInputEditText
         textInputLayout = holder.findViewById(R.id.text_input_layout) as? TextInputLayout
-        editTextView?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        textInputLayout?.endIconMode = END_ICON_PASSWORD_TOGGLE
-        textInputLayout?.setEndIconTintList(
-                ColorStateList.valueOf(android.graphics.Color.GRAY)
-        )
         textInputLayout?.hint = hint
         editTextView?.isSingleLine = true
         text.takeIf { it.isNotEmpty() }?.let {
             editTextView?.setText(text)
+        }
+        textWatcher?.let {
+            editTextView?.addTextChangedListener(it)
+        }
+        if(passwordMode) {
+            textInputLayout?.endIconMode = END_ICON_PASSWORD_TOGGLE
+            textInputLayout?.setEndIconTintList(
+                    ColorStateList.valueOf(android.graphics.Color.GRAY)
+            )
+            editTextView?.transformationMethod = PasswordTransformationMethod.getInstance()
         }
     }
 }

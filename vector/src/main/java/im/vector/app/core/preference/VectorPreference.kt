@@ -31,6 +31,7 @@ import android.widget.TextView
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.core.widget.ImageViewCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
@@ -90,10 +91,12 @@ open class VectorPreference : Preference {
         }
 
     var currentHighlightAnimator: Animator? = null
+    var isIconFrameHidden: Boolean = false
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         val itemView = holder.itemView
         addClickListeners(itemView)
+        val iconFrame = holder.itemView.findViewById(R.id.icon_frame) as? View
 
         // display the title in multi-line to avoid ellipsis.
         try {
@@ -118,6 +121,7 @@ open class VectorPreference : Preference {
 
             // cancel existing animation (find a way to resume if happens during anim?)
             currentHighlightAnimator?.cancel()
+
             if (isHighlighted) {
                 val colorFrom = Color.TRANSPARENT
                 val colorTo = ThemeUtils.getColor(itemView.context, R.attr.colorPrimary)
@@ -151,6 +155,9 @@ open class VectorPreference : Preference {
         }
 
         super.onBindViewHolder(holder)
+        if(isIconFrameHidden) {
+            iconFrame?.isGone = true
+        }
     }
 
     /**

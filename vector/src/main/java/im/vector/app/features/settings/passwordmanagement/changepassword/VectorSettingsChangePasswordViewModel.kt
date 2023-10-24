@@ -24,6 +24,7 @@ import im.vector.app.core.di.MavericksAssistedViewModelFactory
 import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import kotlinx.coroutines.launch
+import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.isInvalidPassword
 import org.matrix.android.sdk.api.session.Session
 
@@ -41,30 +42,39 @@ class VectorSettingsChangePasswordViewModel @AssistedInject constructor(
 
     override fun handle(action: VectorSettingsChangePasswordAction) {
         when (action) {
-            is VectorSettingsChangePasswordAction.OnSaveNewPassword -> changePassword(
-                    oldPassword = action.oldPassword,
-                    newPassword = action.newPassword
-            )
-
+            is VectorSettingsChangePasswordAction.OnSaveNewPassword -> changePassword()
             is VectorSettingsChangePasswordAction.OnSetPassword -> handleSetPassword(
                     password = action.password,
                     type = action.type
             )
+
             is VectorSettingsChangePasswordAction.OnRestoreState -> restoreState()
         }
     }
 
-    private fun changePassword(oldPassword: String?, newPassword: String?) {
-
-        viewModelScope.launch {
-            try {
-                session.accountService().changePassword(password = oldPassword ?: return@launch, newPassword = newPassword ?: return@launch)
-                _viewEvents.post(VectorSettingsChangePasswordViewEvents.OnPasswordReset)
-            } catch (failure: Throwable) {
-                if (failure.isInvalidPassword()) {
-                    _viewEvents.post(VectorSettingsChangePasswordViewEvents.ShowError(message = "", location = ErrorLocation.OLD_PASSWORD))
-                } else {
-                    _viewEvents.post(VectorSettingsChangePasswordViewEvents.ShowError(message = failure.message.orEmpty(), location = ErrorLocation.GENERAL))
+    private fun changePassword() {
+        withState {
+            viewModelScope.launch {
+                try {
+                    val passwordChanged = session.applicationPasswordService().updateApplicationPassword(
+                            oldPassword = it.oldPassword, newPassword = it.newPassword
+                    )
+                    if (passwordChanged) {
+                        _viewEvents.post(VectorSettingsChangePasswordViewEvents.OnPasswordReset)
+                    }
+                } catch (failure: Throwable) {
+                    if (failure is Failure.ServerError) {
+                        if (failure.isInvalidPassword()) {
+                            _viewEvents.post(VectorSettingsChangePasswordViewEvents.ShowError(message = failure.error.message, location = ErrorLocation.OLD_PASSWORD))
+                        } else {
+                            _viewEvents.post(
+                                    VectorSettingsChangePasswordViewEvents.ShowError(
+                                            message = failure.error.message,
+                                            location = ErrorLocation.GENERAL
+                                    )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -79,11 +89,13 @@ class VectorSettingsChangePasswordViewModel @AssistedInject constructor(
     }
 
     private fun restoreState() = withState {
-        _viewEvents.post(VectorSettingsChangePasswordViewEvents.RestorePasswords(
-                oldPassword = it.oldPassword,
-                newPassword = it.newPassword,
-                repeatPassword = it.repeatPassword
-        ))
+        _viewEvents.post(
+                VectorSettingsChangePasswordViewEvents.RestorePasswords(
+                        oldPassword = it.oldPassword,
+                        newPassword = it.newPassword,
+                        repeatPassword = it.repeatPassword
+                )
+        )
     }
 }
 

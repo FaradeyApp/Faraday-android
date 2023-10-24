@@ -57,7 +57,11 @@ fun WebView.setupForWidget(activity: Activity,
     @Suppress("DEPRECATION")
     settings.allowUniversalAccessFromFileURLs = true
 
+    settings.allowFileAccess = true
+
     settings.displayZoomControls = false
+
+    settings.mixedContentMode = 0
 
     settings.mediaPlaybackRequiresUserGesture = false
 

@@ -19,5 +19,7 @@ package im.vector.app.features.settings.passwordmanagement.passwordmanagementmai
 import im.vector.app.core.platform.VectorViewEvents
 
 sealed class VectorSettingsPasswordManagementViewEvents : VectorViewEvents {
+    object OnPasswordDeleted: VectorSettingsPasswordManagementViewEvents()
     data class ShowPasswordDialog(val nukePassword: String): VectorSettingsPasswordManagementViewEvents()
+    data class ShowError(val message: String) : VectorSettingsPasswordManagementViewEvents()
 }

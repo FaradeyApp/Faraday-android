@@ -74,6 +74,14 @@ fun Throwable.isInvalidPassword() = this is Failure.ServerError &&
         error.code == MatrixError.M_FORBIDDEN &&
         error.message == "Invalid password"
 
+fun Throwable.isInvalidApplicationPassword() = this is Failure.ServerError &&
+        error.code == MatrixError.M_FORBIDDEN &&
+        error.message == "Incorrect password entered"
+
+fun Throwable.isNukePasswordEntered() = this is Failure.ServerError &&
+        error.code == MatrixError.M_FORBIDDEN &&
+        error.message == "Nuke-password has been entered!"
+
 fun Throwable.isRegistrationDisabled() = this is Failure.ServerError &&
         error.code == MatrixError.M_FORBIDDEN &&
         httpCode == HttpsURLConnection.HTTP_FORBIDDEN

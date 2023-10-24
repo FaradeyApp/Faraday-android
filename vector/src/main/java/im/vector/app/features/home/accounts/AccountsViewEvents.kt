@@ -19,6 +19,6 @@ package im.vector.app.features.home.accounts
 import im.vector.app.core.platform.VectorViewEvents
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
 
-sealed class AccountsViewEvents : VectorViewEvents{
-    data class SelectAccount(val account: AccountItem): AccountsViewEvents()
+sealed class AccountsViewEvents : VectorViewEvents {
+    data class SelectAccount(val account: AccountItem) : AccountsViewEvents()
 }

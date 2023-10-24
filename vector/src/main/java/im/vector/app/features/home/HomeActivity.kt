@@ -48,10 +48,9 @@ import im.vector.app.core.extensions.validateBackPressed
 import im.vector.app.core.platform.VectorBaseActivity
 import im.vector.app.core.platform.VectorMenuProvider
 import im.vector.app.core.pushers.UnifiedPushHelper
-import im.vector.app.core.resources.ColorProvider
+import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.registerForPermissionsResult
 import im.vector.app.core.utils.startSharePlainTextIntent
-import im.vector.app.core.utils.toast
 import im.vector.app.databinding.ActivityHomeBinding
 import im.vector.app.features.MainActivity
 import im.vector.app.features.MainActivityArgs
@@ -91,6 +90,9 @@ import im.vector.app.features.workers.signout.ServerBackupStatusViewModel
 import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_MATRIX_TO_CUSTOM_SCHEME_URL_BASE
 import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_ROOM_LINK_PREFIX
 import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_USER_LINK_PREFIX
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordFragment
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenArgs
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenType
 import im.vector.lib.core.utils.compat.getParcelableExtraCompat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -100,6 +102,7 @@ import org.matrix.android.sdk.api.session.permalinks.PermalinkService
 import org.matrix.android.sdk.api.session.sync.InitialSyncStrategy
 import org.matrix.android.sdk.api.session.sync.SyncRequestState
 import org.matrix.android.sdk.api.session.sync.initialSyncStrategy
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.MatrixItem
 import timber.log.Timber
 import javax.inject.Inject
@@ -145,6 +148,7 @@ class HomeActivity :
     @Inject lateinit var nightlyProxy: NightlyProxy
     @Inject lateinit var disclaimerDialog: DisclaimerDialog
     @Inject lateinit var notificationPermissionManager: NotificationPermissionManager
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
 
     private var isNewAppLayoutEnabled: Boolean = false // delete once old app layout is removed
 
@@ -217,7 +221,10 @@ class HomeActivity :
         roomListSharedActionViewModel = viewModelProvider[RoomListSharedActionViewModel::class.java]
         views.drawerLayout.addDrawerListener(drawerListener)
         if (isFirstCreation()) {
-            if (vectorPreferences.isNewAppLayoutEnabled()) {
+            if(lightweightSettingsStorage.isApplicationPasswordSet() && activeSessionHolder.getSafeActiveSession()?.sessionParams?.homeServerUrl?.isCustomServer() == true) {
+                views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                replaceFragment(views.homeDetailFragmentContainer, EnterPasswordFragment::class.java, EnterPasswordScreenArgs(type = EnterPasswordScreenType.HOME))
+            } else if (vectorPreferences.isNewAppLayoutEnabled()) {
                 views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 replaceFragment(views.homeDetailFragmentContainer, NewHomeDetailFragment::class.java)
             } else {
@@ -806,5 +813,16 @@ class HomeActivity :
 
     override fun mxToBottomSheetSwitchToSpace(spaceId: String) {
         navigator.switchToSpace(this, spaceId, Navigator.PostSwitchSpaceAction.OpenRoomList)
+    }
+
+    fun handleApplicationPasswordEntered() {
+        if (vectorPreferences.isNewAppLayoutEnabled()) {
+            views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            replaceFragment(views.homeDetailFragmentContainer, NewHomeDetailFragment::class.java)
+        } else {
+            replaceFragment(views.homeDetailFragmentContainer, HomeDetailFragment::class.java)
+            replaceFragment(views.homeDrawerFragmentContainer, HomeDrawerFragment::class.java)
+            views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        }
     }
 }

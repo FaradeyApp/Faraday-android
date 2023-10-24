@@ -16,14 +16,94 @@
 
 package im.vector.app.features.settings.passwordmanagement.enterpassword
 
+import com.airbnb.mvrx.MavericksViewModelFactory
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import im.vector.app.core.di.MavericksAssistedViewModelFactory
+import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
+import im.vector.app.features.settings.passwordmanagement.setpassword.PasswordErrorLocation
+import kotlinx.coroutines.launch
+import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.api.failure.isInvalidApplicationPassword
+import org.matrix.android.sdk.api.failure.isNukePasswordEntered
+import org.matrix.android.sdk.api.session.Session
 
 class EnterPasswordViewModel @AssistedInject constructor(
-        @Assisted private val initialState: EnterPasswordViewState
+        @Assisted private val initialState: EnterPasswordViewState,
+        private val session: Session
 ) : VectorViewModel<EnterPasswordViewState, EnterPasswordAction, EnterPasswordViewEvents>(initialState) {
-    override fun handle(action: EnterPasswordAction) {
+
+    @AssistedFactory
+    interface Factory : MavericksAssistedViewModelFactory<EnterPasswordViewModel, EnterPasswordViewState> {
+        override fun create(initialState: EnterPasswordViewState): EnterPasswordViewModel
     }
 
+    companion object : MavericksViewModelFactory<EnterPasswordViewModel, EnterPasswordViewState> by hiltMavericksViewModelFactory()
+
+    override fun handle(action: EnterPasswordAction) {
+        when (action) {
+            is EnterPasswordAction.OnChangePassword -> {
+                setState {
+                    copy(
+                            password = action.password
+                    )
+                }
+            }
+
+            is EnterPasswordAction.OnClickNext ->
+                withState {
+                    verifyPassword(password = it.password)
+                }
+
+            is EnterPasswordAction.RestoreState ->
+                withState {
+                    _viewEvents.post(
+                            EnterPasswordViewEvents.OnRestoreState(
+                                    password = it.password,
+                                    error = it.error
+                            )
+                    )
+                }
+        }
+    }
+
+    private fun verifyPassword(password: String) = viewModelScope.launch {
+        try {
+            val correctPasswordEntered = session.applicationPasswordService().loginByApplicationPassword(
+                    password = password
+            )
+            if(correctPasswordEntered) {
+                _viewEvents.post(EnterPasswordViewEvents.OnNavigateToPasswordManagement)
+            }
+        } catch (throwable: Throwable) {
+            if (throwable is Failure.ServerError) {
+                when {
+                    throwable.isInvalidApplicationPassword() -> _viewEvents.post(
+                            EnterPasswordViewEvents.ShowError(
+                                    message = throwable.error.message,
+                                    location = PasswordErrorLocation.PASSWORD
+                            )
+                    )
+                    throwable.isNukePasswordEntered() -> {
+                        _viewEvents.post(
+                                EnterPasswordViewEvents.ShowError(
+                                        message = throwable.error.message,
+                                        location = PasswordErrorLocation.GENERAL
+                                )
+                        )
+                        _viewEvents.post(EnterPasswordViewEvents.OnNukePasswordEntered)
+                    }
+                    else -> _viewEvents.post(
+                            EnterPasswordViewEvents.ShowError(
+                                    message = throwable.message.orEmpty(),
+                                    location = PasswordErrorLocation.GENERAL
+                            )
+                    )
+                }
+                return@launch
+            }
+        }
+    }
 }

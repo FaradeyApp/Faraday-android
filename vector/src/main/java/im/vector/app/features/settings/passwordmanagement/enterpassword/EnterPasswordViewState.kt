@@ -18,4 +18,7 @@ package im.vector.app.features.settings.passwordmanagement.enterpassword
 
 import com.airbnb.mvrx.MavericksState
 
-class EnterPasswordViewState : MavericksState
+data class EnterPasswordViewState(
+        val password: String = "",
+        val error: String = ""
+) : MavericksState

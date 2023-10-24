@@ -17,5 +17,11 @@
 package im.vector.app.features.settings.passwordmanagement.enterpassword
 
 import im.vector.app.core.platform.VectorViewEvents
+import im.vector.app.features.settings.passwordmanagement.setpassword.PasswordErrorLocation
 
-sealed class EnterPasswordViewEvents : VectorViewEvents
+sealed class EnterPasswordViewEvents : VectorViewEvents {
+    data class OnRestoreState(val password: String, val error: String): EnterPasswordViewEvents()
+    object OnNavigateToPasswordManagement: EnterPasswordViewEvents()
+    object OnNukePasswordEntered: EnterPasswordViewEvents()
+    data class ShowError(val message: String, val location: PasswordErrorLocation) : EnterPasswordViewEvents()
+}

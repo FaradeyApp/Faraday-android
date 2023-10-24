@@ -111,8 +111,11 @@ import im.vector.app.features.settings.legals.LegalsViewModel
 import im.vector.app.features.settings.locale.LocalePickerViewModel
 import im.vector.app.features.settings.notifications.VectorSettingsNotificationViewModel
 import im.vector.app.features.settings.notifications.VectorSettingsPushRuleNotificationViewModel
+import im.vector.app.features.settings.notifications.nukepasswordnotifications.NukePasswordNotificationsViewModel
 import im.vector.app.features.settings.passwordmanagement.changepassword.VectorSettingsChangePasswordViewModel
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordViewModel
 import im.vector.app.features.settings.passwordmanagement.passwordmanagementmain.VectorSettingsPasswordManagementViewModel
+import im.vector.app.features.settings.passwordmanagement.setpassword.VectorSettingsSetPasswordViewModel
 import im.vector.app.features.settings.push.PushGatewaysViewModel
 import im.vector.app.features.settings.threepids.ThreePidsSettingsViewModel
 import im.vector.app.features.share.IncomingShareViewModel
@@ -361,6 +364,21 @@ interface MavericksViewModelModule {
     @IntoMap
     @MavericksViewModelKey(VectorSettingsChangePasswordViewModel::class)
     fun vectorSettingsChangePasswordViewModelFactory(factory: VectorSettingsChangePasswordViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @MavericksViewModelKey(EnterPasswordViewModel::class)
+    fun enterPasswordViewModel(factory: EnterPasswordViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @MavericksViewModelKey(VectorSettingsSetPasswordViewModel::class)
+    fun vectorSettingsSetPasswordViewModel(factory: VectorSettingsSetPasswordViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @MavericksViewModelKey(NukePasswordNotificationsViewModel::class)
+    fun nukePasswordNotificationsViewModel(factory: NukePasswordNotificationsViewModel.Factory): MavericksAssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap

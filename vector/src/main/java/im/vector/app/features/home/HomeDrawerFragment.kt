@@ -35,6 +35,7 @@ import im.vector.app.core.extensions.replaceChildFragment
 import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.resources.BuildMeta
+import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.startSharePlainTextIntent
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.DialogAddAccountBinding
@@ -78,7 +79,7 @@ class HomeDrawerFragment :
         if (savedInstanceState == null) {
             replaceChildFragment(R.id.homeDrawerGroupListContainer, SpaceListFragment::class.java)
         }
-        views.homeDrawerAddAccountButton.isVisible = session.sessionParams.homeServerUrl == SERVER_WITH_ENABLED_MULTIACCOUNT
+        views.homeDrawerAddAccountButton.isVisible = session.sessionParams.homeServerUrl.isCustomServer()
         session.userService().getUserLive(session.myUserId).observeK(viewLifecycleOwner) { optionalUser ->
             val user = optionalUser?.getOrNull()
             if (user != null) {
@@ -298,11 +299,10 @@ class HomeDrawerFragment :
     }
 
     fun updateAddAccountButtonVisibility(isVisible: Boolean) {
-        views.homeDrawerAddAccountButton.isVisible = isVisible && session.sessionParams.homeServerUrl == SERVER_WITH_ENABLED_MULTIACCOUNT
+        views.homeDrawerAddAccountButton.isVisible = isVisible && session.sessionParams.homeServerUrl.isCustomServer()
     }
 
     companion object {
         private const val ACCOUNTS_FRAGMENT_TAG = "AccountsFragment"
-        private const val SERVER_WITH_ENABLED_MULTIACCOUNT = "https://113-30-191-89.cloud-xip.com/"
     }
 }

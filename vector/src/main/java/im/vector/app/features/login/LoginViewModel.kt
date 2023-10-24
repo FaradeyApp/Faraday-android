@@ -51,6 +51,7 @@ import org.matrix.android.sdk.api.auth.wellknown.WellknownResult
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.MatrixIdFailure
 import org.matrix.android.sdk.api.session.Session
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 
@@ -60,6 +61,7 @@ import java.util.concurrent.CancellationException
 class LoginViewModel @AssistedInject constructor(
         @Assisted initialState: LoginViewState,
         private val applicationContext: Context,
+        private val lightweightSettingsStorage: LightweightSettingsStorage,
         private val authenticationService: AuthenticationService,
         private val activeSessionHolder: ActiveSessionHolder,
         private val homeServerConnectionConfigFactory: HomeServerConnectionConfigFactory,
@@ -375,6 +377,7 @@ class LoginViewModel @AssistedInject constructor(
                     )
                 }
             }
+
             LoginAction.ResetHomeServerUrl -> {
                 viewModelScope.launch {
                     authenticationService.reset()
@@ -390,6 +393,7 @@ class LoginViewModel @AssistedInject constructor(
                     }
                 }
             }
+
             LoginAction.ResetSignMode -> {
                 setState {
                     copy(
@@ -400,6 +404,7 @@ class LoginViewModel @AssistedInject constructor(
                     )
                 }
             }
+
             LoginAction.ResetLogin -> {
                 viewModelScope.launch {
                     authenticationService.cancelPendingLoginOrRegistration()
@@ -411,6 +416,7 @@ class LoginViewModel @AssistedInject constructor(
                     }
                 }
             }
+
             LoginAction.ResetResetPassword -> {
                 setState {
                     copy(
@@ -451,6 +457,7 @@ class LoginViewModel @AssistedInject constructor(
             ServerType.MatrixOrg ->
                 // Request login flow here
                 handle(LoginAction.UpdateHomeServer(matrixOrgUrl))
+
             ServerType.EMS,
             ServerType.Other -> _viewEvents.post(LoginViewEvents.OnServerSelectionDone(action.serverType))
         }
@@ -593,6 +600,7 @@ class LoginViewModel @AssistedInject constructor(
             when (data) {
                 is WellknownResult.Prompt ->
                     onWellknownSuccess(action, data, homeServerConnectionConfig)
+
                 is WellknownResult.FailPrompt ->
                     // Relax on IS discovery if homeserver is valid
                     if (data.homeServerUrl != null && data.wellKnown != null) {
@@ -600,6 +608,7 @@ class LoginViewModel @AssistedInject constructor(
                     } else {
                         onWellKnownError()
                     }
+
                 else -> {
                     onWellKnownError()
                 }
@@ -658,6 +667,7 @@ class LoginViewModel @AssistedInject constructor(
                     )
                 }
             }
+
             else -> {
                 setState {
                     copy(
@@ -732,14 +742,24 @@ class LoginViewModel @AssistedInject constructor(
     }
 
     private suspend fun onSessionCreated(session: Session) {
+
         activeSessionHolder.setActiveSession(session)
 
         authenticationService.reset()
         configureAndStartSessionUseCase.execute(session)
+        lightweightSettingsStorage.setApplicationPasswordEnabled(checkApplicationPasswordIsSet(session))
         setState {
             copy(
                     asyncLoginAction = Success(Unit)
             )
+        }
+    }
+
+    private suspend fun checkApplicationPasswordIsSet(session: Session): Boolean {
+        return try {
+            session.applicationPasswordService().checkApplicationPasswordIsSet()
+        } catch (throwable: Throwable) {
+            false
         }
     }
 
@@ -820,9 +840,9 @@ class LoginViewModel @AssistedInject constructor(
                 // SSO login is taken first
                 data.supportedLoginTypes.contains(LoginFlowTypes.SSO) &&
                         data.supportedLoginTypes.contains(LoginFlowTypes.PASSWORD) -> LoginMode.SsoAndPassword(
-                            data.ssoIdentityProviders.toSsoState(),
-                            data.hasOidcCompatibilityFlow
-                        )
+                        data.ssoIdentityProviders.toSsoState(),
+                        data.hasOidcCompatibilityFlow
+                )
                 data.supportedLoginTypes.contains(LoginFlowTypes.SSO) -> LoginMode.Sso(data.ssoIdentityProviders.toSsoState(), data.hasOidcCompatibilityFlow)
                 data.supportedLoginTypes.contains(LoginFlowTypes.PASSWORD) -> LoginMode.Password
                 else -> LoginMode.Unsupported

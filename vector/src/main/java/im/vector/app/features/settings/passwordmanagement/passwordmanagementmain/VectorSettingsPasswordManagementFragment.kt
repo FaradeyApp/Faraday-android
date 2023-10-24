@@ -16,24 +16,33 @@
 
 package im.vector.app.features.settings.passwordmanagement.passwordmanagementmain
 
+
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import com.airbnb.mvrx.fragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
 import im.vector.app.core.dialogs.NukePasswordDialog
-import im.vector.app.core.preference.ButtonPreference
+import im.vector.app.core.platform.OnBackPressed
 import im.vector.app.core.preference.VectorPreference
 import im.vector.app.core.preference.VectorSwitchPreference
 import im.vector.app.features.settings.VectorSettingsActivity
 import im.vector.app.features.settings.VectorSettingsBaseFragment
 import im.vector.app.features.settings.passwordmanagement.changepassword.VectorSettingsChangePasswordFragment
-import im.vector.app.features.settings.passwordmanagement.VectorSettingsSetPasswordFragment
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordFragment
+import im.vector.app.features.settings.passwordmanagement.setpassword.VectorSettingsSetPasswordFragment
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import java.lang.Exception
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class VectorSettingsPasswordManagementFragment :
-        VectorSettingsBaseFragment() {
+        VectorSettingsBaseFragment(), OnBackPressed {
+
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
 
     private val viewModel: VectorSettingsPasswordManagementViewModel by fragmentViewModel()
 
@@ -53,41 +62,61 @@ class VectorSettingsPasswordManagementFragment :
         findPreference<VectorPreference>("SETTINGS_NUKE_PASSWORD_PREFERENCE_KEY")
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewEvents()
+        bindPref()
     }
 
     override fun bindPref() {
-        passwordPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            changePasswordPreference?.isVisible = passwordPreference?.isChecked ?: false
-            nukePasswordPreference?.isVisible = passwordPreference?.isChecked ?: false
-            true
+        passwordPreference?.let { pref ->
+            pref.isIconFrameHidden = true
+            pref.isChecked = lightweightSettingsStorage.isApplicationPasswordSet()
+            pref.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                when (passwordPreference?.isChecked == true) {
+                    true -> goToSetPasswordScreen()
+                    false -> viewModel.handle(VectorSettingsPasswordManagementAction.DeletePassword)
+                }
+                true
+            }
         }
         changePasswordPreference?.apply {
+            isIconFrameHidden = true
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 goToChangePasswordScreen()
                 true
             }
-            isVisible = passwordPreference?.isChecked ?: false
+            isVisible = lightweightSettingsStorage.isApplicationPasswordSet()
         }
         nukePasswordPreference?.apply {
+            isIconFrameHidden = true
             onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 showNukePassword()
                 true
             }
-            isVisible = passwordPreference?.isChecked ?: false
+            isVisible = lightweightSettingsStorage.isApplicationPasswordSet()
         }
     }
 
     private fun observeViewEvents() {
         viewModel.observeViewEvents { event ->
-            when(event) {
+            when (event) {
                 is VectorSettingsPasswordManagementViewEvents.ShowPasswordDialog -> {
                     activity?.let {
                         NukePasswordDialog().show(it, event.nukePassword)
                     }
+                }
+
+                is VectorSettingsPasswordManagementViewEvents.ShowError -> {
+                    Toast.makeText(activity, event.message, Toast.LENGTH_SHORT).show()
+                    lightweightSettingsStorage.setApplicationPasswordEnabled(true)
+                }
+
+                is VectorSettingsPasswordManagementViewEvents.OnPasswordDeleted -> {
+                    Toast.makeText(activity, "Application password disabled", Toast.LENGTH_SHORT).show()
+                    lightweightSettingsStorage.setApplicationPasswordEnabled(false)
+                    changePasswordPreference?.isVisible = false
+                    nukePasswordPreference?.isVisible = false
                 }
             }
         }
@@ -105,5 +134,16 @@ class VectorSettingsPasswordManagementFragment :
         (vectorActivity as? VectorSettingsActivity)?.navigateTo(VectorSettingsSetPasswordFragment::class.java)
     }
 
-
+    override fun onBackPressed(toolbarButton: Boolean): Boolean {
+        try {
+            val entry = requireActivity().supportFragmentManager.getBackStackEntryAt(requireActivity().supportFragmentManager.backStackEntryCount - 2)
+            if (entry.name == EnterPasswordFragment.TAG) {
+                requireActivity().supportFragmentManager.popBackStack(entry.name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                return true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
 }

@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.session.account
+package org.matrix.android.sdk.internal.session.applicationpassword.tasks
 
-
+import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
+import org.matrix.android.sdk.internal.session.applicationpassword.ApplicationPasswordAPI
 import org.matrix.android.sdk.internal.task.Task
 import javax.inject.Inject
 
-internal interface GetNukePasswordTask : Task<Unit, String>
 
-internal class DefaultGetNukePasswordTask @Inject constructor(
-        private val accountAPI: AccountAPI,
+internal interface CheckApplicationPasswordIsSetTask : Task<Unit, Boolean> {
+}
+
+internal class DefaultCheckApplicationPasswordIsSetTask @Inject constructor(
+        private val applicationPasswordAPI: ApplicationPasswordAPI,
         private val globalErrorReceiver: GlobalErrorReceiver
-) : GetNukePasswordTask {
-    override suspend fun execute(params: Unit): String {
-        return executeRequest(globalErrorReceiver) {
-            accountAPI.getNukePassword().password
+) : CheckApplicationPasswordIsSetTask {
+    override suspend fun execute(params: Unit): Boolean {
+        val result = try {
+            executeRequest(globalErrorReceiver) {
+                applicationPasswordAPI.checkApplicationPasswordIsSet()
+            }.status
+        } catch (throwable: Throwable) {
+            if(throwable is Failure.ServerError) throw throwable
+            false
         }
+        return result == "Application password set"
     }
 }

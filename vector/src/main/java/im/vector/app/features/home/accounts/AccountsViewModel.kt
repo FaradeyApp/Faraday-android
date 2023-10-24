@@ -30,11 +30,13 @@ import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import timber.log.Timber
 
 class AccountsViewModel @AssistedInject constructor(
         @Assisted initialState: AccountsViewState,
         private val session: Session,
+        private val lightweightSettingsStorage: LightweightSettingsStorage,
         private val authenticationService: AuthenticationService
 ) : VectorViewModel<AccountsViewState, AccountsAction, AccountsViewEvents>(initialState) {
 
@@ -71,6 +73,9 @@ class AccountsViewModel @AssistedInject constructor(
     }
 
     private fun handleSetRestartAppValue(value: Boolean) {
+        if(value) {
+            lightweightSettingsStorage.setApplicationPasswordEnabled(false)
+        }
         setState {
             copy(
                     restartApp = value
