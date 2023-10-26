@@ -21,7 +21,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -144,6 +143,11 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
     @Inject lateinit var torEventListener: TorEventListener
     @Inject lateinit var fcmHelper: FcmHelper
 
+
+    /**
+     * In case connection type was changed to ConnectionType.ONION in VectorSettingsConnectionMethodFragment
+     * and app was killed, it is required to fetch connection type from storage and start TorService.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         shortcutsHandler.updateShortcutsWithPreviousIntent()
@@ -165,6 +169,12 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
         handle(StartAppAction.StartApp)
     }
 
+
+    /**
+     * Once Tor Connection is established and proxy port is saved to storage in TorEventBroadcaster,
+     * app start process can be finished as all network dependencies now would be injected with an updated
+     * Tor proxy port. In case of a TorService failure app will be started with previously set connection type.
+     */
     private fun observeTorEvents() {
         torEventListener.torEventLiveData.observeEvent(this) { torEvent ->
             when (torEvent) {
@@ -293,6 +303,8 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
             args.clearCredentials -> {
                 lifecycleScope.launch {
                     try {
+                        // Clear cache is set to true in case nuke password has been activated.
+                        // Thus ClearCacheTask should be executed along with local cleanup.
                         if(args.clearCache) {
                             session.clearCache()
                         }
@@ -305,6 +317,8 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     activeSessionHolder.clearActiveSession()
                     doLocalCleanup(clearPreferences = true, onboardingStore)
                     if(args.clearCache) {
+                        // Clear cache is set to true in case nuke password has been activated.
+                        // In case of accounts switching all recent sessions should be deleted as well.
                         session.applicationPasswordService().clearSessionParamsStore()
                     }
                     startNextActivityAndFinish()

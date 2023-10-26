@@ -21,6 +21,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import im.vector.app.R
 import im.vector.app.databinding.DialogNukePasswordBinding
 
+
+/**
+ * Dialog used to demonstrate nuke password fetched from server.
+ */
+
 class NukePasswordDialog {
     fun show(activity: FragmentActivity, nukePassword: String) {
         val dialogLayout = activity.layoutInflater.inflate(R.layout.dialog_nuke_password, null)

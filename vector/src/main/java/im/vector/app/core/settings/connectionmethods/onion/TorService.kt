@@ -22,6 +22,11 @@ import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+
+/**
+ * Class provides access to TorServiceController generated in VectorApplication class.
+ */
 @Singleton
 class TorService @Inject constructor(
         val lightweightSettingsStorage: LightweightSettingsStorage,

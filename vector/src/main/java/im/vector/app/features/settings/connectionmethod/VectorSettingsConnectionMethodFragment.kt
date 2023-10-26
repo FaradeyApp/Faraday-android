@@ -158,6 +158,11 @@ class VectorSettingsConnectionMethodFragment : ConnectionSettingsBaseFragment() 
         Timber.d("I2P connecting 3")
     }
 
+    /**
+     * Once a user changes connection type, app restart is required so that all network dependencies would be updated
+     * with new proxy settings. If connection type was set to ConnectionType.ONION, after app rebirth TorService
+     * would be started in MainActivity.
+     */
     private fun restartApp(connectionType: ConnectionType) {
         if (connectionType != ConnectionType.ONION && torService.isProxyRunning) {
             torService.switchTorPrefState(false)

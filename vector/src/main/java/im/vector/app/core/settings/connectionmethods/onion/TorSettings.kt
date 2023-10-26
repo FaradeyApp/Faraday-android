@@ -19,6 +19,11 @@ package im.vector.app.core.settings.connectionmethods.onion
 import android.content.Context
 import io.matthewnelson.topl_service_base.ApplicationDefaultTorSettings
 
+/**
+ * Tor Settings. It is possible to set up other obfs4 bridges to circumvent Firewall in case
+ * bridges below get blocked in a certain country. Other than that current settings work just fine.
+ */
+
 class TorSettings(private val context: Context) : ApplicationDefaultTorSettings() {
     override val connectionPadding = ConnectionPadding.OFF
 

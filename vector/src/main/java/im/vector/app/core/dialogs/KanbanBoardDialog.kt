@@ -24,6 +24,11 @@ import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.utils.isValidUrl
 import im.vector.app.databinding.DialogKanbanBoardBinding
 
+
+/**
+ * Dialog to prompt user to enter kanban board url.
+ */
+
 class KanbanBoardDialog {
 
     fun show(activity: Activity, kanbanBoardDialogListener: KanbanBoardDialogListener) {

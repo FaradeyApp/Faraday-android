@@ -22,12 +22,22 @@ import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * Listener class to Tor Broadcast Events.
+ */
+
 class TorEventBroadcaster @Inject constructor(
         private val torService: TorService,
         private val torEventListener: TorEventListener,
         private val lightweightSettingsStorage: LightweightSettingsStorage
 ) : TorServiceEventBroadcaster() {
 
+
+    /**
+     * Receives current information concerning the port through which onion connection is supposed to be established.
+     * Once httpPort is received it is saved in storage and torEventListener is notified. Further logic is handled
+     * by MainActivity and LoginConnectionSettingsFragment.
+     */
     override fun broadcastPortInformation(torPortInfo: TorPortInfo) {
         Timber.d("PortInfo: " + torPortInfo.httpPort)
         if (torPortInfo.httpPort != null) {

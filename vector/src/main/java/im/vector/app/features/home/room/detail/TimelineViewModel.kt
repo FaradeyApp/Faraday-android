@@ -1380,6 +1380,11 @@ class TimelineViewModel @AssistedInject constructor(
         room.sendService().endPoll(eventId)
     }
 
+
+    /**
+     * Workaround to send State Event to add Kanban Board Widget to chat directly as Integration Manager
+     * in SchildiChat seems to be temporarily broken: https://github.com/vector-im/element-android/issues/8392.
+     */
     private fun handleSendAddKanbanBoardRequest(url: String) = viewModelScope.launch {
         try {
             val adapter = MatrixJsonParser.getMoshi()

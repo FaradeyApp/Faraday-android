@@ -747,6 +747,7 @@ class LoginViewModel @AssistedInject constructor(
 
         authenticationService.reset()
         configureAndStartSessionUseCase.execute(session)
+        //Check whether application password is set for this user. If so, after every launch, EnterPasswordFragment will be shown first.
         lightweightSettingsStorage.setApplicationPasswordEnabled(checkApplicationPasswordIsSet(session))
         setState {
             copy(

@@ -130,9 +130,13 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         }
     }
 
+    /**
+     * Indicates whether the application password will be shown to user when he launches the app.
+     */
     override fun isApplicationPasswordSet(): Boolean {
         return sdkDefaultPrefs.getBoolean(MATRIX_SDK_APPLICATION_PASSWORD_SET, matrixConfiguration.applicationPasswordEnabledDefault)
     }
+
 
     override fun setApplicationPasswordEnabled(enabled: Boolean) {
         sdkDefaultPrefs.edit {

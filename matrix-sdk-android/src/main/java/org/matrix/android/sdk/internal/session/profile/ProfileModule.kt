@@ -84,7 +84,4 @@ internal abstract class ProfileModule {
 
     @Binds
     abstract fun bindRegisterNewAccountTask(task: DefaultRegisterNewAccountTask): RegisterNewAccountTask
-
-    @Binds
-    abstract fun bindVerifyEnterPasswordTask(task: DefaultVerifyEnterPasswordTask): VerifyEnterPasswordTask
 }

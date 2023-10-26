@@ -140,11 +140,24 @@ interface ProfileService {
             )
         }
     }
-
+    /**
+     * Return multi-account data.
+     */
     suspend fun getMultipleAccount(homeServerConnectionConfig: HomeServerConnectionConfig): List<AccountItem>
+
+    /**
+     * Return user credentials by token.
+     */
     suspend fun getLoginByToken(token: String): AccountLoginCredentials
+
+    /**
+     * Switch to another account in multi-account.
+     */
     suspend fun reLoginMultiAccount(userId: String, homeServerConnectionConfig: HomeServerConnectionConfig, currentCredentials: Credentials, sessionCreator: SessionCreator): Session
 
+    /**
+     * Register new account.
+     */
     suspend fun createAccount(
             userName: String?,
             password: String?,
@@ -152,7 +165,8 @@ interface ProfileService {
             homeServerConnectionConfig: HomeServerConnectionConfig
     ): Boolean
 
+    /**
+     * Add account to multi-account.
+     */
     suspend fun addNewAccount(userName: String, password: String): Boolean
-
-    suspend fun verifyEnterPassword(userName: String, password: String): Credentials?
 }

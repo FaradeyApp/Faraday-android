@@ -63,7 +63,6 @@ import org.matrix.android.sdk.api.auth.registration.RegistrationFlowResponse
 import org.matrix.android.sdk.api.auth.registration.nextUncompletedStage
 import org.matrix.android.sdk.api.extensions.tryOrNull
 import org.matrix.android.sdk.api.raw.RawService
-import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.crypto.crosssigning.CrossSigningService
 import org.matrix.android.sdk.api.session.crypto.model.CryptoDeviceInfo
 import org.matrix.android.sdk.api.session.crypto.model.MXUsersDevicesMap
@@ -132,9 +131,10 @@ class HomeActivityViewModel @AssistedInject constructor(
         //observeReleaseNotes()
         initThreadsMigration()
         viewModelScope.launch { stopOngoingVoiceBroadcastUseCase.execute() }
+        //In case user has switched accounts in multi-account, application password setting should be updated.
         viewModelScope.launch {
-        lightweightSettingsStorage.setApplicationPasswordEnabled(checkApplicationPasswordIsSet()) }
-
+            lightweightSettingsStorage.setApplicationPasswordEnabled(checkApplicationPasswordIsSet())
+        }
     }
 
     private suspend fun checkApplicationPasswordIsSet(): Boolean {
@@ -159,6 +159,7 @@ class HomeActivityViewModel @AssistedInject constructor(
                 is RegisterUnifiedPushUseCase.RegisterUnifiedPushResult.NeedToAskUserForDistributor -> {
                     _viewEvents.post(HomeActivityViewEvents.AskUserForPushDistributor)
                 }
+
                 RegisterUnifiedPushUseCase.RegisterUnifiedPushResult.Success -> {
                     ensureFcmTokenIsRetrievedUseCase.execute(pushersManager, registerPusher = vectorPreferences.areNotificationEnabledForDevice())
                 }
@@ -212,9 +213,11 @@ class HomeActivityViewModel @AssistedInject constructor(
                         }
                     }
                 }
+
                 AuthenticationDescription.Login -> {
                     // do nothing
                 }
+
                 null -> {
                     // do nothing
                 }
@@ -313,6 +316,7 @@ class HomeActivityViewModel @AssistedInject constructor(
                         is SyncRequestState.Idle -> {
                             maybeVerifyOrBootstrapCrossSigning()
                         }
+
                         else -> Unit
                     }
 
@@ -530,9 +534,11 @@ class HomeActivityViewModel @AssistedInject constructor(
             HomeActivityViewActions.PushPromptHasBeenReviewed -> {
                 vectorPreferences.setDidAskUserToEnableSessionPush()
             }
+
             HomeActivityViewActions.ViewStarted -> {
                 initialize()
             }
+
             is HomeActivityViewActions.RegisterPushDistributor -> {
                 registerUnifiedPush(distributor = action.distributor)
             }

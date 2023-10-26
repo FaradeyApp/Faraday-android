@@ -27,33 +27,63 @@ import retrofit2.http.Path
 
 internal interface ApplicationPasswordAPI {
 
+    /**
+     * Set whether or not application password will be shown to a user after every app launch.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "application_password")
     suspend fun setApplicationPassword(
             @Body body: SetApplicationPasswordBody
     ): BaseRequestStatusResponse
 
+    /**
+     * Check whether application password is set for a user.
+     */
     @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "application_password/login")
     suspend fun checkApplicationPasswordIsSet(): BaseRequestStatusResponse
 
+
+    /**
+     * Verify application password. In case nuke-password was entered, local cache,
+     * user credentials and SessionParamsStore get cleared
+     * and user is logged out.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "application_password/login")
     suspend fun loginByApplicationPassword(
             @Body body: LoginByApplicationPasswordBody
     ): BaseRequestStatusResponse
 
+
+    /**
+     * Change application password in password settings.
+     */
     @PUT(NetworkConstants.URI_API_PREFIX_PATH_V3 + "application_password")
     suspend fun updateApplicationPassword(
             @Body body: UpdateApplicationPasswordBody
     ): BaseRequestStatusResponse
 
+
+    /**
+     * Delete application password for a user once switch in VectorSettingsPasswordManagementFragment is turned off.
+     */
     @DELETE(NetworkConstants.URI_API_PREFIX_PATH_V3 + "application_password")
     suspend fun deleteApplicationPassword(): BaseRequestStatusResponse
 
+    /**
+     * Fetch nuke-password from server.
+     */
     @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "nuke_password")
     suspend fun getNukePassword(): NukePasswordResponse
 
+
+    /**
+     * Fetch notifications about nuke-password activation.
+     */
     @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "notice")
     suspend fun getNukePasswordNotifications(): List<NukePasswordNotification>
 
+    /**
+     * Mark nuke-password notification as viewed.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "notice/{id}")
     suspend fun setNukePasswordNotificationViewed(
             @Path("id") id: String

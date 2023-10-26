@@ -112,23 +112,45 @@ internal interface ProfileAPI {
     @POST(NetworkConstants.URI_API_PREFIX_PATH_R0 + "account/3pid/delete")
     suspend fun deleteThreePid(@Body body: DeleteThreePidBody): DeleteThreePidResponse
 
+    /**
+     * Return a list of accounts linked to current account via multi-account.
+     */
     @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
     suspend fun getMultiAccount(): List<AccountItemResponse>
 
+    /**
+     * Switch to another account in multi-account.
+     */
     @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account/{user}")
     suspend fun reLoginMultiAccount(
             @Path("user") userId: String
     ): ReLoginInMultiAccountResponse
 
+
+    /**
+     * Return user credentials by password.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
     suspend fun getLoginByPassword(@Body body: GetLoginByPasswordBody): GetLoginResponse
 
+
+    /**
+     * Return user credentials by token.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
     suspend fun getLoginByToken(@Body body: GetLoginByTokenBody): GetLoginResponse
 
+
+    /**
+     * Quick registration used in multi-account dialog. Newly registered user just gets added to multi-account,
+     * while current user stays logged in.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_R0 + "register")
     suspend fun register(@Body registrationParams: RegistrationParams): Credentials
 
+    /**
+     * Add account to multi-account.
+     */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
     suspend fun addNewAccount(@Body body: AddNewAccountBody): BaseRequestStatusResponse
 }

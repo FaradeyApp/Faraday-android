@@ -39,6 +39,10 @@ import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
 import javax.inject.Inject
 
+
+/**
+ * Fragment handles multiple account feature.
+ */
 @AndroidEntryPoint
 class AccountsFragment :
         VectorBaseFragment<FragmentAccountsListBinding>(), AccountsController.Callback {
@@ -70,6 +74,9 @@ class AccountsFragment :
         }
     }
 
+    /**
+     * In case a user changes account, app restart is required to update dependencies with new Credentials.
+     */
     override fun invalidate() = withState(viewModel) { state ->
         if (state.restartApp) {
             viewModel.handle(AccountsAction.SetRestartAppValue(false))
