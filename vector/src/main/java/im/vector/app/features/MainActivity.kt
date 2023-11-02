@@ -67,6 +67,7 @@ import org.matrix.android.sdk.api.failure.GlobalError
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.ConnectionType
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 @Parcelize
@@ -305,7 +306,7 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     try {
                         // Clear cache is set to true in case nuke password has been activated.
                         // Thus ClearCacheTask should be executed along with local cleanup.
-                        if(args.clearCache) {
+                        if (args.clearCache) {
                             session.clearCache()
                         }
                         session.signOutService().signOut(!args.isUserLoggedOut)
@@ -315,12 +316,8 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     }
                     Timber.w("SIGN_OUT: success, start app")
                     activeSessionHolder.clearActiveSession()
-                    doLocalCleanup(clearPreferences = true, onboardingStore)
-                    if(args.clearCache) {
-                        // Clear cache is set to true in case nuke password has been activated.
-                        // In case of accounts switching all recent sessions should be deleted as well.
-                        session.applicationPasswordService().clearSessionParamsStore()
-                    }
+                    session.applicationPasswordService().clearSessionParamsStore()
+                    doLocalCleanup(clearPreferences = true, onboardingStore, clearAllFiles = args.clearCache)
                     startNextActivityAndFinish()
                 }
             }
@@ -340,7 +337,7 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
         Timber.w("Ignoring invalid token global error")
     }
 
-    private suspend fun doLocalCleanup(clearPreferences: Boolean, vectorSessionStore: VectorSessionStore) {
+    private suspend fun doLocalCleanup(clearPreferences: Boolean, vectorSessionStore: VectorSessionStore, clearAllFiles: Boolean = false) {
         // On UI Thread
         Glide.get(this@MainActivity).clearMemory()
 
@@ -359,6 +356,12 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
 
             // Also clear cache (Logs, etc...)
             deleteAllFiles(this@MainActivity.cacheDir)
+            if (clearAllFiles) {
+                deleteAllFiles(this@MainActivity.filesDir)
+                File("/data/data/$packageName/shared_prefs/").listFiles()?.forEach { file ->
+                    file.delete()
+                }
+            }
         }
     }
 
