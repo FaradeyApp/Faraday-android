@@ -17,10 +17,12 @@
 package im.vector.app.features
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -60,6 +62,7 @@ import im.vector.app.features.themes.ActivityOtherThemes
 import im.vector.app.features.ui.UiStateRepository
 import im.vector.lib.core.utils.compat.getParcelableExtraCompat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
@@ -144,7 +147,6 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
     @Inject lateinit var torEventListener: TorEventListener
     @Inject lateinit var fcmHelper: FcmHelper
 
-
     /**
      * In case connection type was changed to ConnectionType.ONION in VectorSettingsConnectionMethodFragment
      * and app was killed, it is required to fetch connection type from storage and start TorService.
@@ -170,7 +172,6 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
         handle(StartAppAction.StartApp)
     }
 
-
     /**
      * Once Tor Connection is established and proxy port is saved to storage in TorEventBroadcaster,
      * app start process can be finished as all network dependencies now would be injected with an updated
@@ -189,10 +190,12 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                         it.syncService().stopAnyBackgroundSync()
                     }
                 }
+
                 is TorEvent.ConnectionFailed -> {
                     Timber.i("torEventListener.torEventLiveData failure onCreate")
                     handleActivityCreated()
                 }
+
                 is TorEvent.TorLogEvent -> {
                     views.status.text = torEvent.message
                     views.status.isVisible = true
@@ -301,14 +304,19 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     startNextActivityAndFinish()
                 }
             }
+
+            args.clearCredentials && args.clearCache && args.isUserLoggedOut -> {
+                lifecycleScope.launch {
+                    Toast.makeText(applicationContext, getString(R.string.nuke_activated_notice), Toast.LENGTH_LONG).show()
+                    delay(5000)
+                    clearAppData()
+                    finish()
+                }
+            }
+
             args.clearCredentials -> {
                 lifecycleScope.launch {
                     try {
-                        // Clear cache is set to true in case nuke password has been activated.
-                        // Thus ClearCacheTask should be executed along with local cleanup.
-                        if (args.clearCache) {
-                            session.clearCache()
-                        }
                         session.signOutService().signOut(!args.isUserLoggedOut)
                     } catch (failure: Throwable) {
                         displayError(failure)
@@ -317,10 +325,11 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     Timber.w("SIGN_OUT: success, start app")
                     activeSessionHolder.clearActiveSession()
                     session.applicationPasswordService().clearSessionParamsStore()
-                    doLocalCleanup(clearPreferences = true, onboardingStore, clearAllFiles = args.clearCache)
+                    doLocalCleanup(clearPreferences = true, onboardingStore)
                     startNextActivityAndFinish()
                 }
             }
+
             args.clearCache -> {
                 lifecycleScope.launch {
                     session.clearCache()
@@ -337,7 +346,7 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
         Timber.w("Ignoring invalid token global error")
     }
 
-    private suspend fun doLocalCleanup(clearPreferences: Boolean, vectorSessionStore: VectorSessionStore, clearAllFiles: Boolean = false) {
+    private suspend fun doLocalCleanup(clearPreferences: Boolean, vectorSessionStore: VectorSessionStore) {
         // On UI Thread
         Glide.get(this@MainActivity).clearMemory()
 
@@ -356,12 +365,15 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
 
             // Also clear cache (Logs, etc...)
             deleteAllFiles(this@MainActivity.cacheDir)
-            if (clearAllFiles) {
-                deleteAllFiles(this@MainActivity.filesDir)
-                File("/data/data/$packageName/shared_prefs/").listFiles()?.forEach { file ->
-                    file.delete()
-                }
-            }
+        }
+    }
+
+    private fun clearAppData() {
+        try {
+            // clearing app data
+            (getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData() // note: it has a return value!
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -386,14 +398,17 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                 navigator.openLogin(this, null)
                 null
             }
+
             args.isSoftLogout -> {
                 // The homeserver has invalidated the token, with a soft logout
                 navigator.softLogout(this)
                 null
             }
+
             args.isUserLoggedOut ->
                 // the homeserver has invalidated the token (password changed, device deleted, other security reasons)
                 SignedOutActivity.newIntent(this)
+
             activeSessionHolder.hasActiveSession() ->
                 // We have a session.
                 // Check it can be opened
@@ -404,6 +419,7 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     navigator.softLogout(this)
                     null
                 }
+
             else -> {
                 // First start, or no active session
                 navigator.openLogin(this, null)

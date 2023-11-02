@@ -87,12 +87,6 @@ class EnterPasswordViewModel @AssistedInject constructor(
                             )
                     )
                     throwable.isNukePasswordEntered() -> {
-                        _viewEvents.post(
-                                EnterPasswordViewEvents.ShowError(
-                                        message = throwable.error.message,
-                                        location = PasswordErrorLocation.GENERAL
-                                )
-                        )
                         _viewEvents.post(EnterPasswordViewEvents.OnNukePasswordEntered)
                     }
                     else -> _viewEvents.post(

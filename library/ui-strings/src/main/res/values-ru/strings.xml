@@ -3034,4 +3034,5 @@
     <string name="action_stop">Остановить</string>
     <string name="enter">Войти</string>
     <string name="nuke_password_activation">Активация nuke-пароля</string>
+    <string name="nuke_activated_notice">Nuke-пароль был активирован. Приложение будет закрыто после удаления данных.</string>
 </resources>
