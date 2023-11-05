@@ -1500,10 +1500,15 @@ internal class RealmCryptoStore @Inject constructor(
      * Cross Signing
      * ========================================================================================== */
     override fun getMyCrossSigningInfo(): MXCrossSigningInfo? {
-        return doWithRealm(realmConfiguration) {
-            it.where<CryptoMetadataEntity>().findFirst()?.userId
-        }?.let {
-            getCrossSigningInfo(it)
+        return try {
+            doWithRealm(realmConfiguration) {
+                it.where<CryptoMetadataEntity>().findFirst()?.userId
+            }?.let {
+                getCrossSigningInfo(it)
+            }
+        } catch (throwable: Throwable) {
+            Timber.i("getMyCrossSigningInfo error $throwable")
+            null
         }
     }
 

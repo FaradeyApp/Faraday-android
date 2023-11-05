@@ -70,7 +70,6 @@ import org.matrix.android.sdk.api.failure.GlobalError
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.ConnectionType
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 @Parcelize
@@ -324,8 +323,8 @@ class MainActivity : VectorBaseActivity<ActivityMainBinding>(), UnlockedActivity
                     }
                     Timber.w("SIGN_OUT: success, start app")
                     activeSessionHolder.clearActiveSession()
-                    session.applicationPasswordService().clearSessionParamsStore()
                     doLocalCleanup(clearPreferences = true, onboardingStore)
+                    session.applicationPasswordService().clearSessionParamsStore()
                     startNextActivityAndFinish()
                 }
             }
