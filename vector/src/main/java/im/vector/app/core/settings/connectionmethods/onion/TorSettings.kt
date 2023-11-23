@@ -70,7 +70,7 @@ class TorSettings(private val context: Context) : ApplicationDefaultTorSettings(
     override val relayNickname: String = DEFAULT__RELAY_NICKNAME
     override val relayPort: String = PortOption.DISABLED
     override val runAsDaemon: Boolean = DEFAULT__RUN_AS_DAEMON
-    override val socksPort: String = PortOption.DISABLED
+    override val socksPort: String = "9050"
     override val socksPortIsolationFlags: List<String> = listOf(
             IsolationFlag.KEEP_ALIVE_ISOLATE_SOCKS_AUTH,
             IsolationFlag.IPV6_TRAFFIC,

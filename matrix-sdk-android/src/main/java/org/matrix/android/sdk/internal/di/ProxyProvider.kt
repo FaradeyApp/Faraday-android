@@ -51,9 +51,9 @@ internal class ProxyProvider @Inject constructor(
                     }
                 }
                 ConnectionType.ONION -> {
-                    when(val port = lightweightSettingsStorage.getProxyPort()) {
+                    when(lightweightSettingsStorage.getProxyPort()) {
                         0 -> Proxy.NO_PROXY
-                        else -> Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", port))
+                        else ->   Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", 9050))
                     }
                 }
                 ConnectionType.I2P -> Proxy.NO_PROXY

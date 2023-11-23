@@ -32,14 +32,11 @@ class TorEventBroadcaster @Inject constructor(
         private val lightweightSettingsStorage: LightweightSettingsStorage
 ) : TorServiceEventBroadcaster() {
 
-
     /**
-     * Receives current information concerning the port through which onion connection is supposed to be established.
-     * Once httpPort is received it is saved in storage and torEventListener is notified. Further logic is handled
-     * by MainActivity and LoginConnectionSettingsFragment.
+     * Receives current information concerning ports through which onion connection is supposed to be established.
      */
     override fun broadcastPortInformation(torPortInfo: TorPortInfo) {
-        Timber.d("PortInfo: " + torPortInfo.httpPort)
+        Timber.d("PortInfo: socksPort" + torPortInfo.socksPort + " httpPort" + torPortInfo.httpPort)
         if (torPortInfo.httpPort != null) {
             val port = Integer.valueOf(torPortInfo.httpPort!!.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
             torService.isProxyRunning = true
@@ -73,7 +70,7 @@ class TorEventBroadcaster @Inject constructor(
 
     override fun broadcastNotice(msg: String) {
         Timber.v(msg)
-        if(msg.startsWith("NOTICE|BaseEventListener|Bootstrapped")) {
+        if (msg.startsWith("NOTICE|BaseEventListener|Bootstrapped")) {
             msg.substringAfterLast('|').substringBeforeLast("%")
             val logMessage = msg.substringAfterLast('|').substringBeforeLast("%")
             torEventListener.onTorLogEvent("Tor: $logMessage%")

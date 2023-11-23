@@ -95,11 +95,14 @@ class LoginConnectionSettingsFragment : ConnectionSettingsBaseFragment() {
                 is TorEvent.ConnectionFailed -> {
                     torLoggingDialog?.setMessage(getString(R.string.tor_connection_failed))
                     if (torLoggingDialog?.isShowing == false) torLoggingDialog?.show()
+                    torLoggingDialog?.setCancelable(true)
                 }
 
                 is TorEvent.TorLogEvent -> {
                     torLoggingDialog?.setMessage(torEvent.message)
-                    if (torLoggingDialog?.isShowing == false) torLoggingDialog?.show()
+                    if (torLoggingDialog?.isShowing == false) {
+                        torLoggingDialog?.show()
+                    }
                 }
             }
         }
