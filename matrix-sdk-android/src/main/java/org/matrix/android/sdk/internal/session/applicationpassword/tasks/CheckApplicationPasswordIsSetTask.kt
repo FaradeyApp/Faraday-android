@@ -17,6 +17,7 @@
 package org.matrix.android.sdk.internal.session.applicationpassword.tasks
 
 import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.session.applicationpassword.ApplicationPasswordAPI
@@ -29,9 +30,11 @@ internal interface CheckApplicationPasswordIsSetTask : Task<Unit, Boolean> {
 
 internal class DefaultCheckApplicationPasswordIsSetTask @Inject constructor(
         private val applicationPasswordAPI: ApplicationPasswordAPI,
-        private val globalErrorReceiver: GlobalErrorReceiver
+        private val globalErrorReceiver: GlobalErrorReceiver,
+        private val lightweightSettingsStorage: LightweightSettingsStorage
 ) : CheckApplicationPasswordIsSetTask {
     override suspend fun execute(params: Unit): Boolean {
+        if(!lightweightSettingsStorage.areCustomSettingsEnabled()) return false
         val result = try {
             executeRequest(globalErrorReceiver) {
                 applicationPasswordAPI.checkApplicationPasswordIsSet()

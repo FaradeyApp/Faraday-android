@@ -61,6 +61,7 @@ class AccountsViewModel @AssistedInject constructor(
 
     fun observeAccounts() = viewModelScope.launch {
         flow {
+            if(!lightweightSettingsStorage.areCustomSettingsEnabled()) return@flow
             val result = session.profileService().getMultipleAccount(
                     session.sessionParams.homeServerConnectionConfig
             )
