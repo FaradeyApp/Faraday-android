@@ -47,7 +47,6 @@ import im.vector.app.core.pushers.PushersManager
 import im.vector.app.core.pushers.UnifiedPushHelper
 import im.vector.app.core.services.GuardServiceStarter
 import im.vector.app.core.utils.combineLatest
-import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.isIgnoringBatteryOptimizations
 import im.vector.app.core.utils.registerForPermissionsResult
 import im.vector.app.core.utils.requestDisablingBatteryOptimization
@@ -72,6 +71,7 @@ import org.matrix.android.sdk.api.session.identity.ThreePid
 import org.matrix.android.sdk.api.session.pushers.Pusher
 import org.matrix.android.sdk.api.session.pushrules.RuleIds
 import org.matrix.android.sdk.api.session.pushrules.RuleKind
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import javax.inject.Inject
 
 // Referenced in vector_settings_preferences_root.xml
@@ -89,6 +89,7 @@ class VectorSettingsNotificationFragment :
     @Inject lateinit var vectorFeatures: VectorFeatures
     @Inject lateinit var notificationPermissionManager: NotificationPermissionManager
     @Inject lateinit var ensureFcmTokenIsRetrievedUseCase: EnsureFcmTokenIsRetrievedUseCase
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
 
     override var titleRes: Int = R.string.settings_notifications
     override val preferenceXmlRes = R.xml.vector_settings_notifications
@@ -131,7 +132,7 @@ class VectorSettingsNotificationFragment :
 
     override fun bindPref() {
         findPreference<VectorPreference>(VectorPreferences.SETTINGS_NUKE_PASSWORD_NOTIFICATIONS_PREFERENCE_KEY)?.let {
-            it.isVisible = session.sessionParams.homeServerUrl.isCustomServer()
+            it.isVisible = lightweightSettingsStorage.areCustomSettingsEnabled()
             it.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 (vectorActivity as? VectorSettingsActivity)?.navigateTo(NukePasswordNotificationsFragment::class.java)
                 true

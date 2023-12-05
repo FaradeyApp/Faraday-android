@@ -22,4 +22,7 @@ import retrofit2.http.Path
 internal interface WellKnownAPI {
     @GET("https://{domain}/.well-known/matrix/client")
     suspend fun getWellKnown(@Path("domain") domain: String): WellKnown
+
+    @GET("http://{domain}/.well-known/matrix/client")
+    suspend fun getWellKnownHttp(@Path("domain") domain: String): WellKnown
 }

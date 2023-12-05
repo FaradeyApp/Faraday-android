@@ -143,6 +143,20 @@ class DefaultLightweightSettingsStorage @Inject constructor(
             putBoolean(MATRIX_SDK_APPLICATION_PASSWORD_SET, enabled)
         }
     }
+    /**
+     * Checks whether or not multi-account and nuke-password are supported by current server.
+     */
+    override fun areCustomSettingsEnabled(): Boolean {
+        return sdkDefaultPrefs.getBoolean(MATRIX_SDK_CUSTOM_SETTINGS_ENABLED, matrixConfiguration.customSettingsEnabledDefault)
+    }
+    /**
+     * Sets whether or not multi-account and nuke-password are enabled.
+     */
+    override fun setCustomSettingsEnabled(enabled: Boolean) {
+        sdkDefaultPrefs.edit {
+            putBoolean(MATRIX_SDK_CUSTOM_SETTINGS_ENABLED, enabled)
+        }
+    }
 
     /**
      * Set the presence status sent on syncs when the application is in foreground.
@@ -176,5 +190,6 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME"
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD"
         const val MATRIX_SDK_APPLICATION_PASSWORD_SET = "MATRIX_SDK_APPLICATION_PASSWORD_SET"
+        const val MATRIX_SDK_CUSTOM_SETTINGS_ENABLED = "MATRIX_SDK_CUSTOM_SETTINGS_ENABLED"
     }
 }

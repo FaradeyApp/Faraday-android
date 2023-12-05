@@ -35,7 +35,6 @@ import im.vector.app.core.extensions.replaceChildFragment
 import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.resources.BuildMeta
-import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.startSharePlainTextIntent
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.DialogAddAccountBinding
@@ -52,6 +51,7 @@ import im.vector.app.features.workers.signout.SignOutUiWorker
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.toMatrixItem
 import javax.inject.Inject
 
@@ -64,6 +64,7 @@ class HomeDrawerFragment :
     @Inject lateinit var avatarRenderer: AvatarRenderer
     @Inject lateinit var buildMeta: BuildMeta
     @Inject lateinit var permalinkFactory: PermalinkFactory
+    @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
 
     private lateinit var sharedActionViewModel: HomeSharedActionViewModel
 
@@ -79,14 +80,14 @@ class HomeDrawerFragment :
         if (savedInstanceState == null) {
             replaceChildFragment(R.id.homeDrawerGroupListContainer, SpaceListFragment::class.java)
         }
-        views.homeDrawerAddAccountButton.isVisible = session.sessionParams.homeServerUrl.isCustomServer()
+        views.homeDrawerAddAccountButton.isVisible = lightweightSettingsStorage.areCustomSettingsEnabled()
         session.userService().getUserLive(session.myUserId).observeK(viewLifecycleOwner) { optionalUser ->
             val user = optionalUser?.getOrNull()
             if (user != null) {
                 avatarRenderer.render(user.toMatrixItem(), views.homeDrawerHeaderAvatarView)
                 views.homeDrawerUsernameView.text = user.displayName
                 views.homeDrawerUserIdView.text = user.userId
-                if (savedInstanceState == null) {
+                if (savedInstanceState == null && lightweightSettingsStorage.areCustomSettingsEnabled()) {
                     replaceChildFragment(
                             frameId = R.id.homeDrawerAccountsListContainer,
                             fragmentClass = AccountsFragment::class.java,
@@ -299,7 +300,7 @@ class HomeDrawerFragment :
     }
 
     fun updateAddAccountButtonVisibility(isVisible: Boolean) {
-        views.homeDrawerAddAccountButton.isVisible = isVisible && session.sessionParams.homeServerUrl.isCustomServer()
+        views.homeDrawerAddAccountButton.isVisible = isVisible && lightweightSettingsStorage.areCustomSettingsEnabled()
     }
 
     companion object {

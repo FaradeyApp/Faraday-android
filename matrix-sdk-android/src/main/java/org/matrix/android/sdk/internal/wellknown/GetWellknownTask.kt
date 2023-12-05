@@ -23,6 +23,7 @@ import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.data.WellKnown
 import org.matrix.android.sdk.api.auth.wellknown.WellknownResult
 import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.internal.di.Unauthenticated
 import org.matrix.android.sdk.internal.network.RetrofitFactory
 import org.matrix.android.sdk.internal.network.executeRequest
@@ -53,7 +54,8 @@ internal interface GetWellknownTask : Task<GetWellknownTask.Params, WellknownRes
 internal class DefaultGetWellknownTask @Inject constructor(
         @Unauthenticated
         private val okHttpClient: Lazy<OkHttpClient>,
-        private val retrofitFactory: RetrofitFactory
+        private val retrofitFactory: RetrofitFactory,
+        private val lightweightSettingsStorage: LightweightSettingsStorage
 ) : GetWellknownTask {
 
     override suspend fun execute(params: GetWellknownTask.Params): WellknownResult {
@@ -84,7 +86,14 @@ internal class DefaultGetWellknownTask @Inject constructor(
 
         return try {
             val wellKnown = executeRequest(null) {
-                wellKnownAPI.getWellKnown(domain)
+                when(domain.endsWith("onion")){
+                    true -> wellKnownAPI.getWellKnownHttp(domain)
+                    false -> wellKnownAPI.getWellKnown(domain)
+                }
+            }
+
+            if(wellKnown.useSecurityFeatures == "true") {
+                lightweightSettingsStorage.setCustomSettingsEnabled(true)
             }
 
             // Success

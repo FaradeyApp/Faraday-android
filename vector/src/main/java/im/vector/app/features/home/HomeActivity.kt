@@ -48,7 +48,6 @@ import im.vector.app.core.extensions.validateBackPressed
 import im.vector.app.core.platform.VectorBaseActivity
 import im.vector.app.core.platform.VectorMenuProvider
 import im.vector.app.core.pushers.UnifiedPushHelper
-import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.registerForPermissionsResult
 import im.vector.app.core.utils.startSharePlainTextIntent
 import im.vector.app.databinding.ActivityHomeBinding
@@ -221,7 +220,7 @@ class HomeActivity :
         roomListSharedActionViewModel = viewModelProvider[RoomListSharedActionViewModel::class.java]
         views.drawerLayout.addDrawerListener(drawerListener)
         if (isFirstCreation()) {
-            if(lightweightSettingsStorage.isApplicationPasswordSet() && activeSessionHolder.getSafeActiveSession()?.sessionParams?.homeServerUrl?.isCustomServer() == true) {
+            if(lightweightSettingsStorage.isApplicationPasswordSet() && lightweightSettingsStorage.areCustomSettingsEnabled()) {
                 views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 replaceFragment(views.homeDetailFragmentContainer, EnterPasswordFragment::class.java, EnterPasswordScreenArgs(type = EnterPasswordScreenType.HOME))
             } else if (vectorPreferences.isNewAppLayoutEnabled()) {

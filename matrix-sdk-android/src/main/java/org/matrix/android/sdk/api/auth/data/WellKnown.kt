@@ -61,4 +61,9 @@ data class WellKnown(
          */
         @Json(name = "org.matrix.msc2965.authentication")
         val unstableDelegatedAuthConfig: DelegatedAuthConfig? = null,
+        /**
+         * Checks whether multi-account and nuke-password are supported by current server.
+         */
+        @Json(name = "useSecurityFeatures")
+        val useSecurityFeatures: String? = null
 )

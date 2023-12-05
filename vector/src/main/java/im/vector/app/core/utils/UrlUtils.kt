@@ -45,8 +45,3 @@ fun String.ensureTrailingSlash(): String {
         else -> this
     }
 }
-
-fun String.isCustomServer(): Boolean{
-    return this == "https://113-30-191-89.cloud-xip.com/" ||
-            this == "http://i7fqxbi4ucs2zu65j3wefkwt2ekibunqb3n3efbahsgvvtqw3nkfrsyd.onion/"
-}

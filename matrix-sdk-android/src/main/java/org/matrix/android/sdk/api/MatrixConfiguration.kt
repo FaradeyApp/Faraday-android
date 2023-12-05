@@ -71,9 +71,13 @@ data class MatrixConfiguration(
          */
         val threadMessagesEnabledDefault: Boolean = true,
         /**
-         * Thread messages default enable/disabled value.
+         * Application password default enable/disabled value.
          */
         val applicationPasswordEnabledDefault: Boolean = false,
+        /**
+         * Custom settings default enable/disabled value.
+         */
+        val customSettingsEnabledDefault: Boolean = false,
         /**
          * Connection default proxy host value.
          */

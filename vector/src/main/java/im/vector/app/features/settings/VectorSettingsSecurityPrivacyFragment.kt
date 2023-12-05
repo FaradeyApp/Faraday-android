@@ -51,7 +51,6 @@ import im.vector.app.core.preference.VectorPreference
 import im.vector.app.core.preference.VectorPreferenceCategory
 import im.vector.app.core.preference.VectorSwitchPreference
 import im.vector.app.core.utils.copyToClipboard
-import im.vector.app.core.utils.isCustomServer
 import im.vector.app.core.utils.openFileSelection
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.DialogImportE2eKeysBinding
@@ -82,7 +81,6 @@ import me.gujun.android.span.span
 import org.matrix.android.sdk.api.MatrixCallback
 import org.matrix.android.sdk.api.extensions.getFingerprintHumanReadable
 import org.matrix.android.sdk.api.raw.RawService
-import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.crypto.crosssigning.isVerified
 import org.matrix.android.sdk.api.session.crypto.model.DeviceInfo
 import org.matrix.android.sdk.api.session.crypto.model.DevicesListResponse
@@ -364,7 +362,7 @@ class VectorSettingsSecurityPrivacyFragment :
 
     private fun setUpNukePassword() {
         passwordPreference?.let {
-            it.isVisible = session.sessionParams.homeServerUrl.isCustomServer()
+            it.isVisible = lightweightSettingsStorage.areCustomSettingsEnabled()
             it.setOnPreferenceClickListener {
                 openPasswordManagementScreen()
                 true
