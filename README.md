@@ -42,7 +42,7 @@ Faradey для Аndroid  - мобильное приложение, которо
 
 Укажите название и описание пространства, чтобы участники могли легко его идентифицировать.
 
-<p align="left">
+<p align="center">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/3.jpg" width="300">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/4.jpg" width="300">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/5.jpg" width="300">
@@ -92,7 +92,6 @@ Faradey для Аndroid  - мобильное приложение, которо
 
 Введите или вставьте ссылку на вашу Faradey-kanban-board. Это позволит интегрировать Kanban доску непосредственно в ваше пространство в Faradey для более эффективного управления задачами и проектами.
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/8.1.jpg" width="300">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/11.jpg" width="300">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/12.jpg" width="300">
 </p> 
@@ -100,9 +99,14 @@ Faradey для Аndroid  - мобильное приложение, которо
 
 ---
 
-### Просмотр активных виджетов
+### Управление и просмотр активных виджетов
+
+В верхней части интерфейса комнаты в приложении Faradey найдите и нажмите на специально предусмотренную кнопку для просмотра и управления активными виджетами и интеграциями.
+
+Управляйте и настраивайте Kanban доску по мере необходимости.
 
 <p align="center">
+  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/8.1.jpg" width="300">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/13.jpg" width="300">
 </p>
 
