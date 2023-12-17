@@ -1,5 +1,6 @@
 # Faradey-android
-
+[![Feature Requests](https://img.shields.io/badge/feature%E2%80%93request%20issues-open-yellow)](https://github.com/FaradeyApp/Faradey-android/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
+[![Bugs](https://img.shields.io/badge/bug%20issues-open-yellow)](https://github.com/FaradeyApp/Faradey-android/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3Abug)
 
 ## Описание
 
