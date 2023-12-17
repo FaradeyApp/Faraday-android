@@ -962,6 +962,7 @@ class TimelineViewModel @AssistedInject constructor(
                     R.id.add_kanban_board -> session.integrationManagerService().isIntegrationEnabled() && state.isAllowedToManageWidgets
                     R.id.voice_call -> !vectorPreferences.hideCallButtons() && (state.isCallOptionAvailable() || state.hasActiveElementCallWidget())
                     R.id.video_call -> !vectorPreferences.hideCallButtons() && (state.isCallOptionAvailable() || state.jitsiState.confId == null || state.jitsiState.hasJoined)
+                    R.id.taiga_board -> true
                     // Show Join conference button only if there is an active conf id not joined. Otherwise fallback to default video disabled. ^
                     R.id.join_conference -> !state.isCallOptionAvailable() && state.jitsiState.confId != null && !state.jitsiState.hasJoined
                     R.id.search -> state.isSearchAvailable()

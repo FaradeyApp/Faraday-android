@@ -93,6 +93,23 @@
         <activity android:name=".features.home.HomeActivity" />
 
         <activity
+            android:name=".features.home.room.detail.RoomDetailTaigaBoard"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <!-- Include the host attribute if you want your app to respond
+                     only to URLs with your app's domain. -->
+                <data android:scheme="http"/>
+                <data android:host="https://taiga.io"/>
+                <data android:scheme="http"/>
+                <data android:host="https://tree.taiga.io"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- The BROWSABLE category is required to get links from web pages. -->
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".features.login.SSORedirectRouterActivity"
             android:exported="true"
             android:theme="@style/Theme.Vector.Black.Transparent">

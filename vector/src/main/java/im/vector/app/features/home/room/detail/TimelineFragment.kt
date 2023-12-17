@@ -128,6 +128,7 @@ import im.vector.app.core.utils.shareMedia
 import im.vector.app.core.utils.shareText
 import im.vector.app.core.utils.startInstallFromSourceIntent
 import im.vector.app.core.utils.toast
+import im.vector.app.databinding.ActivityTaigaBoardBinding
 import im.vector.app.databinding.DialogReportContentBinding
 import im.vector.app.databinding.FragmentTimelineBinding
 import im.vector.app.features.VectorFeatures
@@ -319,6 +320,10 @@ class TimelineFragment :
 
     private lateinit var keyboardStateUtils: KeyboardStateUtils
     private lateinit var callActionsHandler: StartCallActionsHandler
+
+    private lateinit var taigaBoardBinding: ActivityTaigaBoardBinding
+
+//    private val taigaBoardHandler = RoomDetailTaigaBoard()
 
     private val currentCallsViewPresenter = CurrentCallsViewPresenter()
 
@@ -895,6 +900,7 @@ class TimelineFragment :
             }
             menu.findItem(R.id.video_call).icon?.alpha = if (callButtonsEnabled) 0xFF else 0x40
             menu.findItem(R.id.voice_call).icon?.alpha = if (callButtonsEnabled || state.hasActiveElementCallWidget()) 0xFF else 0x40
+            menu.findItem(R.id.taiga_board).icon?.alpha = 0xFF
 
             val matrixAppsMenuItem = menu.findItem(R.id.open_matrix_apps)
             val widgetsCount = state.activeRoomWidgets.invoke()?.size ?: 0
@@ -1018,6 +1024,10 @@ class TimelineFragment :
             }
             R.id.video_call -> {
                 callActionsHandler.onVideoCallClicked()
+                true
+            }
+            R.id.taiga_board -> {
+                navigateToTaiga()
                 true
             }
             R.id.show_participants -> {
@@ -2345,6 +2355,12 @@ class TimelineFragment :
             )
             navigator.openThreadList(it, roomThreadDetailArgs)
         }
+    }
+
+    // Navigate to Taiga (RoomDetailTaigaBoard is Activity)
+    private fun navigateToTaiga() {
+        val intent = Intent(context, RoomDetailTaigaBoard::class.java)
+        context?.startActivity(intent)
     }
 
     // VectorInviteView.Callback
