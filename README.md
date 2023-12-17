@@ -75,8 +75,11 @@ Faradey для Аndroid  - мобильное приложение, которо
 ### Включение интеграций для активации Kanban доски
 
 Откройте настройки приложения Faradey, чтобы настроить дополнительные функции.
+
 В меню настроек перейдите в раздел "Общее", который содержит общие параметры приложения.
+
 Активируйте опцию разрешения интеграций. Это позволит подключать внешние сервисы, такие как Kanban доска, для расширения функциональности вашего рабочего пространства.
+
 
 <p align="center">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/8.2.jpg" width="300">
@@ -87,18 +90,17 @@ Faradey для Аndroid  - мобильное приложение, которо
 
 ---
 
-### Войти в чат, нажать появившуюся кнопку 'Add kanban board'
+### Добавление Kanban доски в чат
+
+Войдите в выбранную комнату чата и нажмите на кнопку 'Add kanban board', которая появилась в результате активации интеграций.
+
+Введите или вставьте ссылку на вашу Faradey-kanban-board. Это позволит интегрировать Kanban доску непосредственно в ваше пространство в Faradey для более эффективного управления задачами и проектами.
 <p align="center">
+  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/8.1.jpg" width="300">
   <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/11.jpg" width="300">
+  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/12.jpg" width="300">
 </p> 
 
----
-
-
-### Добавить ссылку с Faradey-kanban-board
-<p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/12.jpg" width="300">
-</p>
 
 ---
 
