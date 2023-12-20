@@ -35,6 +35,15 @@
         app:showAsAction="always"
         tools:visible="true" />
 
+    <item
+        android:id="@+id/taiga_board"
+        android:icon="@drawable/ic_integrations"
+        android:title="@string/action_video_call"
+        android:visible="false"
+        app:iconTint="?colorPrimary"
+        app:showAsAction="always"
+        tools:visible="true" />
+
     <!-- We always want to show this item as an icon -->
     <item
         android:id="@+id/voice_call"

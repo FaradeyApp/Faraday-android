@@ -23,14 +23,14 @@
     <string name="bubble_style_both">Ambos lados</string>
     <string name="bubble_time_location_top">Superior</string>
     <string name="bubble_time_location_bottom">Inferior</string>
-    <string name="all_list_rooms_empty_title">SchildiChat</string>
+    <string name="all_list_rooms_empty_title">Faradey</string>
     <string name="all_list_rooms_empty_body">Los chats se mostrán aquí</string>
     <string name="login_connect_using_matrix_id_text_sc">ej: @usuario:dominio.com</string>
     <string name="login_server_other_title_sc">Servidor personalizado</string>
     <string name="settings_room_unread_kind_group">Previsualización del contenido del chat grupal</string>
     <string name="bubble_time_location">Ubicación de la marca de tiempo</string>
     <string name="url_previews_in_encrypted_rooms_summary">Esto va a filtrar las URLs de tus mensajes al servidor central!</string>
-    <string name="login_mobile_device_sc">SchildiChat para Android</string>
+    <string name="login_mobile_device_sc">Faradey para Android</string>
     <string name="bottom_action_all">General</string>
     <string name="url_previews_in_encrypted_rooms">Previsualización de URLs en chats encriptados</string>
     <string name="settings_home_overview">Vista general</string>
