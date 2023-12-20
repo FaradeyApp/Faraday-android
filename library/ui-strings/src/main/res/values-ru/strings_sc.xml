@@ -18,9 +18,9 @@
     <string name="bubble_style_none">Нет</string>
     <string name="bubble_style_start">На той же стороне</string>
     <string name="bubble_style_both">С обеих сторон</string>
-    <string name="login_mobile_device_sc">SchildiChat Android</string>
+    <string name="login_mobile_device_sc">Faradey Android</string>
     <string name="bottom_action_all">Обзор</string>
-    <string name="all_list_rooms_empty_title">SchildiChat</string>
+    <string name="all_list_rooms_empty_title">Faradey</string>
     <string name="all_list_rooms_empty_body">Здесь будут отображаться чаты</string>
     <!-- Login screen -->
     <string name="login_connect_using_matrix_id_text_sc">например @user:domain.com</string>

@@ -38,9 +38,9 @@
     <string name="settings_aggregate_unread_counts">仅统计私聊</string>
     <string name="labs_mark_rooms_unread">将聊天标记为未读</string>
     <string name="url_previews_in_encrypted_rooms">允许在加密聊天中显示链接预览</string>
-    <string name="login_mobile_device_sc">SchildiChat Android</string>
+    <string name="login_mobile_device_sc">Faradey Android</string>
     <string name="bottom_action_all">概览</string>
-    <string name="all_list_rooms_empty_title">SchildiChat</string>
+    <string name="all_list_rooms_empty_title">Faradey</string>
     <string name="all_list_rooms_empty_body">聊天记录将会显示在这里</string>
     <string name="login_connect_using_matrix_id_text_sc">例如：@user:domain.com</string>
     <string name="login_server_other_title_sc">自定义服务器</string>
@@ -131,7 +131,7 @@
     <string name="settings_sc_debugging_summary">启用额外日志或者除错特性</string>
     <string name="settings_notif_only_alert_once">仅响铃一次</string>
     <string name="settings_notif_only_alert_once_summary">如果已打开针对于该聊天的通知，则忽略新消息的警报声音</string>
-    <string name="settings_sc_debugging">SchildiChat 除错 (Debug)</string>
+    <string name="settings_sc_debugging">Faradey 除错 (Debug)</string>
     <string name="settings_sc_dbg_read_marker">阅读标记除错</string>
     <string name="settings_sc_dbg_timeline_chunks">时间线一致性除错</string>
 </resources>

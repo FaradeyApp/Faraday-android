@@ -37,9 +37,9 @@
     <string name="labs_mark_rooms_unread_summary">Erlaube, Chats als ungelesen zu markieren. Andere Matrix-Clients unterstützen dies möglicherweise noch nicht.</string>
     <string name="url_previews_in_encrypted_rooms">URL-Vorschau in verschlüsselten Chats</string>
     <string name="url_previews_in_encrypted_rooms_summary">Dies offenbart in Nachrichten enthaltene URLs gegenüber dem Homeserver!</string>
-    <string name="login_mobile_device_sc">SchildiChat Android</string>
+    <string name="login_mobile_device_sc">Faradey Android</string>
     <string name="bottom_action_all">Übersicht</string>
-    <string name="all_list_rooms_empty_title">SchildiChat</string>
+    <string name="all_list_rooms_empty_title">Faradey</string>
     <string name="all_list_rooms_empty_body">Konversationen werden hier angezeigt</string>
     <!-- Login screen -->
     <string name="login_connect_using_matrix_id_text_sc">z. B. @user:domain.com</string>

@@ -64,9 +64,9 @@
     <string name="url_previews_in_encrypted_rooms">URL previews in encrypted chats</string>
     <string name="url_previews_in_encrypted_rooms_summary">This will leak URLs from your messages to your homeserver!</string>
 
-    <string name="login_mobile_device_sc">SchildiChat Android</string>
+    <string name="login_mobile_device_sc">Faradey Android</string>
     <string name="bottom_action_all">Overview</string>
-    <string name="all_list_rooms_empty_title">SchildiChat</string>
+    <string name="all_list_rooms_empty_title">Faradey</string>
     <string name="all_list_rooms_empty_body">Chats will be displayed here</string>
 
     <!-- Login screen -->
