@@ -1,6 +1,6 @@
 # Faraday-android
-[![Feature Requests](https://img.shields.io/badge/feature%E2%80%93request%20issues-open-green)](https://github.com/FaradeyApp/Faradey-android/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
-[![Bugs](https://img.shields.io/badge/bug%20issues-open-green)](https://github.com/FaradeyApp/Faradey-android/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3Abug)
+[![Feature Requests](https://img.shields.io/badge/feature%E2%80%93request%20issues-open-green)](https://github.com/FaradayApp/Faraday-android/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
+[![Bugs](https://img.shields.io/badge/bug%20issues-open-green)](https://github.com/FaradayApp/Faraday-android/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3Abug)
 
 ## Описание
 
@@ -62,7 +62,7 @@ Faraday для Аndroid  - мобильное приложение, которо
 * I2P (Invisible Internet Project) – анонимная сеть, обеспечивающая защищенную коммуникацию пользователя. Она использует децентрализованную сетевую структуру для обеспечения анонимности и безопасности, шифруя пользовательский трафик и передавая его через серию ретрансляторов в сети I2P.
 
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/1.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/1.jpg" width="300">
 </p>
 
 ---
@@ -77,7 +77,7 @@ Faraday для Аndroid  - мобильное приложение, которо
 * Третий метод предназначен для авторизации через главный сервер Matrix, который находится по адресу matrix.org. Это стандартный вариант для пользователей, которые не связаны с конкретным пользовательским или корпоративным сервером и хотят использовать общедоступный сервер Matrix. Просто выберите этот вариант при входе в систему, чтобы подключиться к общей сети Matrix.
 
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/2.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/2.jpg" width="300">
 </p>
 
 
@@ -90,9 +90,9 @@ Faraday для Аndroid  - мобильное приложение, которо
 Укажите название и описание пространства, чтобы участники могли легко его идентифицировать.
 
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/3.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/4.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/5.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/3.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/4.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/5.jpg" width="300">
 </p>
 
 ---
@@ -107,8 +107,8 @@ Faraday для Аndroid  - мобильное приложение, которо
 
 
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/6.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/7.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/6.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/7.jpg" width="300">
 </p>
 
 
@@ -128,9 +128,9 @@ Faraday для Аndroid  - мобильное приложение, которо
 
 
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/8.2.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/9.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/10.jpg" width="300">    
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/8.2.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/9.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/10.jpg" width="300">    
 </p>
 
 
@@ -145,8 +145,8 @@ Faraday для Аndroid  - мобильное приложение, которо
 * Введите или вставьте ссылку на вашу Faraday-kanban-board. Это позволит интегрировать Kanban доску непосредственно в ваше пространство в Faraday.
   
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/11.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/12.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/11.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/12.jpg" width="300">
 </p> 
 
 
@@ -159,8 +159,8 @@ Faraday для Аndroid  - мобильное приложение, которо
 Управляйте и настраивайте Kanban доску по мере необходимости.
 
 <p align="center">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/8.1.jpg" width="300">
-  <img src="https://github.com/FaradeyApp/.github/blob/main/images/android/13.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/8.1.jpg" width="300">
+  <img src="https://github.com/FaradayApp/.github/blob/main/images/android/13.jpg" width="300">
 </p>
 
 ---
