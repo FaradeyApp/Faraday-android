@@ -44,6 +44,15 @@
         app:showAsAction="always"
         tools:visible="true" />
 
+    <item
+        android:id="@+id/cryptpad"
+        android:icon="@drawable/ic_integrations_crypt"
+        android:title="@string/action_video_call"
+        android:visible="false"
+        app:iconTint="@color/accent_sc_dark_blue"
+        app:showAsAction="always"
+        tools:visible="true" />
+
     <!-- We always want to show this item as an icon -->
     <item
         android:id="@+id/voice_call"
