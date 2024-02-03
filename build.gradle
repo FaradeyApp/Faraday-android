@@ -85,7 +85,6 @@ allprojects {
                 groups.jitpack.group.each { includeGroup it }
             }
         }
-        // Jitsi repo
         maven {
             url 'https://github.com/vector-im/jitsi_libre_maven/raw/main/android-sdk-6.2.2'
             // Note: to test Jitsi release you can use a local file like this:
@@ -95,18 +94,8 @@ allprojects {
                 groups.jitsi.group.each { includeGroup it }
             }
         }
-        // Do not use `google()`, it prevents Dependabot from working properly
-        maven {
-            url 'https://maven.google.com'
-            content {
-                groups.google.regex.each { includeGroupByRegex it }
-                groups.google.group.each { includeGroup it }
-            }
-        }
-        // Do not use `jcenter`, it prevents Dependabot from working properly
-        maven {
-            url 'https://jcenter.bintray.com'
-        }
+        google()
+        mavenCentral()
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
