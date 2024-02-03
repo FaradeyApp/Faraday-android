@@ -306,7 +306,7 @@ android {
 
         fdroid {
             dimension "store"
-            versionName "1.5.28.sc65"
+            versionName "1.0.0"
             buildConfigField "String", "SHORT_FLAVOR_DESCRIPTION", "\"F\""
             buildConfigField "String", "FLAVOR_DESCRIPTION", "\"FDroid\""
             isDefault = true
