@@ -21,9 +21,9 @@
     <string name="settings_single_overview_summary">Ikusi bai zuzeneko mezuak eta gelak orri bat</string>
     <string name="settings_single_overview">Konbinatu chat ikuspegi orokorra</string>
     <string name="settings_home_overview">Ikuspegi orokorra</string>
-    <string name="all_list_rooms_empty_title">Faradey</string>
+    <string name="all_list_rooms_empty_title">Faraday</string>
     <string name="all_list_rooms_empty_body">Hitzaldian agertuko dira hemen</string>
-    <string name="login_mobile_device_sc">Faradey Android</string>
+    <string name="login_mobile_device_sc">Faraday Android</string>
     <string name="bottom_action_all">Ikuspegi orokorra</string>
     <string name="url_previews_in_encrypted_rooms">URL aurrebistak enkriptatutako hitzaldian</string>
     <string name="labs_mark_rooms_unread_summary">Baimendu markatzeko hitzaldian bezala irakurri gabe. Beste matrize bezeroei agian ez laguntza funtzionalitate hau oraindik.</string>

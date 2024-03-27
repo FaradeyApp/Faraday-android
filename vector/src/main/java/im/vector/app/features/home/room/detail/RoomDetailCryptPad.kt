@@ -19,7 +19,7 @@ class RoomDetailCryptPad : AppCompatActivity() {
         webView.webViewClient = WebViewClient()
         webView.settings.domStorageEnabled = true
         webView.settings.javaScriptEnabled = true
-        webView.loadUrl("https://cryptpad.fr")
+        webView.loadUrl("https://cryptodocs.pm/")
     }
 
     fun handleBoard(){
