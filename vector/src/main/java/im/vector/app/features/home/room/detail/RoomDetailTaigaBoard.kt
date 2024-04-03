@@ -19,7 +19,7 @@ class RoomDetailTaigaBoard : AppCompatActivity (){
         webView.webViewClient = WebViewClient()
         webView.settings.domStorageEnabled = true
         webView.settings.javaScriptEnabled = true
-        webView.loadUrl("https://tree.taiga.io")
+        webView.loadUrl("http://teamddtawkczeuj6bxqrcrkuq6vasjwed3dleybrao4z4grae4rpg7ad.onion/")
     }
 
     fun handleBoard(){
