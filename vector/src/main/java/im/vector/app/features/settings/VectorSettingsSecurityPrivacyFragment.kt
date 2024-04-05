@@ -47,6 +47,7 @@ import im.vector.app.core.intent.ExternalIntentData
 import im.vector.app.core.intent.analyseIntent
 import im.vector.app.core.intent.getFilenameFromUri
 import im.vector.app.core.platform.SimpleTextWatcher
+import im.vector.app.core.preference.VectorListPreference
 import im.vector.app.core.preference.VectorPreference
 import im.vector.app.core.preference.VectorPreferenceCategory
 import im.vector.app.core.preference.VectorSwitchPreference
@@ -74,6 +75,7 @@ import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPas
 import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenType
 import im.vector.app.features.settings.passwordmanagement.passwordmanagementmain.VectorSettingsPasswordManagementFragment
 import im.vector.app.features.themes.ThemeUtils
+import im.vector.app.features.useragent.VectorUserAgentInterceptor
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -154,6 +156,10 @@ class VectorSettingsSecurityPrivacyFragment :
 
     private val showDevicesListV2Pref by lazy {
         findPreference<VectorPreference>(VectorPreferences.SETTINGS_SHOW_DEVICES_LIST_V2_PREFERENCE_KEY)!!
+    }
+
+    private val userAgentPref by lazy {
+        findPreference<VectorListPreference>(VectorPreferences.SETTINGS_USER_AGENT_KEY)
     }
 
     // encrypt to unverified devices
@@ -286,6 +292,9 @@ class VectorSettingsSecurityPrivacyFragment :
     }
 
     override fun bindPref() {
+        // User-Agent
+        setUpUserAgent()
+
         // Nuke password
         setUpNukePassword()
 
@@ -366,6 +375,21 @@ class VectorSettingsSecurityPrivacyFragment :
             it.setOnPreferenceClickListener {
                 openPasswordManagementScreen()
                 true
+            }
+        }
+    }
+
+    private fun setUpUserAgent() {
+        userAgentPref?.let {
+            it.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+                if (newValue is String) {
+                    VectorUserAgentInterceptor.setUserAgent(
+                            if (newValue != "default") newValue else null
+                    )
+                    true
+                } else {
+                    false
+                }
             }
         }
     }

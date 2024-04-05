@@ -72,4 +72,20 @@
         <item>@string/media_saving_period_forever</item>
     </string-array>
 
+    <!-- user-agent choice list -->
+    <string-array name="user_agent_entries">
+        <item>default</item>
+        <item>chrome</item>
+        <item>firefox</item>
+        <item>wget</item>
+        <item>curl</item>
+    </string-array>
+
+    <string-array name="user_agent_values">
+        <item>default</item>
+        <item>Mozilla/5.0 (Linux; Android 8.1.0; itel S33 Build/O11019) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.144 Mobile Safari/537.36</item>
+        <item>Mozilla/5.0 (Linux; Android 11; Mobile; rv:126.0) Gecko/126.0 Firefox/126.0</item>
+        <item>Wget/1.24.5</item>
+        <item>curl/8.4.0</item>
+    </string-array>
 </resources>

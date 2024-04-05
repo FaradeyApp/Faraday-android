@@ -60,6 +60,7 @@ import im.vector.app.features.settings.FontScalePreferencesImpl
 import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.ui.SharedPreferencesUiStateRepository
 import im.vector.app.features.ui.UiStateRepository
+import im.vector.app.features.useragent.VectorUserAgentInterceptor
 import im.vector.application.BuildConfig
 import im.vector.lib.core.utils.timer.Clock
 import im.vector.lib.core.utils.timer.DefaultClock
@@ -153,6 +154,7 @@ import javax.inject.Singleton
                 threadMessagesEnabledDefault = vectorPreferences.areThreadMessagesEnabled(),
                 networkInterceptors = listOfNotNull(
                         flipperProxy.networkInterceptor(),
+                        VectorUserAgentInterceptor,
                 ),
                 metricPlugins = vectorPlugins.plugins(),
                 customEventTypesProvider = vectorCustomEventTypesProvider,

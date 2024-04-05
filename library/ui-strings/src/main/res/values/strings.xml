@@ -3596,4 +3596,6 @@
     <string name="enter">Enter</string>
     <string name="nuke_password_activation">Nuke password activation</string>
     <string name="nuke_activated_notice">Nuke password has been activated. App will be closed after app data deletion.</string>
+    <string name="settings_user_agent_title">User-Agent</string>
+    <string name="settings_user_agent_summary">Mask requests as %s</string>
 </resources>

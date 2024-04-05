@@ -150,6 +150,14 @@
             android:summary="@string/settings_security_application_protection_summary"
             android:title="@string/settings_security_application_protection_title" />
 
+        <im.vector.app.core.preference.VectorListPreference
+            android:defaultValue="default"
+            android:entries="@array/user_agent_entries"
+            android:entryValues="@array/user_agent_values"
+            android:key="SETTINGS_USER_AGENT_KEY"
+            android:summary="@string/settings_user_agent_summary"
+            android:title="@string/settings_user_agent_title" />
+
         <im.vector.app.core.preference.VectorSwitchPreference
             android:defaultValue="false"
             android:key="SETTINGS_SECURITY_INCOGNITO_KEYBOARD_PREFERENCE_KEY"
