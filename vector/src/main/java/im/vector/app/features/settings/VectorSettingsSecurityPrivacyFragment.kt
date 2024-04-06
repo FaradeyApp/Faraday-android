@@ -381,6 +381,7 @@ class VectorSettingsSecurityPrivacyFragment :
 
     private fun setUpUserAgent() {
         userAgentPref?.let {
+            VectorUserAgentInterceptor.setUserAgent(it.value)
             it.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
                 if (newValue is String) {
                     VectorUserAgentInterceptor.setUserAgent(
