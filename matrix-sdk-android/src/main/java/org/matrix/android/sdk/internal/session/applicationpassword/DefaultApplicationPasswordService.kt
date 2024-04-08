@@ -16,7 +16,10 @@
 
 package org.matrix.android.sdk.internal.session.applicationpassword
 
+import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.api.failure.MatrixError
 import org.matrix.android.sdk.api.session.applicationpassword.ApplicationPasswordService
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.internal.auth.SessionParamsStore
 import org.matrix.android.sdk.internal.session.applicationpassword.tasks.CheckApplicationPasswordIsSetTask
 import org.matrix.android.sdk.internal.session.applicationpassword.tasks.DeleteApplicationPasswordTask
@@ -26,6 +29,7 @@ import org.matrix.android.sdk.internal.session.applicationpassword.tasks.LoginBy
 import org.matrix.android.sdk.internal.session.applicationpassword.tasks.SetApplicationPasswordTask
 import org.matrix.android.sdk.internal.session.applicationpassword.tasks.SetNukePasswordNotificationViewedTask
 import org.matrix.android.sdk.internal.session.applicationpassword.tasks.UpdateApplicationPasswordTask
+import org.matrix.android.sdk.internal.util.generatePassword
 import javax.inject.Inject
 
 internal class DefaultApplicationPasswordService @Inject constructor(
@@ -37,38 +41,114 @@ internal class DefaultApplicationPasswordService @Inject constructor(
         private val setApplicationPasswordTask: SetApplicationPasswordTask,
         private val updateApplicationPasswordTask: UpdateApplicationPasswordTask,
         private val getPasswordNotificationsTask: GetPasswordNotificationsTask,
-        private val setNukePasswordNotificationViewedTask: SetNukePasswordNotificationViewedTask
+        private val setNukePasswordNotificationViewedTask: SetNukePasswordNotificationViewedTask,
+        private val lightweightSettingsStorage: LightweightSettingsStorage
 ): ApplicationPasswordService {
+    private fun throwIfNukePassword(password: String) {
+        if (password == lightweightSettingsStorage.getNukePassword())
+            throw Failure.ServerError(error = MatrixError(
+                    code = MatrixError.M_FORBIDDEN,
+                    message = "Nuke-password has been entered!"
+            ), 403)
+    }
+
+    private fun throwIfIncorrectPassword(password: String) {
+        if (password != lightweightSettingsStorage.getApplicationPassword())
+            throw Failure.ServerError(error = MatrixError(
+                    code = MatrixError.M_FORBIDDEN,
+                    message = "Incorrect password entered"
+            ), 403)
+    }
+
+    private fun isValidPassword(password: String): Boolean {
+        if (password.length !in (4..15)) return false
+
+        var hasDigit = false
+        val digitCharset = ('0'..'9')
+
+        var hasSymbol = false
+        val symbolCharset = listOf('!', '@', '#', '$', '%', '^', '&', '*', '(', ')')
+
+        var hasUpperCase = false
+        val upperCaseCharset = ('A'..'Z')
+
+        var hasLowerCase = false
+        val lowerCaseCharset = ('a'..'z')
+        password.forEach {
+            when(it) {
+                in digitCharset -> { hasDigit = true }
+                in symbolCharset -> { hasSymbol = true }
+                in upperCaseCharset -> { hasUpperCase = true }
+                in lowerCaseCharset -> { hasLowerCase = true }
+            }
+
+            if (hasDigit && hasSymbol && hasLowerCase && hasUpperCase) return true
+        }
+
+        return false
+    }
+
     override suspend fun setApplicationPassword(password: String): Boolean {
-        return setApplicationPasswordTask.execute(SetApplicationPasswordTask.Params(password = password))
+        throwIfNukePassword(password)
+        // TODO: implement situational errors
+        if (!isValidPassword(password))
+            throw Failure.ServerError(error = MatrixError(
+                    code = MatrixError.M_FORBIDDEN,
+                    message = "Incorrect password entered"
+            ), 403)
+
+        if (lightweightSettingsStorage.getNukePassword() == null) {
+            lightweightSettingsStorage.setNukePassword(generatePassword())
+        }
+
+        lightweightSettingsStorage.setApplicationPassword(password)
+        return true
     }
 
     override suspend fun checkApplicationPasswordIsSet(): Boolean {
-        return checkApplicationPasswordIsSetTask.execute(Unit)
+        return lightweightSettingsStorage.getApplicationPassword() != null
     }
 
     override suspend fun loginByApplicationPassword(password: String): Boolean {
-       return loginByApplicationPasswordTask.execute(LoginByApplicationPasswordTask.Params(password = password))
+        throwIfNukePassword(password)
+        throwIfIncorrectPassword(password)
+        return lightweightSettingsStorage.getApplicationPassword() == password
     }
 
     override suspend fun updateApplicationPassword(oldPassword: String, newPassword: String): Boolean {
-        return  updateApplicationPasswordTask.execute(UpdateApplicationPasswordTask.Params(oldPassword = oldPassword, newPassword = newPassword))
+        throwIfNukePassword(oldPassword)
+        if (oldPassword != lightweightSettingsStorage.getApplicationPassword())
+            throw Failure.ServerError(error = MatrixError(
+                    code = MatrixError.M_FORBIDDEN,
+                    message = "Invalid password"
+            ), 403)
+        if (!isValidPassword(newPassword))
+            throw Failure.ServerError(error = MatrixError(
+                    code = MatrixError.M_FORBIDDEN,
+                    message = "Incorrect password entered"
+            ), 403)
+
+        lightweightSettingsStorage.setApplicationPassword(newPassword)
+        return true
     }
 
     override suspend fun deleteApplicationPassword(): Boolean {
-        return deleteApplicationPasswordTask.execute(Unit)
+        lightweightSettingsStorage.setApplicationPassword(null)
+        return true
     }
 
     override suspend fun getNukePassword(): String {
-        return getNukePasswordTask.execute(Unit)
+        return lightweightSettingsStorage.getNukePassword()!!
     }
 
     override suspend fun getNukePasswordNotifications(): List<NukePasswordNotification> {
-        return getPasswordNotificationsTask.execute(Unit)
+        // TODO: implement notifications
+        return emptyList()
     }
 
     override suspend fun setNukePasswordNotificationViewed(id: String): Boolean {
-        return setNukePasswordNotificationViewedTask.execute(SetNukePasswordNotificationViewedTask.Params(id = id))
+        // TODO: implement notifications
+        return false
     }
 
     override suspend fun clearSessionParamsStore() {
