@@ -18,6 +18,8 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import com.zhuinden.monarchy.Monarchy
 import io.realm.kotlin.where
@@ -63,7 +65,8 @@ internal class DefaultProfileService @Inject constructor(
         private val registerNewAccountTask: RegisterNewAccountTask,
         private val pendingThreePidMapper: PendingThreePidMapper,
         private val userStore: UserStore,
-        private val fileUploader: FileUploader
+        private val fileUploader: FileUploader,
+        private val localAccountStore: LocalAccountStore
 ) : ProfileService {
 
     override suspend fun getDisplayName(userId: String): Optional<String> {
@@ -180,11 +183,14 @@ internal class DefaultProfileService @Inject constructor(
     override suspend fun getMultipleAccount(
             homeServerConnectionConfig: HomeServerConnectionConfig
     ): List<AccountItem> {
-        return getMultipleAccountTask.execute(
-                GetMultipleAccountTask.Params(
-                        homeServerConnectionConfig=homeServerConnectionConfig
-                )
-        )
+        return localAccountStore.getAccounts().map {
+            val data = getProfile(it.userId)
+            AccountItem(
+                    userId = it.userId,
+                    displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
+                    avatarUrl = data.get(ProfileService.AVATAR_URL_KEY) as? String
+            )
+        }
     }
 
     override suspend fun reLoginMultiAccount(

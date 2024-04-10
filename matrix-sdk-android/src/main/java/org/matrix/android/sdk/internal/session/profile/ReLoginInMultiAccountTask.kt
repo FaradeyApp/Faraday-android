@@ -40,21 +40,36 @@ internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Pa
 
 internal class DefaultReLoginInMultiAccountTask @Inject constructor(
         private val profileAPI: ProfileAPI,
-        private val globalErrorReceiver: GlobalErrorReceiver
+        private val globalErrorReceiver: GlobalErrorReceiver,
+        private val localAccountStore: LocalAccountStore
 ) : ReLoginInMultiAccountTask {
     override suspend fun execute(params: ReLoginInMultiAccountTask.Params): Session {
         var result = ""
         val credentials: Credentials = try {
-            result = executeRequest(globalErrorReceiver) {
-                profileAPI.reLoginMultiAccount(params.userId)
-            }.loginToken
+//            result = executeRequest(globalErrorReceiver) {
+//                profileAPI.reLoginMultiAccount(params.userId)
+//            }.loginToken
+            val account = localAccountStore.getAccount(params.userId)
             val loginResponse = executeRequest(globalErrorReceiver) {
-                profileAPI.getLoginByToken(
-                        GetLoginByTokenBody(
-                                type = "m.login.token",
-                                token = result
-                        )
-                )
+                if (account.token != null) {
+                    profileAPI.getLoginByToken(
+                            GetLoginByTokenBody(
+                                    type = "m.login.token",
+                                    token = account.token!!,
+                            )
+                    )
+                } else {
+                    profileAPI.getLoginByPassword(
+                            GetLoginByPasswordBody(
+                                    type = "m.login.password",
+                                    identifier = LoginIdentifier(
+                                            type = "m.id.user",
+                                            user = account.username!!
+                                    ),
+                                    password = account.password!!,
+                            )
+                    )
+                }
             }
             Credentials(
                     userId = loginResponse.userId,

@@ -16,7 +16,6 @@
 
 package org.matrix.android.sdk.internal.session.profile
 
-
 import dagger.Lazy
 import okhttp3.OkHttpClient
 import org.matrix.android.sdk.api.auth.data.Credentials
@@ -47,7 +46,8 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
         private val globalErrorReceiver: GlobalErrorReceiver,
         @Unauthenticated
         private val okHttpClient: Lazy<OkHttpClient>,
-        private val retrofitFactory: RetrofitFactory
+        private val retrofitFactory: RetrofitFactory,
+        private val localAccountStore: LocalAccountStore,
 ) : RegisterNewAccountTask {
     override suspend fun execute(params: RegisterNewAccountTask.Params): Boolean {
         var credentials: Credentials? = null
@@ -67,9 +67,15 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
         }
         credentials?.let {
             val result = try {
-                executeRequest(globalErrorReceiver) {
-                    profileAPI.addNewAccount(AddNewAccountBody(token = it.accessToken))
-                }.status
+//                executeRequest(globalErrorReceiver) {
+//                    profileAPI.addNewAccount(AddNewAccountBody(token = it.accessToken))
+//                }.status
+                localAccountStore.addAccount(
+                        it.userId,
+                        params.registrationParams.username,
+                        params.registrationParams.password
+                )
+                "OK"
             } catch (throwable: Throwable) {
                 Timber.i("Add New Account error $throwable")
                 if (throwable is Failure.ServerError) {

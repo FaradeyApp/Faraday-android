@@ -22,6 +22,8 @@ import dagger.Module
 import dagger.Provides
 import org.matrix.android.sdk.api.session.profile.ProfileService
 import org.matrix.android.sdk.internal.session.SessionScope
+import org.matrix.android.sdk.internal.session.user.RealmUserStore
+import org.matrix.android.sdk.internal.session.user.UserStore
 import retrofit2.Retrofit
 
 @Module
@@ -84,4 +86,7 @@ internal abstract class ProfileModule {
 
     @Binds
     abstract fun bindRegisterNewAccountTask(task: DefaultRegisterNewAccountTask): RegisterNewAccountTask
+
+    @Binds
+    abstract fun bindLocalAccountStore(store: DefaultLocalAccountStore): LocalAccountStore
 }

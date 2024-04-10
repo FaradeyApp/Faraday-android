@@ -18,6 +18,7 @@ package org.matrix.android.sdk.internal.session.profile
 
 
 import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.internal.di.DeviceId
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.task.Task
@@ -33,7 +34,8 @@ internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, Boolean> {
 
 internal class DefaultAddNewAccountTask @Inject constructor(
         private val profileAPI: ProfileAPI,
-        private val globalErrorReceiver: GlobalErrorReceiver
+        private val globalErrorReceiver: GlobalErrorReceiver,
+        private val localAccountStore: LocalAccountStore,
 ) : AddNewAccountTask {
     override suspend fun execute(params: AddNewAccountTask.Params): Boolean {
         val credentials = try {
@@ -45,7 +47,7 @@ internal class DefaultAddNewAccountTask @Inject constructor(
                                         type = "m.id.user",
                                         user = params.username
                                 ),
-                                password = params.password
+                                password = params.password,
                         )
                 )
             }
@@ -55,9 +57,11 @@ internal class DefaultAddNewAccountTask @Inject constructor(
             null
         } ?: return false
         val result = try {
-            executeRequest(globalErrorReceiver) {
-                profileAPI.addNewAccount(AddNewAccountBody(token = credentials.accessToken))
-            }.status
+//            executeRequest(globalErrorReceiver) {
+//                profileAPI.addNewAccount(AddNewAccountBody(token = credentials.accessToken))
+//            }.status
+            localAccountStore.addAccount(credentials.userId, params.username, params.password)
+            "OK"
         } catch (throwable: Throwable) {
             if(throwable is Failure.ServerError) throw throwable
             Timber.i("Add New Account error $throwable")

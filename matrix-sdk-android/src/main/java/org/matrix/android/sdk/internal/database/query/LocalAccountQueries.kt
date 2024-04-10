@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 New Vector Ltd
+ * Copyright (c) 2024 New Vector Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.api.session.profile.model
+package org.matrix.android.sdk.internal.database.query
 
-import org.matrix.android.sdk.api.util.MatrixItem
+import io.realm.Realm
+import io.realm.RealmQuery
+import io.realm.kotlin.where
+import org.matrix.android.sdk.internal.database.model.LocalAccountEntity
+import org.matrix.android.sdk.internal.database.model.LocalAccountEntityFields
 
-data class AccountItem(
-        val userId: String,
-        val displayName: String,
-        val avatarUrl: String? = null,
-        val unreadCount: Int = 0 // FIXME: Add getting of unread count
-)
-
-fun AccountItem.toMatrixItem() = MatrixItem.AccountMatrixItem(userId, displayName, avatarUrl)
+internal fun LocalAccountEntity.Companion.where(realm: Realm, userId: String): RealmQuery<LocalAccountEntity> {
+    return realm
+            .where<LocalAccountEntity>()
+            .equalTo(LocalAccountEntityFields.USER_ID, userId)
+}
