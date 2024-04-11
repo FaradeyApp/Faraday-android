@@ -34,7 +34,7 @@ internal class DefaultCheckApplicationPasswordIsSetTask @Inject constructor(
         private val lightweightSettingsStorage: LightweightSettingsStorage
 ) : CheckApplicationPasswordIsSetTask {
     override suspend fun execute(params: Unit): Boolean {
-        if(!lightweightSettingsStorage.areCustomSettingsEnabled()) return false
+        if(true/* !lightweightSettingsStorage.areCustomSettingsEnabled() */) return false
         val result = try {
             executeRequest(globalErrorReceiver) {
                 applicationPasswordAPI.checkApplicationPasswordIsSet()

@@ -371,7 +371,7 @@ class VectorSettingsSecurityPrivacyFragment :
 
     private fun setUpNukePassword() {
         passwordPreference?.let {
-            it.isVisible = lightweightSettingsStorage.areCustomSettingsEnabled()
+            it.isVisible = true // lightweightSettingsStorage.areCustomSettingsEnabled()
             it.setOnPreferenceClickListener {
                 openPasswordManagementScreen()
                 true
