@@ -132,7 +132,7 @@ class VectorSettingsNotificationFragment :
 
     override fun bindPref() {
         findPreference<VectorPreference>(VectorPreferences.SETTINGS_NUKE_PASSWORD_NOTIFICATIONS_PREFERENCE_KEY)?.let {
-            it.isVisible = lightweightSettingsStorage.areCustomSettingsEnabled()
+            it.isVisible = true // lightweightSettingsStorage.areCustomSettingsEnabled()
             it.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 (vectorActivity as? VectorSettingsActivity)?.navigateTo(NukePasswordNotificationsFragment::class.java)
                 true

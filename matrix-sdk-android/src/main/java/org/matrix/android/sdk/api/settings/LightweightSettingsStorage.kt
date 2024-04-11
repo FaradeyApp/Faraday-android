@@ -38,6 +38,10 @@ interface LightweightSettingsStorage {
     fun setProxyPassword(proxyPassword: String)
     fun isApplicationPasswordSet(): Boolean
     fun setApplicationPasswordEnabled(enabled: Boolean)
+    fun setApplicationPassword(applicationPassword: String?)
+    fun getApplicationPassword(): String?
+    fun setNukePassword(nukePassword: String)
+    fun getNukePassword(): String?
     fun areCustomSettingsEnabled(): Boolean
     fun setCustomSettingsEnabled(enabled: Boolean)
 }

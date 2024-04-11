@@ -143,6 +143,27 @@ class DefaultLightweightSettingsStorage @Inject constructor(
             putBoolean(MATRIX_SDK_APPLICATION_PASSWORD_SET, enabled)
         }
     }
+
+    override fun setApplicationPassword(applicationPassword: String?) {
+        sdkDefaultPrefs.edit {
+            putString(MATRIX_SDK_APPLICATION_PASSWORD, applicationPassword)
+        }
+    }
+
+    override fun getApplicationPassword(): String? {
+        return sdkDefaultPrefs.getString(MATRIX_SDK_APPLICATION_PASSWORD, null)
+    }
+
+    override fun setNukePassword(nukePassword: String) {
+        sdkDefaultPrefs.edit {
+            putString(MATRIX_SDK_NUKE_PASSWORD, nukePassword)
+        }
+    }
+
+    override fun getNukePassword(): String? {
+        return sdkDefaultPrefs.getString(MATRIX_SDK_NUKE_PASSWORD, null)
+    }
+
     /**
      * Checks whether or not multi-account and nuke-password are supported by current server.
      */
@@ -190,6 +211,8 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_USERNAME"
         const val MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD = "MATRIX_SDK_SETTINGS_CONNECTION_PROXY_PASSWORD"
         const val MATRIX_SDK_APPLICATION_PASSWORD_SET = "MATRIX_SDK_APPLICATION_PASSWORD_SET"
+        const val MATRIX_SDK_APPLICATION_PASSWORD = "MATRIX_SDK_APPLICATION_PASSWORD"
+        const val MATRIX_SDK_NUKE_PASSWORD = "MATRIX_SDK_NUKE_PASSWORD"
         const val MATRIX_SDK_CUSTOM_SETTINGS_ENABLED = "MATRIX_SDK_CUSTOM_SETTINGS_ENABLED"
     }
 }

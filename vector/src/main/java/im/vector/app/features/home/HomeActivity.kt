@@ -220,7 +220,7 @@ class HomeActivity :
         roomListSharedActionViewModel = viewModelProvider[RoomListSharedActionViewModel::class.java]
         views.drawerLayout.addDrawerListener(drawerListener)
         if (isFirstCreation()) {
-            if(lightweightSettingsStorage.isApplicationPasswordSet() && lightweightSettingsStorage.areCustomSettingsEnabled()) {
+            if(lightweightSettingsStorage.isApplicationPasswordSet() && true/* lightweightSettingsStorage.areCustomSettingsEnabled() */) {
                 views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 replaceFragment(views.homeDetailFragmentContainer, EnterPasswordFragment::class.java, EnterPasswordScreenArgs(type = EnterPasswordScreenType.HOME))
             } else if (vectorPreferences.isNewAppLayoutEnabled()) {
