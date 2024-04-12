@@ -237,7 +237,7 @@ android {
         }
 
         release {
-            resValue "string", "app_name", "Faradey"
+            resValue "string", "app_name", "Faraday"
             resValue "color", "launcher_background", "#0DBD8B"
             postprocessing {
                 removeUnusedCode true

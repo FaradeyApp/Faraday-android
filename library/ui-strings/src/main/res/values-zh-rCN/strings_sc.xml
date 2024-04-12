@@ -131,7 +131,7 @@
     <string name="settings_sc_debugging_summary">启用额外日志或者除错特性</string>
     <string name="settings_notif_only_alert_once">仅响铃一次</string>
     <string name="settings_notif_only_alert_once_summary">如果已打开针对于该聊天的通知，则忽略新消息的警报声音</string>
-    <string name="settings_sc_debugging">Faradey 除错 (Debug)</string>
+    <string name="settings_sc_debugging">Faraday 除错 (Debug)</string>
     <string name="settings_sc_dbg_read_marker">阅读标记除错</string>
     <string name="settings_sc_dbg_timeline_chunks">时间线一致性除错</string>
 </resources>

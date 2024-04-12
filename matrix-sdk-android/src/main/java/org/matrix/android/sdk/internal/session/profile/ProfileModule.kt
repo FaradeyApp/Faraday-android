@@ -22,8 +22,6 @@ import dagger.Module
 import dagger.Provides
 import org.matrix.android.sdk.api.session.profile.ProfileService
 import org.matrix.android.sdk.internal.session.SessionScope
-import org.matrix.android.sdk.internal.session.user.RealmUserStore
-import org.matrix.android.sdk.internal.session.user.UserStore
 import retrofit2.Retrofit
 
 @Module
