@@ -3056,4 +3056,5 @@
     <string name="enter">Войти</string>
     <string name="nuke_password_activation">Активация nuke-пароля</string>
     <string name="nuke_activated_notice">Nuke-пароль был активирован. Приложение будет закрыто после удаления данных.</string>
+    <string name="settings_user_agent_summary">Маскировать запросы под %s</string>
 </resources>
