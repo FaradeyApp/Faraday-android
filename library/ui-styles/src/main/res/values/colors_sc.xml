@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Accent colors -->
-    <color name="accent_sc">#8BC34A</color>
+    <color name="accent_sc">#0ABAB5</color>
     <color name="accent_sc_alpha25">#3F8BC34A</color>
     <color name="accent_sc_alpha12">#1E8BC34A</color>
     <color name="accent_sc_noalpha12">#edf4e6</color> <!-- same as accent_sc_alpha12 when displayed on #fafafa -->
