@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.database.migration
+package org.matrix.android.sdk.internal.auth.db.migration
 
 import io.realm.DynamicRealm
-import org.matrix.android.sdk.internal.database.model.LocalAccountEntityFields
 import org.matrix.android.sdk.internal.util.database.RealmMigrator
+import org.matrix.android.sdk.internal.auth.db.LocalAccountEntityFields
 
-internal class MigrateSessionTo052(realm: DynamicRealm) : RealmMigrator(realm, 52) {
+internal class MigrateAuthTo006(realm: DynamicRealm) : RealmMigrator(realm, 5) {
+
     override fun doMigrate(realm: DynamicRealm) {
         realm.schema.create("LocalAccountEntity")
                 .addField(LocalAccountEntityFields.USER_ID, String::class.java)
@@ -33,3 +34,4 @@ internal class MigrateSessionTo052(realm: DynamicRealm) : RealmMigrator(realm, 5
                 .setNullable(LocalAccountEntityFields.PASSWORD, true)
     }
 }
+
