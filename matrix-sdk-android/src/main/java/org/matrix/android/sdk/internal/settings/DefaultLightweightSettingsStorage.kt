@@ -168,7 +168,7 @@ class DefaultLightweightSettingsStorage @Inject constructor(
      * Checks whether or not multi-account and nuke-password are supported by current server.
      */
     override fun areCustomSettingsEnabled(): Boolean {
-        return sdkDefaultPrefs.getBoolean(MATRIX_SDK_CUSTOM_SETTINGS_ENABLED, matrixConfiguration.customSettingsEnabledDefault)
+        return true // sdkDefaultPrefs.getBoolean(MATRIX_SDK_CUSTOM_SETTINGS_ENABLED, matrixConfiguration.customSettingsEnabledDefault)
     }
     /**
      * Sets whether or not multi-account and nuke-password are enabled.

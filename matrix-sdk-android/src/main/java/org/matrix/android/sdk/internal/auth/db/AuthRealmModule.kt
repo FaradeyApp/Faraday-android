@@ -25,7 +25,8 @@ import io.realm.annotations.RealmModule
         library = true,
         classes = [
             SessionParamsEntity::class,
-            PendingSessionEntity::class
+            PendingSessionEntity::class,
+            LocalAccountEntity::class,
         ]
 )
 internal class AuthRealmModule

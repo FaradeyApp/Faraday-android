@@ -17,8 +17,9 @@
 package org.matrix.android.sdk.internal.session.profile
 
 
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.Failure
-import org.matrix.android.sdk.internal.di.DeviceId
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.task.Task
@@ -35,8 +36,10 @@ internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, Boolean> {
 internal class DefaultAddNewAccountTask @Inject constructor(
         private val profileAPI: ProfileAPI,
         private val globalErrorReceiver: GlobalErrorReceiver,
-        private val localAccountStore: LocalAccountStore,
+        authenticationService: AuthenticationService
 ) : AddNewAccountTask {
+    private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
+
     override suspend fun execute(params: AddNewAccountTask.Params): Boolean {
         val credentials = try {
             executeRequest(globalErrorReceiver) {

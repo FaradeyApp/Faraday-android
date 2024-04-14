@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.database.query
+package org.matrix.android.sdk.internal.auth.db
 
-import io.realm.Realm
-import io.realm.RealmQuery
-import io.realm.kotlin.where
-import org.matrix.android.sdk.internal.database.model.LocalAccountEntity
-import org.matrix.android.sdk.internal.database.model.LocalAccountEntityFields
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 
-internal fun LocalAccountEntity.Companion.where(realm: Realm, userId: String): RealmQuery<LocalAccountEntity> {
-    return realm
-            .where<LocalAccountEntity>()
-            .equalTo(LocalAccountEntityFields.USER_ID, userId)
+internal open class LocalAccountEntity(
+        @PrimaryKey var userId: String = "",
+        var token: String? = null,
+        var username: String? = null,
+        var password: String? = null,
+) : RealmObject() {
+
+    companion object
 }
+
+internal fun LocalAccountEntity.toLocalAccount() = LocalAccount(userId, token, username, password)

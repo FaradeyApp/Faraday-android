@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.session.profile
+package org.matrix.android.sdk.internal.auth.db
 
-import com.zhuinden.monarchy.Monarchy
+import io.realm.RealmConfiguration
 import io.realm.kotlin.where
-import org.matrix.android.sdk.internal.database.model.LocalAccountEntity
-import org.matrix.android.sdk.internal.database.model.toLocalAccount
-import org.matrix.android.sdk.internal.di.SessionDatabase
-import org.matrix.android.sdk.internal.util.awaitTransaction
+import org.matrix.android.sdk.internal.auth.db.query.where
+import org.matrix.android.sdk.internal.database.awaitTransaction
+import org.matrix.android.sdk.internal.di.AuthDatabase
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 import javax.inject.Inject
 
-internal interface LocalAccountStore {
+interface LocalAccountStore {
     suspend fun getAccounts(): List<LocalAccount>
     suspend fun addAccount(
             userId: String,
@@ -36,19 +36,19 @@ internal interface LocalAccountStore {
     suspend fun getAccount(userId: String): LocalAccount
 }
 
-internal class DefaultLocalAccountStore @Inject constructor(
-        @SessionDatabase private val monarchy: Monarchy,
+class DefaultLocalAccountStore @Inject constructor(
+        @AuthDatabase private val realmConfiguration: RealmConfiguration,
 ) : LocalAccountStore {
-    override suspend fun addAccount(userId: String, username: String?, password: String?, token: String?) = monarchy.awaitTransaction { realm ->
+    override suspend fun addAccount(userId: String, username: String?, password: String?, token: String?) = awaitTransaction(realmConfiguration) { realm ->
         val accountEntity = LocalAccountEntity(userId, token, username, password)
         realm.insertOrUpdate(accountEntity)
     }
 
-    override suspend fun getAccount(userId: String): LocalAccount = monarchy.awaitTransaction { realm ->
-        realm.where<LocalAccountEntity>().findFirst()!!.toLocalAccount()
+    override suspend fun getAccount(userId: String): LocalAccount = awaitTransaction(realmConfiguration) { realm ->
+        LocalAccountEntity.where(realm, userId).findFirst()!!.toLocalAccount()
     }
 
-    override suspend fun getAccounts(): List<LocalAccount> = monarchy.awaitTransaction { realm ->
+    override suspend fun getAccounts(): List<LocalAccount> = awaitTransaction(realmConfiguration) { realm ->
         realm.where<LocalAccountEntity>().findAll().map { it.toLocalAccount() }
     }
 }

@@ -26,6 +26,8 @@ import org.matrix.android.sdk.api.auth.HomeServerHistoryService
 import org.matrix.android.sdk.api.legacy.LegacySessionImporter
 import org.matrix.android.sdk.internal.auth.db.AuthRealmMigration
 import org.matrix.android.sdk.internal.auth.db.AuthRealmModule
+import org.matrix.android.sdk.internal.auth.db.DefaultLocalAccountStore
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.db.RealmPendingSessionStore
 import org.matrix.android.sdk.internal.auth.db.RealmSessionParamsStore
 import org.matrix.android.sdk.internal.auth.login.DefaultDirectLoginTask
@@ -78,6 +80,9 @@ internal abstract class AuthModule {
 
     @Binds
     abstract fun bindPendingSessionStore(store: RealmPendingSessionStore): PendingSessionStore
+
+    @Binds
+    abstract fun bindLocalAccountStore(store: DefaultLocalAccountStore): LocalAccountStore
 
     @Binds
     abstract fun bindAuthenticationService(service: DefaultAuthenticationService): AuthenticationService

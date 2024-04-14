@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
@@ -179,7 +180,7 @@ class HomeDrawerFragment :
 
             dialog.setOnShowListener {
                 val addAccountButton = views.addAccountButton
-                val registerButton = views.registerButton
+                val registerButton = views.registerButton.apply { this.visibility = INVISIBLE }
                 val header = views.header
                 val notice = views.notice
                 notice.isVisible = false

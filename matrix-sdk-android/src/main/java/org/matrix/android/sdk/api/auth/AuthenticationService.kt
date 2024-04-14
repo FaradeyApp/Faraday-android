@@ -24,6 +24,7 @@ import org.matrix.android.sdk.api.auth.registration.RegistrationWizard
 import org.matrix.android.sdk.api.auth.wellknown.WellknownResult
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.auth.SessionCreator
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 
 /**
  * This interface defines methods to authenticate or to create an account to a matrix server.
@@ -110,6 +111,8 @@ interface AuthenticationService {
             matrixId: String,
             homeServerConnectionConfig: HomeServerConnectionConfig?
     ): WellknownResult
+
+    fun getLocalAccountStore(): LocalAccountStore
 
     /**
      * Authenticate with a matrixId and a password.

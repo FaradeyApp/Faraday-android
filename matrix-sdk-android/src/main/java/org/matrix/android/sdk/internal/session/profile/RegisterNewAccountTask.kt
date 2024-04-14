@@ -18,11 +18,13 @@ package org.matrix.android.sdk.internal.session.profile
 
 import dagger.Lazy
 import okhttp3.OkHttpClient
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.data.LoginFlowTypes
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.toRegistrationFlowResponse
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.registration.AuthParams
 import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.di.Unauthenticated
@@ -47,8 +49,10 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
         @Unauthenticated
         private val okHttpClient: Lazy<OkHttpClient>,
         private val retrofitFactory: RetrofitFactory,
-        private val localAccountStore: LocalAccountStore,
+        authenticationService: AuthenticationService
 ) : RegisterNewAccountTask {
+    private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
+
     override suspend fun execute(params: RegisterNewAccountTask.Params): Boolean {
         var credentials: Credentials? = null
         val unauthorizedProfileAPI = buildProfileAPI(params.homeServerConnectionConfig)

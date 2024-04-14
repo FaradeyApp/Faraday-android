@@ -18,13 +18,12 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import com.zhuinden.monarchy.Monarchy
 import io.realm.kotlin.where
 import kotlinx.coroutines.withContext
 import org.matrix.android.sdk.api.MatrixCoroutineDispatchers
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.auth.UserInteractiveAuthInterceptor
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
@@ -36,7 +35,9 @@ import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.MimeTypes
 import org.matrix.android.sdk.api.util.Optional
+import org.matrix.android.sdk.internal.auth.DefaultAuthenticationService
 import org.matrix.android.sdk.internal.auth.SessionCreator
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.database.model.PendingThreePidEntity
 import org.matrix.android.sdk.internal.database.model.UserThreePidEntity
@@ -66,8 +67,9 @@ internal class DefaultProfileService @Inject constructor(
         private val pendingThreePidMapper: PendingThreePidMapper,
         private val userStore: UserStore,
         private val fileUploader: FileUploader,
-        private val localAccountStore: LocalAccountStore
+        authenticationService: AuthenticationService
 ) : ProfileService {
+    private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
 
     override suspend fun getDisplayName(userId: String): Optional<String> {
         val params = GetProfileInfoTask.Params(userId)
@@ -180,10 +182,10 @@ internal class DefaultProfileService @Inject constructor(
         refreshThreePids()
     }
 
-    override suspend fun getMultipleAccount(
-            homeServerConnectionConfig: HomeServerConnectionConfig
-    ): List<AccountItem> {
-        return localAccountStore.getAccounts().map {
+    override suspend fun getMultipleAccount(userId: String): List<AccountItem> {
+        return localAccountStore.getAccounts().filter {
+            it.userId != userId
+        }.map {
             val data = getProfile(it.userId)
             AccountItem(
                     userId = it.userId,
@@ -224,6 +226,10 @@ internal class DefaultProfileService @Inject constructor(
                         password = password
                 )
         )
+    }
+
+    override suspend fun storeAccount(userId: String, token: String?, username: String?, password: String?) {
+        localAccountStore.addAccount(userId, token = token)
     }
 
     override suspend fun getLoginByToken(token: String): AccountLoginCredentials {

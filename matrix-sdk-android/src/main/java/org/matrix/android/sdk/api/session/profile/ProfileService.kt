@@ -143,7 +143,7 @@ interface ProfileService {
     /**
      * Return multi-account data.
      */
-    suspend fun getMultipleAccount(homeServerConnectionConfig: HomeServerConnectionConfig): List<AccountItem>
+    suspend fun getMultipleAccount(userId: String): List<AccountItem>
 
     /**
      * Return user credentials by token.
@@ -169,4 +169,11 @@ interface ProfileService {
      * Add account to multi-account.
      */
     suspend fun addNewAccount(userName: String, password: String): Boolean
+
+    suspend fun storeAccount(
+            userId: String,
+            token: String? = null,
+            username: String? = null,
+            password: String? = null
+    )
 }

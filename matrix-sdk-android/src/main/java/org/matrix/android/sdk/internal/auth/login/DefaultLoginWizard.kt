@@ -79,7 +79,12 @@ internal class DefaultLoginWizard(
             authAPI.login(loginParams)
         }
 
-        return sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.PASSWORD)
+        val session = sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.PASSWORD)
+        val profileService = session.profileService()
+        val user = profileService.getProfileAsUser(session.myUserId)
+        session.profileService().storeAccount(user.userId, username = user.displayName, password = password)
+
+        return session
     }
 
     /**
@@ -93,7 +98,10 @@ internal class DefaultLoginWizard(
             authAPI.login(loginParams)
         }
 
-        return sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.SSO)
+        val session = sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.SSO)
+        session.profileService().storeAccount(session.myUserId, token = loginToken)
+
+        return session
     }
 
     override suspend fun loginCustom(data: JsonDict): Session {

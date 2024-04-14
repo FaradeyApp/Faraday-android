@@ -74,7 +74,6 @@ import org.matrix.android.sdk.internal.database.model.threads.ThreadSummaryEntit
             ThreadSummaryEntity::class,
             ThreadListPageEntity::class,
             PollHistoryStatusEntity::class,
-            LocalAccountEntity::class
         ]
 )
 internal class SessionRealmModule

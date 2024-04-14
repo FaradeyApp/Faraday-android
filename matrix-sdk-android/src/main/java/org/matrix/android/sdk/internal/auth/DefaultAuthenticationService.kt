@@ -37,6 +37,7 @@ import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.util.appendParamToUrl
 import org.matrix.android.sdk.internal.SessionManager
 import org.matrix.android.sdk.internal.auth.data.WebClientConfig
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.db.PendingSessionData
 import org.matrix.android.sdk.internal.auth.login.DefaultLoginWizard
 import org.matrix.android.sdk.internal.auth.login.DirectLoginTask
@@ -66,7 +67,8 @@ internal class DefaultAuthenticationService @Inject constructor(
         private val pendingSessionStore: PendingSessionStore,
         private val getWellknownTask: GetWellknownTask,
         private val directLoginTask: DirectLoginTask,
-        private val qrLoginTokenTask: QrLoginTokenTask
+        private val qrLoginTokenTask: QrLoginTokenTask,
+        private val localAccountStore: LocalAccountStore
 ) : AuthenticationService {
 
     private var pendingSessionData: PendingSessionData? = pendingSessionStore.getPendingSessionData()
@@ -394,6 +396,8 @@ internal class DefaultAuthenticationService @Inject constructor(
                 )
         )
     }
+
+    override fun getLocalAccountStore(): LocalAccountStore = localAccountStore
 
     private fun HomeServerConnectionConfig?.orWellKnownDefaults() = this ?: HomeServerConnectionConfig.Builder()
             // server uri is ignored when doing a wellknown lookup as we use the matrix id domain instead
