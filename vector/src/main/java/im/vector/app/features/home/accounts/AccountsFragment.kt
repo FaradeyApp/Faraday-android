@@ -16,6 +16,7 @@
 
 package im.vector.app.features.home.accounts
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +27,6 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.Uninitialized
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.core.extensions.cleanup
 import im.vector.app.core.extensions.configureWith
@@ -38,7 +38,6 @@ import im.vector.app.features.home.HomeDrawerFragment
 import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
 import javax.inject.Inject
-
 
 /**
  * Fragment handles multiple account feature.
@@ -80,7 +79,18 @@ class AccountsFragment :
     override fun invalidate() = withState(viewModel) { state ->
         if (state.restartApp) {
             viewModel.handle(AccountsAction.SetRestartAppValue(false))
-            ProcessPhoenix.triggerRebirth(context)
+            val context = requireContext()
+            val packageManager = context.packageManager
+            val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+            val componentName = intent!!.component
+            val mainIntent = Intent.makeRestartActivityTask(componentName)
+            // Required for API 34 and later
+            // Ref: https://developer.android.com/about/versions/14/behavior-changes-14#safer-intents
+            // Required for API 34 and later
+            // Ref: https://developer.android.com/about/versions/14/behavior-changes-14#safer-intents
+            mainIntent.setPackage(context.packageName)
+            context.startActivity(mainIntent)
+            Runtime.getRuntime().exit(0)
         }
         state.errorMessage?.let {message ->
             activity?.toast(message)

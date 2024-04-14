@@ -63,7 +63,7 @@ class AccountsViewModel @AssistedInject constructor(
         flow {
             if(!lightweightSettingsStorage.areCustomSettingsEnabled()) return@flow
             val result = session.profileService().getMultipleAccount(
-                    session.sessionParams.homeServerConnectionConfig
+                    session.myUserId
             )
             emit(result)
         }.setOnEach {
