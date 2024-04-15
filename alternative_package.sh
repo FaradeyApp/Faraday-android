@@ -46,7 +46,7 @@ logo_replace_color() {
     sed -i "s|#8BC34A|$color_shell|gi" "$file"
     sed -i "s|#33691E|$color_shell_dark|gi" "$file"
     # bg color
-    sed -i "s|#e2f0d2|$color_bg|gi" "$file"
+    sed -i "s|#ffffff|$color_bg|gi" "$file"
 }
 
 logo_alternative() {
