@@ -3598,4 +3598,9 @@
     <string name="nuke_activated_notice">Nuke password has been activated. App will be closed after app data deletion.</string>
     <string name="settings_user_agent_title" translatable="false">User-Agent</string>
     <string name="settings_user_agent_summary">Mask requests as %s</string>
+    <string name="application_password_wrong_length">The password must contain at least 4 and no more than 15 characters</string>
+    <string name="application_password_no_digit">The password must contain at least one digit</string>
+    <string name="application_password_no_uppercase">The password must contain at least one uppercase</string>
+    <string name="application_password_no_lowercase">The password must contain at least one lowercase</string>
+    <string name="application_password_no_symbol">The password must contain at least one character from the list: !, @, #, $, %, ^, &amp;, *, (, )</string>
 </resources>

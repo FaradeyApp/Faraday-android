@@ -3057,4 +3057,9 @@
     <string name="nuke_password_activation">Активация nuke-пароля</string>
     <string name="nuke_activated_notice">Nuke-пароль был активирован. Приложение будет закрыто после удаления данных.</string>
     <string name="settings_user_agent_summary">Маскировать запросы под %s</string>
+    <string name="application_password_wrong_length">Пароль должен содержать не менее 4 и не более 15 символов</string>
+    <string name="application_password_no_digit">Пароль должен содержать хотя бы одну цифру</string>
+    <string name="application_password_no_uppercase">Пароль должен содержать хотя бы одну заглавную букву</string>
+    <string name="application_password_no_lowercase">Пароль должен содержать хотя бы одну строчную букву</string>
+    <string name="application_password_no_symbol">Пароль должен содержать хотя бы один символ из списка: !, @, #, $, %, ^, &amp;, *, (, )</string>
 </resources>

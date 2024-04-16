@@ -183,7 +183,7 @@ data class MatrixError(
         const val M_WEAK_PASSWORD = "M_WEAK_PASSWORD"
 
         /** The provided password's length is shorter than the minimum length required by the server. */
-        const val M_PASSWORD_TOO_SHORT = "M_PASSWORD_TOO_SHORT"
+        const val M_PASSWORD_WRONG_LENGTH = "M_PASSWORD_WRONG_LENGTH"
 
         /** The password doesn't contain any digit but the server requires at least one. */
         const val M_PASSWORD_NO_DIGIT = "M_PASSWORD_NO_DIGIT"

@@ -21,27 +21,11 @@ import org.matrix.android.sdk.api.failure.MatrixError
 import org.matrix.android.sdk.api.session.applicationpassword.ApplicationPasswordService
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.internal.auth.SessionParamsStore
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.CheckApplicationPasswordIsSetTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.DeleteApplicationPasswordTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.GetNukePasswordTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.GetPasswordNotificationsTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.LoginByApplicationPasswordTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.SetApplicationPasswordTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.SetNukePasswordNotificationViewedTask
-import org.matrix.android.sdk.internal.session.applicationpassword.tasks.UpdateApplicationPasswordTask
 import org.matrix.android.sdk.internal.util.generatePassword
 import javax.inject.Inject
 
 internal class DefaultApplicationPasswordService @Inject constructor(
         private val sessionParamsStore: SessionParamsStore,
-        private val checkApplicationPasswordIsSetTask: CheckApplicationPasswordIsSetTask,
-        private val deleteApplicationPasswordTask: DeleteApplicationPasswordTask,
-        private val getNukePasswordTask: GetNukePasswordTask,
-        private val loginByApplicationPasswordTask: LoginByApplicationPasswordTask,
-        private val setApplicationPasswordTask: SetApplicationPasswordTask,
-        private val updateApplicationPasswordTask: UpdateApplicationPasswordTask,
-        private val getPasswordNotificationsTask: GetPasswordNotificationsTask,
-        private val setNukePasswordNotificationViewedTask: SetNukePasswordNotificationViewedTask,
         private val lightweightSettingsStorage: LightweightSettingsStorage
 ): ApplicationPasswordService {
     private fun throwIfNukePassword(password: String) {
@@ -56,12 +40,16 @@ internal class DefaultApplicationPasswordService @Inject constructor(
         if (password != lightweightSettingsStorage.getApplicationPassword())
             throw Failure.ServerError(error = MatrixError(
                     code = MatrixError.M_FORBIDDEN,
-                    message = "Incorrect password entered"
+                    message = "Invalid password"
             ), 403)
     }
 
-    private fun isValidPassword(password: String): Boolean {
-        if (password.length !in (4..15)) return false
+    private fun throwIfInvalidPassword(password: String) {
+        if (password.length !in (4..15))
+            throw Failure.ServerError(error = MatrixError(
+                code = MatrixError.M_PASSWORD_WRONG_LENGTH,
+                message = "Incorrect password entered"
+            ), 403)
 
         var hasDigit = false
         val digitCharset = ('0'..'9')
@@ -82,20 +70,26 @@ internal class DefaultApplicationPasswordService @Inject constructor(
                 in lowerCaseCharset -> { hasLowerCase = true }
             }
 
-            if (hasDigit && hasSymbol && hasLowerCase && hasUpperCase) return true
+            if (hasDigit && hasSymbol && hasLowerCase && hasUpperCase) return
         }
 
-        return false
+        val errorCode = when {
+            !hasDigit -> MatrixError.M_PASSWORD_NO_DIGIT
+            !hasSymbol -> MatrixError.M_PASSWORD_NO_SYMBOL
+            !hasLowerCase -> MatrixError.M_PASSWORD_NO_LOWERCASE
+            !hasUpperCase -> MatrixError.M_PASSWORD_NO_UPPERCASE
+            else -> ""
+        }
+
+        throw Failure.ServerError(error = MatrixError(
+                code = errorCode,
+                message = "Incorrect password entered"
+        ), 403)
     }
 
     override suspend fun setApplicationPassword(password: String): Boolean {
         throwIfNukePassword(password)
-        // TODO: implement situational errors
-        if (!isValidPassword(password))
-            throw Failure.ServerError(error = MatrixError(
-                    code = MatrixError.M_FORBIDDEN,
-                    message = "Incorrect password entered"
-            ), 403)
+        throwIfInvalidPassword(password)
 
         if (lightweightSettingsStorage.getNukePassword() == null) {
             lightweightSettingsStorage.setNukePassword(generatePassword())
@@ -122,11 +116,8 @@ internal class DefaultApplicationPasswordService @Inject constructor(
                     code = MatrixError.M_FORBIDDEN,
                     message = "Invalid password"
             ), 403)
-        if (!isValidPassword(newPassword))
-            throw Failure.ServerError(error = MatrixError(
-                    code = MatrixError.M_FORBIDDEN,
-                    message = "Incorrect password entered"
-            ), 403)
+
+        throwIfInvalidPassword(newPassword)
 
         lightweightSettingsStorage.setApplicationPassword(newPassword)
         return true

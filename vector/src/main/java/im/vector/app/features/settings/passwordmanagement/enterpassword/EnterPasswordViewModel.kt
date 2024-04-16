@@ -27,6 +27,7 @@ import im.vector.app.features.settings.passwordmanagement.setpassword.PasswordEr
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.isInvalidApplicationPassword
+import org.matrix.android.sdk.api.failure.isInvalidPassword
 import org.matrix.android.sdk.api.failure.isNukePasswordEntered
 import org.matrix.android.sdk.api.session.Session
 
@@ -80,7 +81,7 @@ class EnterPasswordViewModel @AssistedInject constructor(
         } catch (throwable: Throwable) {
             if (throwable is Failure.ServerError) {
                 when {
-                    throwable.isInvalidApplicationPassword() -> _viewEvents.post(
+                    throwable.isInvalidPassword() -> _viewEvents.post(
                             EnterPasswordViewEvents.ShowError(
                                     message = throwable.error.message,
                                     location = PasswordErrorLocation.PASSWORD

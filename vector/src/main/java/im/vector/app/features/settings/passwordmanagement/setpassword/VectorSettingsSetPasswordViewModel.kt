@@ -25,6 +25,7 @@ import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import im.vector.app.features.settings.passwordmanagement.changepassword.PasswordType
 import kotlinx.coroutines.launch
+import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.isInvalidApplicationPassword
 import org.matrix.android.sdk.api.failure.isNukePasswordEntered
 import org.matrix.android.sdk.api.session.Session
@@ -81,7 +82,11 @@ class VectorSettingsSetPasswordViewModel @AssistedInject constructor(
                     }
                 } catch (failure: Throwable) {
                     when{
-                        failure.isInvalidApplicationPassword() -> _viewEvents.post(VectorSettingsSetPasswordViewEvents.ShowError(message = failure.message.orEmpty(), location = PasswordErrorLocation.PASSWORD))
+                        failure.isInvalidApplicationPassword() -> {
+                            _viewEvents.post(VectorSettingsSetPasswordViewEvents.ShowError(
+                                    message = (failure as Failure.ServerError).error.code, location = PasswordErrorLocation.PASSWORD)
+                            )
+                        }
                         failure.isNukePasswordEntered() -> {
                             _viewEvents.post(
                                     VectorSettingsSetPasswordViewEvents.ShowError(

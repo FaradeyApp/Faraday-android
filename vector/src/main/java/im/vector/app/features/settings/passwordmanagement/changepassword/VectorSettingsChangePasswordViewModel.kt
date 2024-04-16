@@ -25,6 +25,7 @@ import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.api.failure.isInvalidApplicationPassword
 import org.matrix.android.sdk.api.failure.isInvalidPassword
 import org.matrix.android.sdk.api.session.Session
 
@@ -66,6 +67,13 @@ class VectorSettingsChangePasswordViewModel @AssistedInject constructor(
                     if (failure is Failure.ServerError) {
                         if (failure.isInvalidPassword()) {
                             _viewEvents.post(VectorSettingsChangePasswordViewEvents.ShowError(message = failure.error.message, location = ErrorLocation.OLD_PASSWORD))
+                        } else if (failure.isInvalidApplicationPassword()) {
+                            _viewEvents.post(
+                                    VectorSettingsChangePasswordViewEvents.ShowError(
+                                            message = failure.error.code,
+                                            location = ErrorLocation.GENERAL
+                                    )
+                            )
                         } else {
                             _viewEvents.post(
                                     VectorSettingsChangePasswordViewEvents.ShowError(

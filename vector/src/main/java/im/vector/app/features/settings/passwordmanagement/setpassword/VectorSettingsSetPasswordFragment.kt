@@ -32,6 +32,7 @@ import im.vector.app.core.preference.TextInputPreference
 import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsBaseFragment
 import im.vector.app.features.settings.passwordmanagement.changepassword.PasswordType
+import org.matrix.android.sdk.api.failure.MatrixError
 
 @AndroidEntryPoint
 class VectorSettingsSetPasswordFragment :
@@ -97,7 +98,14 @@ class VectorSettingsSetPasswordFragment :
                 is VectorSettingsSetPasswordViewEvents.ShowError -> {
                     when (event.location) {
                         PasswordErrorLocation.PASSWORD -> {
-                            passwordPreference?.textInputLayout?.error = event.message
+                            passwordPreference?.textInputLayout?.error = when(event.message) {
+                                MatrixError.M_PASSWORD_WRONG_LENGTH -> getString(R.string.application_password_wrong_length)
+                                MatrixError.M_PASSWORD_NO_DIGIT -> getString(R.string.application_password_no_digit)
+                                MatrixError.M_PASSWORD_NO_SYMBOL -> getString(R.string.application_password_no_symbol)
+                                MatrixError.M_PASSWORD_NO_LOWERCASE -> getString(R.string.application_password_no_uppercase)
+                                MatrixError.M_PASSWORD_NO_UPPERCASE -> getString(R.string.application_password_no_lowercase)
+                                else -> event.message
+                            }
                         }
 
                         PasswordErrorLocation.REPEAT_PASSWORD -> {

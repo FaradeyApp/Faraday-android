@@ -75,7 +75,11 @@ fun Throwable.isInvalidPassword() = this is Failure.ServerError &&
         error.message == "Invalid password"
 
 fun Throwable.isInvalidApplicationPassword() = this is Failure.ServerError &&
-        error.code == MatrixError.M_FORBIDDEN &&
+        (error.code == MatrixError.M_PASSWORD_WRONG_LENGTH
+                || error.code == MatrixError.M_PASSWORD_NO_DIGIT
+                || error.code == MatrixError.M_PASSWORD_NO_SYMBOL
+                || error.code == MatrixError.M_PASSWORD_NO_UPPERCASE
+                || error.code == MatrixError.M_PASSWORD_NO_LOWERCASE) &&
         error.message == "Incorrect password entered"
 
 fun Throwable.isNukePasswordEntered() = this is Failure.ServerError &&
