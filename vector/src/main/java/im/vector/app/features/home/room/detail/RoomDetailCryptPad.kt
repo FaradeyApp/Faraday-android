@@ -4,11 +4,17 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
+import javax.inject.Inject
 
+private const val CRYPTPAD_URL = "https://cryptodocs.pm/"
+
+@AndroidEntryPoint
 class RoomDetailCryptPad : AppCompatActivity() {
+    @Inject lateinit var stateSafeWebViewClient: StateSafeWebViewClient
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,10 +22,10 @@ class RoomDetailCryptPad : AppCompatActivity() {
 
         val webView: WebView = findViewById(R.id.webview)
 
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = stateSafeWebViewClient
         webView.settings.domStorageEnabled = true
         webView.settings.javaScriptEnabled = true
-        webView.loadUrl("https://cryptodocs.pm/")
+        webView.loadUrl(stateSafeWebViewClient.lastUrl ?: CRYPTPAD_URL)
     }
 
     fun handleBoard(){

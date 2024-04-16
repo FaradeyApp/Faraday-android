@@ -27,6 +27,7 @@ import im.vector.app.core.settings.connectionmethods.onion.TorService
 import im.vector.app.features.analytics.AnalyticsTracker
 import im.vector.app.features.call.webrtc.WebRtcCallManager
 import im.vector.app.features.home.AvatarRenderer
+import im.vector.app.features.home.room.detail.StateSafeWebViewClient
 import im.vector.app.features.navigation.Navigator
 import im.vector.app.features.pin.PinLocker
 import im.vector.app.features.rageshake.BugReporter
@@ -75,4 +76,6 @@ interface SingletonEntryPoint {
     fun webRtcCallManager(): WebRtcCallManager
 
     fun appCoroutineScope(): CoroutineScope
+
+    fun stateSafeWebViewClient(): StateSafeWebViewClient
 }
