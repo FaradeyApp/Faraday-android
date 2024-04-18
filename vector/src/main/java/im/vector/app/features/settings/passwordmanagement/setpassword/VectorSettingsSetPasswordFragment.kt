@@ -102,8 +102,8 @@ class VectorSettingsSetPasswordFragment :
                                 MatrixError.M_PASSWORD_WRONG_LENGTH -> getString(R.string.application_password_wrong_length)
                                 MatrixError.M_PASSWORD_NO_DIGIT -> getString(R.string.application_password_no_digit)
                                 MatrixError.M_PASSWORD_NO_SYMBOL -> getString(R.string.application_password_no_symbol)
-                                MatrixError.M_PASSWORD_NO_LOWERCASE -> getString(R.string.application_password_no_uppercase)
-                                MatrixError.M_PASSWORD_NO_UPPERCASE -> getString(R.string.application_password_no_lowercase)
+                                MatrixError.M_PASSWORD_NO_LOWERCASE -> getString(R.string.application_password_no_lowercase)
+                                MatrixError.M_PASSWORD_NO_UPPERCASE -> getString(R.string.application_password_no_uppercase)
                                 else -> event.message
                             }
                         }
