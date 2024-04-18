@@ -176,4 +176,6 @@ interface ProfileService {
             username: String? = null,
             password: String? = null
     )
+
+    suspend fun clearMultiAccount()
 }

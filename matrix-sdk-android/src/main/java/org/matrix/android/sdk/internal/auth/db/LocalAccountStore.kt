@@ -34,6 +34,8 @@ interface LocalAccountStore {
     )
 
     suspend fun getAccount(userId: String): LocalAccount
+
+    suspend fun clearAll()
 }
 
 class DefaultLocalAccountStore @Inject constructor(
@@ -46,6 +48,10 @@ class DefaultLocalAccountStore @Inject constructor(
 
     override suspend fun getAccount(userId: String): LocalAccount = awaitTransaction(realmConfiguration) { realm ->
         LocalAccountEntity.where(realm, userId).findFirst()!!.toLocalAccount()
+    }
+
+    override suspend fun clearAll() = awaitTransaction(realmConfiguration) { realm ->
+        realm.delete(LocalAccountEntity::class.java)
     }
 
     override suspend fun getAccounts(): List<LocalAccount> = awaitTransaction(realmConfiguration) { realm ->

@@ -110,6 +110,9 @@ class HomeDrawerFragment :
         // Sign out
         views.homeDrawerHeaderSignoutView.debouncedClicks {
             sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
+            lifecycleScope.launch {
+                session.profileService().clearMultiAccount()
+            }
             SignOutUiWorker(requireActivity()).perform()
         }
         // Add account

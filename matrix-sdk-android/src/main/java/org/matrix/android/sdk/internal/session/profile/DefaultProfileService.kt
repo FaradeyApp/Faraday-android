@@ -232,6 +232,10 @@ internal class DefaultProfileService @Inject constructor(
         localAccountStore.addAccount(userId, token = token)
     }
 
+    override suspend fun clearMultiAccount() {
+        localAccountStore.clearAll()
+    }
+
     override suspend fun getLoginByToken(token: String): AccountLoginCredentials {
         return getLoginByTokenTask.execute(
                 GetLoginByTokenTask.Params(
