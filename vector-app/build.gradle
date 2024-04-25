@@ -247,6 +247,7 @@ android {
                 optimizeCode true
                 proguardFiles 'proguard-rules.pro'
             }
+            signingConfig signingConfigs.debug
             // signingConfig signingConfigs.release
         }
 
