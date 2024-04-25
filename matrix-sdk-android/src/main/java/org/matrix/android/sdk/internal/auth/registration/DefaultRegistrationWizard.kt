@@ -82,6 +82,12 @@ internal class DefaultRegistrationWizard(
                 .also {
                     pendingSessionData = pendingSessionData.copy(isRegistrationStarted = true)
                             .also { pendingSessionStore.savePendingSessionData(it) }
+                }.also {
+                    if(it is RegistrationResult.Success) {
+                        it.session.profileService().storeAccount(
+                                it.session.myUserId, username = userName, password = password
+                        )
+                    }
                 }
     }
 
