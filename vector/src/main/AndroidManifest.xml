@@ -110,6 +110,23 @@
         </activity>
 
         <activity
+            android:name=".features.home.room.detail.RoomDetailTestWeb"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <!-- Include the host attribute if you want your app to respond
+                     only to URLs with your app's domain. -->
+                <data android:scheme="http"/>
+                <data android:host="https://test.ttt"/>
+                <data android:scheme="http"/>
+                <data android:host="https://tree.taiga.io"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- The BROWSABLE category is required to get links from web pages. -->
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".features.home.room.detail.RoomDetailCryptPad"
             android:exported="true">
             <intent-filter>
