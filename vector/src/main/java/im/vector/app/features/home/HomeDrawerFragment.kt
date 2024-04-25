@@ -42,7 +42,9 @@ import im.vector.app.databinding.DialogAddAccountBinding
 import im.vector.app.databinding.FragmentHomeDrawerBinding
 import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.home.accounts.AccountsFragment
+import im.vector.app.features.login.LoginConfig
 import im.vector.app.features.login.PromptSimplifiedModeActivity
+import im.vector.app.features.navigation.Navigator
 import im.vector.app.features.permalink.PermalinkFactory
 import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsActivity
@@ -183,7 +185,7 @@ class HomeDrawerFragment :
 
             dialog.setOnShowListener {
                 val addAccountButton = views.addAccountButton
-                val registerButton = views.registerButton.apply { this.visibility = INVISIBLE }
+                val registerButton = views.registerButton //.apply { this.visibility = INVISIBLE }
                 val header = views.header
                 val notice = views.notice
                 notice.isVisible = false
