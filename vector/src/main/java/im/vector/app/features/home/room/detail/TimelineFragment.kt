@@ -900,8 +900,6 @@ class TimelineFragment :
             }
             menu.findItem(R.id.video_call).icon?.alpha = if (callButtonsEnabled) 0xFF else 0x40
             menu.findItem(R.id.voice_call).icon?.alpha = if (callButtonsEnabled || state.hasActiveElementCallWidget()) 0xFF else 0x40
-            menu.findItem(R.id.taiga_board).icon?.alpha = 0xFF
-            menu.findItem(R.id.cryptpad).icon?.alpha = 0xFF
 
             val matrixAppsMenuItem = menu.findItem(R.id.open_matrix_apps)
             val widgetsCount = state.activeRoomWidgets.invoke()?.size ?: 0
@@ -1025,14 +1023,6 @@ class TimelineFragment :
             }
             R.id.video_call -> {
                 callActionsHandler.onVideoCallClicked()
-                true
-            }
-            R.id.taiga_board -> {
-                navigateToTaiga()
-                true
-            }
-            R.id.cryptpad -> {
-                navigateToCryptPad()
                 true
             }
             R.id.show_participants -> {
@@ -2360,18 +2350,6 @@ class TimelineFragment :
             )
             navigator.openThreadList(it, roomThreadDetailArgs)
         }
-    }
-
-    // Navigate to Taiga (RoomDetailTaigaBoard is Activity)
-    private fun navigateToTaiga() {
-        val intent = Intent(context, RoomDetailTaigaBoard::class.java)
-        context?.startActivity(intent)
-    }
-
-    // Navigate to CryptPad (RoomDetailCryptPad is Activity)
-    private fun navigateToCryptPad() {
-        val intent = Intent(context, RoomDetailCryptPad::class.java)
-        context?.startActivity(intent)
     }
 
     // VectorInviteView.Callback

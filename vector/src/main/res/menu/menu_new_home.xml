@@ -3,6 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+    <item
+        android:id="@+id/test_web"
+        android:icon="@drawable/ic_integrations_crypt"
+        android:title="@string/test_menu_title"
+        app:iconTint="@color/accent_sc_dark_greendark"
+        app:showAsAction="never"
+        tools:visible="true" />
+
     <item
         android:id="@+id/menu_home_setting"
         android:icon="@drawable/ic_settings_x"
@@ -50,11 +59,27 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/taiga_board"
+        android:icon="@drawable/ic_integrations"
+        android:title="@string/taiga_menu_name"
+        app:iconTint="?colorPrimary"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/cryptpad"
+        android:icon="@drawable/ic_integrations_crypt"
+        android:title="@string/cryptpad_menu_title"
+        app:iconTint="@color/accent_sc_dark_blue"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <item
         android:id="@+id/menu_home_filter"
         android:icon="@drawable/ic_home_search"
         android:title="@string/home_filter_placeholder_home"
         app:iconTint="?vctr_content_secondary"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/dev_theming"

@@ -19,11 +19,13 @@ package im.vector.app.features.home
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -58,6 +60,9 @@ import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.analytics.plan.ViewRoom
 import im.vector.app.features.crypto.recover.SetupMode
 import im.vector.app.features.disclaimer.DisclaimerDialog
+import im.vector.app.features.home.room.detail.RoomDetailCryptPad
+import im.vector.app.features.home.room.detail.RoomDetailTaigaBoard
+import im.vector.app.features.home.room.detail.RoomDetailTestWeb
 import im.vector.app.features.home.room.list.actions.RoomListSharedAction
 import im.vector.app.features.home.room.list.actions.RoomListSharedActionViewModel
 import im.vector.app.features.home.room.list.home.layout.HomeLayoutSettingBottomDialogFragment
@@ -71,6 +76,9 @@ import im.vector.app.features.permalink.NavigationInterceptor
 import im.vector.app.features.permalink.PermalinkHandler
 import im.vector.app.features.permalink.PermalinkHandler.Companion.MATRIX_TO_CUSTOM_SCHEME_URL_BASE
 import im.vector.app.features.permalink.PermalinkHandler.Companion.ROOM_LINK_PREFIX
+import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_MATRIX_TO_CUSTOM_SCHEME_URL_BASE
+import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_ROOM_LINK_PREFIX
+import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_USER_LINK_PREFIX
 import im.vector.app.features.permalink.PermalinkHandler.Companion.USER_LINK_PREFIX
 import im.vector.app.features.popup.DefaultVectorAlert
 import im.vector.app.features.popup.PopupAlertManager
@@ -78,6 +86,9 @@ import im.vector.app.features.popup.VerificationVectorAlert
 import im.vector.app.features.rageshake.ReportType
 import im.vector.app.features.rageshake.VectorUncaughtExceptionHandler
 import im.vector.app.features.settings.VectorSettingsActivity
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordFragment
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenArgs
+import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenType
 import im.vector.app.features.spaces.SpaceCreationActivity
 import im.vector.app.features.spaces.SpacePreviewActivity
 import im.vector.app.features.spaces.SpaceSettingsMenuBottomSheet
@@ -86,12 +97,6 @@ import im.vector.app.features.spaces.share.ShareSpaceBottomSheet
 import im.vector.app.features.themes.ThemeUtils
 import im.vector.app.features.usercode.UserCodeActivity
 import im.vector.app.features.workers.signout.ServerBackupStatusViewModel
-import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_MATRIX_TO_CUSTOM_SCHEME_URL_BASE
-import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_ROOM_LINK_PREFIX
-import im.vector.app.features.permalink.PermalinkHandler.Companion.SC_USER_LINK_PREFIX
-import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordFragment
-import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenArgs
-import im.vector.app.features.settings.passwordmanagement.enterpassword.EnterPasswordScreenType
 import im.vector.lib.core.utils.compat.getParcelableExtraCompat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -633,6 +638,9 @@ class HomeActivity :
         menu.findItem(R.id.menu_home_init_sync_optimized)?.isVisible = vectorPreferences.developerMode()
         menu.findItem(R.id.dev_theming)?.isVisible = vectorPreferences.developerMode()
         menu.findItem(R.id.dev_new_layout)?.isVisible = vectorFeatures.isNewAppLayoutFeatureEnabled() && vectorPreferences.developerMode()
+        menu.findItem(R.id.taiga_board)?.icon?.alpha = 0xFF
+        menu.findItem(R.id.cryptpad)?.icon?.alpha = 0xFF
+        menu.findItem(R.id.test_web)?.icon?.alpha = 0xFF
 
         // Base theme setting
         ArrayOptionsMenuHelper.createSubmenu(
@@ -716,6 +724,18 @@ class HomeActivity :
                 launchQrCode()
                 true
             }
+            R.id.cryptpad -> {
+                navigateToCryptPad()
+                true
+            }
+            R.id.taiga_board -> {
+                navigateToTaiga()
+                true
+            }
+            R.id.test_web -> {
+                navigateToTestWeb()
+                true
+            }
             else -> false
         }
 
@@ -723,6 +743,21 @@ class HomeActivity :
                 R.id.dev_base_theme,
                 R.id.dev_theme_accent
         )
+    }
+
+    private fun navigateToTestWeb() {
+        val intent = Intent(this, RoomDetailTestWeb::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToCryptPad() {
+        val intent = Intent(this, RoomDetailCryptPad::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToTaiga() {
+        val intent = Intent(this, RoomDetailTaigaBoard::class.java)
+        startActivity(intent)
     }
 
     private fun launchQrCode() {
@@ -812,6 +847,19 @@ class HomeActivity :
 
     override fun mxToBottomSheetSwitchToSpace(spaceId: String) {
         navigator.switchToSpace(this, spaceId, Navigator.PostSwitchSpaceAction.OpenRoomList)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (menu !is Menu) return super.onPrepareOptionsMenu(menu)
+
+        val config: Configuration = resources.configuration
+        val width = config.screenWidthDp
+
+        if (width > 400) {
+            menu.findItem(R.id.test_web)?.setShowAsAction(SHOW_AS_ACTION_ALWAYS)
+        }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     fun handleApplicationPasswordEntered() {

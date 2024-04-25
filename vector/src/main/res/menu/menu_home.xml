@@ -40,6 +40,30 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
+        android:id="@+id/taiga_board"
+        android:icon="@drawable/ic_integrations"
+        android:title="@string/action_video_call"
+        app:iconTint="?colorPrimary"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/cryptpad"
+        android:icon="@drawable/ic_integrations_crypt"
+        android:title="@string/action_video_call"
+        app:iconTint="@color/accent_sc_dark_blue"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <item
+        android:id="@+id/test_web"
+        android:icon="@drawable/ic_integrations_crypt"
+        android:title="@string/action_video_call"
+        app:iconTint="@color/accent_sc_dark_greendark"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+    <item
         android:id="@+id/dev_theming"
         android:title="@string/settings_theme"
         android:visible="false"
