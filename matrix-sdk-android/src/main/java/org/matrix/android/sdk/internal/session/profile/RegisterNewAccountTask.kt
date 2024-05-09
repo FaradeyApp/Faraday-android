@@ -44,7 +44,6 @@ internal interface RegisterNewAccountTask : Task<RegisterNewAccountTask.Params, 
 }
 
 internal class DefaultRegisterNewAccountTask @Inject constructor(
-        private val profileAPI: ProfileAPI,
         private val globalErrorReceiver: GlobalErrorReceiver,
         @Unauthenticated
         private val okHttpClient: Lazy<OkHttpClient>,

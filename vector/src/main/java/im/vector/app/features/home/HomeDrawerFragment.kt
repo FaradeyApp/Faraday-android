@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
@@ -44,9 +43,7 @@ import im.vector.app.databinding.FragmentHomeDrawerBinding
 import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.home.accounts.AccountsFragment
 import im.vector.app.features.login.HomeServerConnectionConfigFactory
-import im.vector.app.features.login.LoginConfig
 import im.vector.app.features.login.PromptSimplifiedModeActivity
-import im.vector.app.features.navigation.Navigator
 import im.vector.app.features.permalink.PermalinkFactory
 import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsActivity

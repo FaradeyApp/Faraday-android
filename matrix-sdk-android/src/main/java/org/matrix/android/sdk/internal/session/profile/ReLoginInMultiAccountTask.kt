@@ -17,20 +17,14 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import org.matrix.android.sdk.api.auth.AuthenticationService
-import org.matrix.android.sdk.api.auth.LoginType
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.login.LoginWizard
-import org.matrix.android.sdk.api.failure.Failure
+import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.auth.SessionCreator
-import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
-import org.matrix.android.sdk.internal.network.executeRequest
+import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.task.Task
 import javax.inject.Inject
-import org.matrix.android.sdk.api.session.Session
-import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
-import org.matrix.android.sdk.internal.session.HomeServerHolder
-import timber.log.Timber
 
 internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Params, Session> {
     data class Params(
@@ -42,9 +36,6 @@ internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Pa
 }
 
 internal class DefaultReLoginInMultiAccountTask @Inject constructor(
-        private val profileAPI: ProfileAPI,
-        private val multiServerProfileApi: MultiServerProfileApi,
-        private val globalErrorReceiver: GlobalErrorReceiver,
         private val authenticationService: AuthenticationService,
 ) : ReLoginInMultiAccountTask {
     private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
