@@ -101,7 +101,6 @@ import org.matrix.android.sdk.internal.session.user.accountdata.DefaultSessionAc
 import org.matrix.android.sdk.internal.session.widgets.DefaultWidgetURLFormatter
 import retrofit2.Retrofit
 import java.io.File
-import java.net.Proxy
 import javax.inject.Provider
 import javax.inject.Qualifier
 
@@ -246,11 +245,13 @@ internal abstract class SessionModule {
                 @SessionId sessionId: String,
                 @MockHttpInterceptor testInterceptor: TestInterceptor?,
                 matrixConfiguration: MatrixConfiguration,
+                multiServerInterceptor: MultiServerInterceptor,
                 lightweightSettingsStorage: LightweightSettingsStorage
         ): OkHttpClient {
             val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
             return okHttpClient
                     .newBuilder()
+                    .addInterceptor(multiServerInterceptor)
                     .addAccessTokenInterceptor(accessTokenProvider)
                     .apply {
                         if (testInterceptor != null) {
