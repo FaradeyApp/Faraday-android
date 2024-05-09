@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.matrix.android.sdk.internal.session.profile
+package org.matrix.android.sdk.internal.session
 
-data class LocalAccount(
-        var userId: String,
-        var token: String?,
-        var username: String?,
-        var password: String?,
-        var homeServerUrl: String
-)
+const val LOCALHOST_DOMAIN = "https://localhost/"
+
+object HomeServerHolder {
+    var homeServer = ""
+
+    fun setDefaultHomeServer() {
+        homeServer = ""
+    }
+}

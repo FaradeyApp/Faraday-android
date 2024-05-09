@@ -20,7 +20,7 @@ import io.realm.DynamicRealm
 import org.matrix.android.sdk.internal.util.database.RealmMigrator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountEntityFields
 
-internal class MigrateAuthTo006(realm: DynamicRealm) : RealmMigrator(realm, 5) {
+internal class MigrateAuthTo006(realm: DynamicRealm) : RealmMigrator(realm, 6) {
 
     override fun doMigrate(realm: DynamicRealm) {
         realm.schema.create("LocalAccountEntity")
@@ -32,6 +32,7 @@ internal class MigrateAuthTo006(realm: DynamicRealm) : RealmMigrator(realm, 5) {
                 .setNullable(LocalAccountEntityFields.USERNAME, true)
                 .addField(LocalAccountEntityFields.PASSWORD, String::class.java)
                 .setNullable(LocalAccountEntityFields.PASSWORD, true)
+                .addField(LocalAccountEntityFields.HOME_SERVER_URL, String::class.java)
     }
 }
 

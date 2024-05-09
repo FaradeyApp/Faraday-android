@@ -28,9 +28,10 @@ interface LocalAccountStore {
     suspend fun getAccounts(): List<LocalAccount>
     suspend fun addAccount(
             userId: String,
+            homeServerUrl: String,
             username: String? = null,
             password: String? = null,
-            token: String? = null
+            token: String? = null,
     )
 
     suspend fun getAccount(userId: String): LocalAccount
@@ -41,8 +42,8 @@ interface LocalAccountStore {
 class DefaultLocalAccountStore @Inject constructor(
         @AuthDatabase private val realmConfiguration: RealmConfiguration,
 ) : LocalAccountStore {
-    override suspend fun addAccount(userId: String, username: String?, password: String?, token: String?) = awaitTransaction(realmConfiguration) { realm ->
-        val accountEntity = LocalAccountEntity(userId, token, username, password)
+    override suspend fun addAccount(userId: String, homeServerUrl: String, username: String?, password: String?, token: String?) = awaitTransaction(realmConfiguration) { realm ->
+        val accountEntity = LocalAccountEntity(userId, token, username, password, homeServerUrl)
         realm.insertOrUpdate(accountEntity)
     }
 
