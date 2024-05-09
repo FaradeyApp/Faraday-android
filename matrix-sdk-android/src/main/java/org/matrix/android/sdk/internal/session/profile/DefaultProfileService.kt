@@ -35,7 +35,6 @@ import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.MimeTypes
 import org.matrix.android.sdk.api.util.Optional
-import org.matrix.android.sdk.internal.auth.DefaultAuthenticationService
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
@@ -59,7 +58,7 @@ internal class DefaultProfileService @Inject constructor(
         private val addThreePidTask: AddThreePidTask,
         private val validateSmsCodeTask: ValidateSmsCodeTask,
         private val finalizeAddingThreePidTask: FinalizeAddingThreePidTask,
-        private val deleteThreePidTask: DeleteThreePidTask, private val getMultipleAccountTask: GetMultipleAccountTask,
+        private val deleteThreePidTask: DeleteThreePidTask,
         private val addNewAccountTask: AddNewAccountTask,
         private val getLoginByTokenTask: GetLoginByTokenTask,
         private val reLoginInMultiAccountTask: ReLoginInMultiAccountTask,
@@ -98,8 +97,8 @@ internal class DefaultProfileService @Inject constructor(
         return Optional.from(avatarUrl)
     }
 
-    override suspend fun getProfile(userId: String): JsonDict {
-        val params = GetProfileInfoTask.Params(userId)
+    override suspend fun getProfile(userId: String, homeServerUrl: String?): JsonDict {
+        val params = GetProfileInfoTask.Params(userId, homeServerUrl = homeServerUrl)
         return getProfileInfoTask.execute(params)
     }
 
@@ -186,7 +185,7 @@ internal class DefaultProfileService @Inject constructor(
         return localAccountStore.getAccounts().filter {
             it.userId != userId
         }.map {
-            val data = getProfile(it.userId)
+            val data = getProfile(it.userId, it.homeServerUrl)
             AccountItem(
                     userId = it.userId,
                     displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
@@ -219,17 +218,18 @@ internal class DefaultProfileService @Inject constructor(
         return registerNewAccountTask.execute(RegisterNewAccountTask.Params(params, homeServerConnectionConfig))
     }
 
-    override suspend fun addNewAccount(userName: String, password: String): Boolean {
+    override suspend fun addNewAccount(userName: String, password: String, homeServerUrl: String): Boolean {
         return addNewAccountTask.execute(
                 AddNewAccountTask.Params(
                         username = userName,
-                        password = password
+                        password = password,
+                        homeServerUrl = homeServerUrl
                 )
         )
     }
 
-    override suspend fun storeAccount(userId: String, token: String?, username: String?, password: String?) {
-        localAccountStore.addAccount(userId, token = token)
+    override suspend fun storeAccount(userId: String, homeServerUrl: String, token: String?, username: String?, password: String?) {
+        localAccountStore.addAccount(userId, homeServerUrl, username, password, token)
     }
 
     override suspend fun clearMultiAccount() {

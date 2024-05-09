@@ -22,6 +22,7 @@ import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
+import org.matrix.android.sdk.internal.session.HomeServerHolder
 import org.matrix.android.sdk.internal.task.Task
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,12 +30,14 @@ import javax.inject.Inject
 internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, Boolean> {
     data class Params(
             val username: String,
-            val password: String
+            val password: String,
+            val homeServerUrl: String? = null
     )
 }
 
 internal class DefaultAddNewAccountTask @Inject constructor(
         private val profileAPI: ProfileAPI,
+        private val multiServerProfileApi: MultiServerProfileApi,
         private val globalErrorReceiver: GlobalErrorReceiver,
         authenticationService: AuthenticationService
 ) : AddNewAccountTask {
@@ -43,7 +46,20 @@ internal class DefaultAddNewAccountTask @Inject constructor(
     override suspend fun execute(params: AddNewAccountTask.Params): Boolean {
         val credentials = try {
             executeRequest(globalErrorReceiver) {
-                profileAPI.getLoginByPassword(
+                params.homeServerUrl?.let {
+                    HomeServerHolder.homeServer = it
+                    multiServerProfileApi.getLoginByPassword(
+                            GetLoginByPasswordBody(
+                                    type = "m.login.password",
+                                    identifier = LoginIdentifier(
+                                            type = "m.id.user",
+                                            user = params.username
+                                    ),
+                                    password = params.password,
+                            )
+                    )
+                }.also { HomeServerHolder.setDefaultHomeServer() }
+                        ?: profileAPI.getLoginByPassword(
                         GetLoginByPasswordBody(
                                 type = "m.login.password",
                                 identifier = LoginIdentifier(
@@ -63,7 +79,7 @@ internal class DefaultAddNewAccountTask @Inject constructor(
 //            executeRequest(globalErrorReceiver) {
 //                profileAPI.addNewAccount(AddNewAccountBody(token = credentials.accessToken))
 //            }.status
-            localAccountStore.addAccount(credentials.userId, params.username, params.password)
+            localAccountStore.addAccount(credentials.userId, params.homeServerUrl!!, params.username, params.password)
             "OK"
         } catch (throwable: Throwable) {
             if(throwable is Failure.ServerError) throw throwable

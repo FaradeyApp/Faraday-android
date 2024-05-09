@@ -77,7 +77,7 @@ interface ProfileService {
      * @param userId the userId param to look for
      *
      */
-    suspend fun getProfile(userId: String): JsonDict
+    suspend fun getProfile(userId: String, homeServerUrl: String? = null): JsonDict
 
     /**
      * Get the current user 3Pids.
@@ -132,7 +132,7 @@ interface ProfileService {
      * Return a User object from a userId.
      */
     suspend fun getProfileAsUser(userId: String): User {
-        return getProfile(userId).let { dict ->
+        return getProfile(userId, null).let { dict ->
             User(
                     userId = userId,
                     displayName = dict[DISPLAY_NAME_KEY] as? String,
@@ -168,10 +168,11 @@ interface ProfileService {
     /**
      * Add account to multi-account.
      */
-    suspend fun addNewAccount(userName: String, password: String): Boolean
+    suspend fun addNewAccount(userName: String, password: String, homeServerUrl: String): Boolean
 
     suspend fun storeAccount(
             userId: String,
+            homeServerUrl: String,
             token: String? = null,
             username: String? = null,
             password: String? = null

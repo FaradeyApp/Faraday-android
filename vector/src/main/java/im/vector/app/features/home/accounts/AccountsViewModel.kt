@@ -21,9 +21,11 @@ import com.airbnb.mvrx.Success
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import im.vector.app.core.di.ActiveSessionHolder
 import im.vector.app.core.di.MavericksAssistedViewModelFactory
 import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
+import im.vector.app.core.session.ConfigureAndStartSessionUseCase
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.auth.AuthenticationService
@@ -37,7 +39,9 @@ class AccountsViewModel @AssistedInject constructor(
         @Assisted initialState: AccountsViewState,
         private val session: Session,
         private val lightweightSettingsStorage: LightweightSettingsStorage,
-        private val authenticationService: AuthenticationService
+        private val authenticationService: AuthenticationService,
+        private val activeSessionHolder: ActiveSessionHolder,
+        private val configureAndStartSessionUseCase: ConfigureAndStartSessionUseCase
 ) : VectorViewModel<AccountsViewState, AccountsAction, AccountsViewEvents>(initialState) {
 
     @AssistedFactory
@@ -100,6 +104,9 @@ class AccountsViewModel @AssistedInject constructor(
                     currentCredentials = session.sessionParams.credentials,
                     sessionCreator = authenticationService.getSessionCreator()
             )
+            activeSessionHolder.setActiveSession(session)
+            authenticationService.reset()
+            configureAndStartSessionUseCase.execute(session)
             Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
         } catch (throwable: Throwable) {
             Timber.i("Error re-login into app $throwable")

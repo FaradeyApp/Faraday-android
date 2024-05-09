@@ -36,12 +36,14 @@ import im.vector.app.core.extensions.replaceChildFragment
 import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.resources.BuildMeta
+import im.vector.app.core.utils.ensureProtocol
 import im.vector.app.core.utils.startSharePlainTextIntent
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.DialogAddAccountBinding
 import im.vector.app.databinding.FragmentHomeDrawerBinding
 import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.home.accounts.AccountsFragment
+import im.vector.app.features.login.HomeServerConnectionConfigFactory
 import im.vector.app.features.login.LoginConfig
 import im.vector.app.features.login.PromptSimplifiedModeActivity
 import im.vector.app.features.navigation.Navigator
@@ -68,6 +70,7 @@ class HomeDrawerFragment :
     @Inject lateinit var buildMeta: BuildMeta
     @Inject lateinit var permalinkFactory: PermalinkFactory
     @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
+    @Inject lateinit var homeServerConnectionConfigFactory: HomeServerConnectionConfigFactory
 
     private lateinit var sharedActionViewModel: HomeSharedActionViewModel
 
@@ -113,7 +116,7 @@ class HomeDrawerFragment :
         views.homeDrawerHeaderSignoutView.debouncedClicks {
             sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
             lifecycleScope.launch {
-                session.profileService().clearMultiAccount()
+//                session.profileService().clearMultiAccount()
             }
             SignOutUiWorker(requireActivity()).perform()
         }
@@ -185,7 +188,7 @@ class HomeDrawerFragment :
 
             dialog.setOnShowListener {
                 val addAccountButton = views.addAccountButton
-                val registerButton = views.registerButton //.apply { this.visibility = INVISIBLE }
+                val registerButton = views.registerButton
                 val header = views.header
                 val notice = views.notice
                 notice.isVisible = false
@@ -193,11 +196,20 @@ class HomeDrawerFragment :
                 var isSignUpMode = false
 
                 fun updateUi() {
+                    val homeserverUrl = views.accountHomeserverText.text.toString()
                     val username = views.accountUsernameText.text.toString()
                     val password = views.accountPasswordText.text.toString()
 
-                    addAccountButton.isEnabled = username.isNotEmpty() && password.isNotEmpty()
+                    addAccountButton.isEnabled =
+                            homeserverUrl.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty()
                 }
+
+                views.accountHomeserverText.addTextChangedListener(object : SimpleTextWatcher() {
+                    override fun afterTextChanged(s: Editable) {
+                        views.accountHomeserverTil.error = null
+                        updateUi()
+                    }
+                })
 
                 views.accountUsernameText.addTextChangedListener(object : SimpleTextWatcher() {
                     override fun afterTextChanged(s: Editable) {
@@ -215,12 +227,14 @@ class HomeDrawerFragment :
 
                 fun showPasswordLoadingView(toShow: Boolean) {
                     if (toShow) {
+                        views.accountHomeserverText.isEnabled = false
                         views.accountUsernameText.isEnabled = false
                         views.accountPasswordText.isEnabled = false
                         views.changePasswordLoader.isVisible = true
                         addAccountButton.isEnabled = false
                         registerButton.isEnabled = false
                     } else {
+                        views.accountHomeserverText.isEnabled = true
                         views.accountUsernameText.isEnabled = true
                         views.accountPasswordText.isEnabled = true
                         views.changePasswordLoader.isVisible = false
@@ -257,8 +271,11 @@ class HomeDrawerFragment :
 
                     view.hideKeyboard()
 
+                    val homeserverUrl = views.accountHomeserverText.text.toString().trim().ensureProtocol()
                     val username = views.accountUsernameText.text.toString()
                     val password = views.accountPasswordText.text.toString()
+
+                    views.accountHomeserverText.setText(homeserverUrl)
 
                     showPasswordLoadingView(true)
 
@@ -267,11 +284,11 @@ class HomeDrawerFragment :
                             when (isSignUpMode) {
                                 true -> session.profileService().createAccount(
                                         username, password, getString(R.string.login_mobile_device_sc),
-                                        session.sessionParams.homeServerConnectionConfig
+                                        homeServerConnectionConfigFactory.create(homeserverUrl)!!
                                 )
 
                                 false -> session.profileService().addNewAccount(
-                                        username, password
+                                        username, password, homeserverUrl
                                 )
                             }
                         }

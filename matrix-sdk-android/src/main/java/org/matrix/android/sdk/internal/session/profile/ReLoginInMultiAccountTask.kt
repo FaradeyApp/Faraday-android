@@ -16,11 +16,11 @@
 
 package org.matrix.android.sdk.internal.session.profile
 
-
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.auth.LoginType
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
+import org.matrix.android.sdk.api.auth.login.LoginWizard
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
@@ -29,6 +29,7 @@ import org.matrix.android.sdk.internal.task.Task
 import javax.inject.Inject
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
+import org.matrix.android.sdk.internal.session.HomeServerHolder
 import timber.log.Timber
 
 internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Params, Session> {
@@ -36,59 +37,36 @@ internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Pa
             val homeServerConnectionConfig: HomeServerConnectionConfig,
             val userId: String,
             val currentCredentials: Credentials,
-            val sessionCreator: SessionCreator
+            val sessionCreator: SessionCreator,
     )
 }
 
 internal class DefaultReLoginInMultiAccountTask @Inject constructor(
         private val profileAPI: ProfileAPI,
+        private val multiServerProfileApi: MultiServerProfileApi,
         private val globalErrorReceiver: GlobalErrorReceiver,
-        authenticationService: AuthenticationService
+        private val authenticationService: AuthenticationService,
 ) : ReLoginInMultiAccountTask {
     private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
+    private val loginWizard: LoginWizard
+        get() = authenticationService.getLoginWizard()
 
     override suspend fun execute(params: ReLoginInMultiAccountTask.Params): Session {
+        val account = localAccountStore.getAccount(params.userId)
+        require(account.homeServerUrl.isNotBlank())
 
-        var result = ""
-        val credentials: Credentials = try {
-//            result = executeRequest(globalErrorReceiver) {
-//                profileAPI.reLoginMultiAccount(params.userId)
-//            }.loginToken
-            val account = localAccountStore.getAccount(params.userId)
-            val loginResponse = executeRequest(globalErrorReceiver) {
-                if (account.token != null) {
-                    profileAPI.getLoginByToken(
-                            GetLoginByTokenBody(
-                                    type = "m.login.token",
-                                    token = account.token!!,
-                            )
-                    )
-                } else {
-                    profileAPI.getLoginByPassword(
-                            GetLoginByPasswordBody(
-                                    type = "m.login.password",
-                                    identifier = LoginIdentifier(
-                                            type = "m.id.user",
-                                            user = account.username!!
-                                    ),
-                                    password = account.password!!,
-                            )
-                    )
-                }
-            }
-            Credentials(
-                    userId = loginResponse.userId,
-                    deviceId = loginResponse.deviceId,
-                    homeServer = loginResponse.homeServer,
-                    accessToken = loginResponse.accessToken,
-                    refreshToken = null,
-            )
-        } catch (throwable: Throwable) {
-            Timber.i("ReLoginInMultiAccountTask Throwable=$throwable")
-            if(throwable is Failure.ServerError) throw throwable
-            else  params.currentCredentials
-        }
-        Timber.i("ReLoginInMultiAccountTask result=$result")
-        return params.sessionCreator.createSession(credentials, params.homeServerConnectionConfig, LoginType.DIRECT)
+        val homeServerConnectionConfig = HomeServerConnectionConfig.Builder()
+                .withHomeServerUri(account.homeServerUrl)
+                .build()
+
+
+        authenticationService.cancelPendingLoginOrRegistration()
+        authenticationService.getLoginFlow(homeServerConnectionConfig)
+        val session = loginWizard.login(
+                account.username!!,
+                account.password!!,
+                "Faraday Android"
+        )
+        return session
     }
 }

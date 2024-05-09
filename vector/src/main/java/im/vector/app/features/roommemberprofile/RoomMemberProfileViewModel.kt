@@ -334,7 +334,7 @@ class RoomMemberProfileViewModel @AssistedInject constructor(
     private suspend fun fetchProfileInfo() {
         val result = runCatchingToAsync {
             session.profileService()
-                    .getProfile(initialState.userId)
+                    .getProfile(initialState.userId, null)
                     .let { User.fromJson(initialState.userId, it) }
                     .toMatrixItem()
         }

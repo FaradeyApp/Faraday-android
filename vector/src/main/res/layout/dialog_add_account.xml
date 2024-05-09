@@ -31,6 +31,24 @@
         android:textColor="?vctr_content_secondary" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/account_homeserver_til"
+        style="@style/Widget.Vector.TextInputLayout.Form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_vertical_margin"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/account_homeserver_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/login_server_url_form_other_hint"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/account_username_til"
         style="@style/Widget.Vector.TextInputLayout.Username"
         android:layout_width="match_parent"

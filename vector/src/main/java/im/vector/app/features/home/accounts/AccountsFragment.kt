@@ -120,6 +120,7 @@ class AccountsFragment :
                 accountItem = account,
                 onPositiveActionClicked = {
                     viewModel.handle(AccountsAction.SelectAccount(account))
+                    views.stateView.state = StateView.State.Loading
                 }
         ).perform()
     }

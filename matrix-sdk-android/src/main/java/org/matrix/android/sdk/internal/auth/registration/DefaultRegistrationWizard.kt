@@ -85,7 +85,7 @@ internal class DefaultRegistrationWizard(
                 }.also {
                     if(it is RegistrationResult.Success) {
                         it.session.profileService().storeAccount(
-                                it.session.myUserId, username = userName, password = password
+                                it.session.myUserId, it.session.sessionParams.homeServerUrl, username = userName, password = password
                         )
                     }
                 }
@@ -220,7 +220,14 @@ internal class DefaultRegistrationWizard(
             delayMillis: Long = 0
     ): RegistrationResult {
         delay(delayMillis)
-        return register(loginType) { registerTask.execute(RegisterTask.Params(registrationParams)) }
+        return register(loginType) { registerTask.execute(RegisterTask.Params(registrationParams)) }.also {
+            if(it is RegistrationResult.Success) {
+                it.session.profileService().storeAccount(
+                        it.session.myUserId, it.session.sessionParams.homeServerUrl,
+                        username = registrationParams.username, password = registrationParams.password
+                )
+            }
+        }
     }
 
     private suspend fun performRegistrationOtherRequest(
