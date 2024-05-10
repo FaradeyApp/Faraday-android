@@ -19,6 +19,7 @@ package org.matrix.android.sdk.internal.session
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class MultiServerInterceptor @Inject constructor(): Interceptor {
@@ -30,12 +31,17 @@ class MultiServerInterceptor @Inject constructor(): Interceptor {
         homeServerUrl.takeIf { it.isNotBlank() }?.let {
             newRequestBuilder.url(
                     request.url.toString().replace(
-                            LOCALHOST_DOMAIN, it.apply { if(!it.endsWith("/")) { it.plus("/") } }
+                            LOCALHOST_DOMAIN, it.let {
+                                if(!it.endsWith("/"))
+                                    it.plus("/")
+                                else it
+                            }
                     ).toHttpUrlOrNull() ?: request.url
             )
         }
 
         request = newRequestBuilder.build()
+        Timber.d("Sending to ${request.url}")
         return chain.proceed(request)
     }
 }
