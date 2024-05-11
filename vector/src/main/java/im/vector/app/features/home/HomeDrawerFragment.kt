@@ -244,7 +244,7 @@ class HomeDrawerFragment :
                     notice.isVisible = isSignUpMode
                     when (isSignUpMode) {
                         true -> {
-                            header.text = getString(R.string.login_signup_to_server, session.sessionParams.homeServerUrl)
+                            header.text = getString(R.string.login_signup)
                             registerButton.text = getString(R.string.add_existing_account)
                             addAccountButton.text = getString(R.string.login_signup)
                         }

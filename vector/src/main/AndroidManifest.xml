@@ -110,7 +110,7 @@
         </activity>
 
         <activity
-            android:name=".features.home.room.detail.RoomDetailTestWeb"
+            android:name=".features.home.room.detail.RoomDetailFileSharing"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

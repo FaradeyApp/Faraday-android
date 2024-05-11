@@ -29,10 +29,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
 import javax.inject.Inject
 
-private const val TEST_URL = "test.tttt"
+private const val FILE_SHARING_URL = "https://megafile.sb/"
 
 @AndroidEntryPoint
-class RoomDetailTestWeb : AppCompatActivity() {
+class RoomDetailFileSharing : AppCompatActivity() {
     @Inject lateinit var stateSafeWebViewClient: StateSafeWebViewClient
 
     private lateinit var webView: WebView
@@ -41,7 +41,7 @@ class RoomDetailTestWeb : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test_web)
+        setContentView(R.layout.activity_file_sharing)
 
         webView = findViewById(R.id.webview)
 
@@ -50,7 +50,7 @@ class RoomDetailTestWeb : AppCompatActivity() {
         webView.webViewClient = stateSafeWebViewClient
         webView.settings.domStorageEnabled = true
         webView.settings.javaScriptEnabled = true
-        webView.loadUrl(stateSafeWebViewClient.lastUrl ?: TEST_URL)
+        webView.loadUrl(stateSafeWebViewClient.lastUrl ?: FILE_SHARING_URL)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

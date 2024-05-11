@@ -62,7 +62,7 @@ import im.vector.app.features.crypto.recover.SetupMode
 import im.vector.app.features.disclaimer.DisclaimerDialog
 import im.vector.app.features.home.room.detail.RoomDetailCryptPad
 import im.vector.app.features.home.room.detail.RoomDetailTaigaBoard
-import im.vector.app.features.home.room.detail.RoomDetailTestWeb
+import im.vector.app.features.home.room.detail.RoomDetailFileSharing
 import im.vector.app.features.home.room.list.actions.RoomListSharedAction
 import im.vector.app.features.home.room.list.actions.RoomListSharedActionViewModel
 import im.vector.app.features.home.room.list.home.layout.HomeLayoutSettingBottomDialogFragment
@@ -733,7 +733,7 @@ class HomeActivity :
                 true
             }
             R.id.test_web -> {
-                navigateToTestWeb()
+                navigateToFileSharing()
                 true
             }
             else -> false
@@ -745,8 +745,8 @@ class HomeActivity :
         )
     }
 
-    private fun navigateToTestWeb() {
-        val intent = Intent(this, RoomDetailTestWeb::class.java)
+    private fun navigateToFileSharing() {
+        val intent = Intent(this, RoomDetailFileSharing::class.java)
         startActivity(intent)
     }
 
