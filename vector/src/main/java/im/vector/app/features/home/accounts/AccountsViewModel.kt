@@ -108,13 +108,16 @@ class AccountsViewModel @AssistedInject constructor(
             authenticationService.reset()
             configureAndStartSessionUseCase.execute(result)
             Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
+
+            handleSetRestartAppValue(value = true)
         } catch (throwable: Throwable) {
             Timber.i("Error re-login into app $throwable")
             if (throwable is Failure.ServerError) {
                 handleSetErrorMessage(throwable.error.message)
                 return@launch
             }
+
+
         }
-        handleSetRestartAppValue(value = true)
     }
 }
