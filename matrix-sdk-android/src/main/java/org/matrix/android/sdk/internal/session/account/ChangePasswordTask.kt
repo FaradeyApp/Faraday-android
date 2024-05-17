@@ -16,6 +16,7 @@
 
 package org.matrix.android.sdk.internal.session.account
 
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.toRegistrationFlowResponse
 import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
@@ -34,8 +35,10 @@ internal interface ChangePasswordTask : Task<ChangePasswordTask.Params, Unit> {
 internal class DefaultChangePasswordTask @Inject constructor(
         private val accountAPI: AccountAPI,
         private val globalErrorReceiver: GlobalErrorReceiver,
-        @UserId private val userId: String
+        @UserId private val userId: String,
+        authenticationService: AuthenticationService
 ) : ChangePasswordTask {
+    val localAccountStore = authenticationService.getLocalAccountStore()
 
     override suspend fun execute(params: ChangePasswordTask.Params) {
         val changePasswordParams = ChangePasswordParams.create(userId, params.password, params.newPassword, params.logoutAllDevices)
@@ -59,5 +62,7 @@ internal class DefaultChangePasswordTask @Inject constructor(
                 throw throwable
             }
         }
+
+        localAccountStore.updatePassword(userId, params.newPassword)
     }
 }

@@ -104,9 +104,9 @@ class AccountsViewModel @AssistedInject constructor(
                     currentCredentials = session.sessionParams.credentials,
                     sessionCreator = authenticationService.getSessionCreator()
             )
-            activeSessionHolder.setActiveSession(session)
+            activeSessionHolder.setActiveSession(result)
             authenticationService.reset()
-            configureAndStartSessionUseCase.execute(session)
+            configureAndStartSessionUseCase.execute(result)
             Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
         } catch (throwable: Throwable) {
             Timber.i("Error re-login into app $throwable")

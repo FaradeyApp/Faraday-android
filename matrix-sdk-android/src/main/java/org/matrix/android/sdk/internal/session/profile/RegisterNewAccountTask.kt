@@ -75,7 +75,7 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
 //                }.status
                 localAccountStore.addAccount(
                         it.userId,
-                        it.homeServer!!,
+                        params.homeServerConnectionConfig.homeServerUri.toString(),
                         params.registrationParams.username,
                         params.registrationParams.password
                 )
