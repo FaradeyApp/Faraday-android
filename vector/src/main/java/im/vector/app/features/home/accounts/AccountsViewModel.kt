@@ -41,7 +41,7 @@ class AccountsViewModel @AssistedInject constructor(
         private val lightweightSettingsStorage: LightweightSettingsStorage,
         private val authenticationService: AuthenticationService,
         private val activeSessionHolder: ActiveSessionHolder,
-        private val configureAndStartSessionUseCase: ConfigureAndStartSessionUseCase
+        private val configureAndStartSessionUseCase: ConfigureAndStartSessionUseCase,
 ) : VectorViewModel<AccountsViewState, AccountsAction, AccountsViewEvents>(initialState) {
 
     @AssistedFactory
@@ -60,7 +60,13 @@ class AccountsViewModel @AssistedInject constructor(
             is AccountsAction.SelectAccount -> handleSelectAccountAction(account = action.account)
             is AccountsAction.SetRestartAppValue -> handleSetRestartAppValue(value = action.value)
             is AccountsAction.SetErrorMessage -> handleSetErrorMessage(message = action.value)
+            is AccountsAction.DeleteAccount -> handleDeleteAccount(account = action.account)
+            is AccountsAction.SetErrorWhileAccountChange -> handleSetErrorWhileAccountChange(account = action.account)
         }
+    }
+
+    private fun handleDeleteAccount(account: AccountItem) = viewModelScope.launch {
+        authenticationService.getLocalAccountStore().deleteAccount(account.userId)
     }
 
     fun observeAccounts() = viewModelScope.launch {
@@ -96,6 +102,14 @@ class AccountsViewModel @AssistedInject constructor(
         }
     }
 
+    private fun handleSetErrorWhileAccountChange(account: AccountItem?) {
+        setState {
+            copy(
+                    invalidAccount = account
+            )
+        }
+    }
+
     private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
         try {
             val result = session.profileService().reLoginMultiAccount(
@@ -114,10 +128,9 @@ class AccountsViewModel @AssistedInject constructor(
             Timber.i("Error re-login into app $throwable")
             if (throwable is Failure.ServerError) {
                 handleSetErrorMessage(throwable.error.message)
+                handleSetErrorWhileAccountChange(account)
                 return@launch
             }
-
-
         }
     }
 }

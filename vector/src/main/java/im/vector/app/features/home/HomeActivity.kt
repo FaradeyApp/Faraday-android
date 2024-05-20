@@ -61,8 +61,8 @@ import im.vector.app.features.analytics.plan.ViewRoom
 import im.vector.app.features.crypto.recover.SetupMode
 import im.vector.app.features.disclaimer.DisclaimerDialog
 import im.vector.app.features.home.room.detail.RoomDetailCryptPad
-import im.vector.app.features.home.room.detail.RoomDetailTaigaBoard
 import im.vector.app.features.home.room.detail.RoomDetailFileSharing
+import im.vector.app.features.home.room.detail.RoomDetailTaigaBoard
 import im.vector.app.features.home.room.list.actions.RoomListSharedAction
 import im.vector.app.features.home.room.list.actions.RoomListSharedActionViewModel
 import im.vector.app.features.home.room.list.home.layout.HomeLayoutSettingBottomDialogFragment
@@ -225,7 +225,7 @@ class HomeActivity :
         roomListSharedActionViewModel = viewModelProvider[RoomListSharedActionViewModel::class.java]
         views.drawerLayout.addDrawerListener(drawerListener)
         if (isFirstCreation()) {
-            if(lightweightSettingsStorage.isApplicationPasswordSet() && true/* lightweightSettingsStorage.areCustomSettingsEnabled() */) {
+            if(lightweightSettingsStorage.isApplicationPasswordSet()) {
                 views.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 replaceFragment(views.homeDetailFragmentContainer, EnterPasswordFragment::class.java, EnterPasswordScreenArgs(type = EnterPasswordScreenType.HOME))
             } else if (vectorPreferences.isNewAppLayoutEnabled()) {

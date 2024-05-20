@@ -23,4 +23,6 @@ sealed class AccountsAction : VectorViewModelAction {
     data class SelectAccount(val account: AccountItem) : AccountsAction()
     data class SetRestartAppValue(val value: Boolean) : AccountsAction()
     data class SetErrorMessage(val value: String?) : AccountsAction()
+    data class DeleteAccount(val account: AccountItem) : AccountsAction()
+    data class SetErrorWhileAccountChange(val account: AccountItem?) : AccountsAction()
 }

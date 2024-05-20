@@ -35,8 +35,10 @@ import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.FragmentAccountsListBinding
 import im.vector.app.features.home.HomeDrawerFragment
+import im.vector.app.features.workers.changeaccount.ChangeAccountErrorUiWorker
 import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -91,6 +93,18 @@ class AccountsFragment :
             mainIntent.setPackage(context.packageName)
             context.startActivity(mainIntent)
             Runtime.getRuntime().exit(0)
+        }
+        if (state.invalidAccount != null) {
+            ChangeAccountErrorUiWorker(
+                    requireActivity(),
+                    accountItem = state.invalidAccount,
+                    onPositiveActionClicked = {
+                        viewModel.handle(AccountsAction.DeleteAccount(it))
+                        updateMultiAccount()
+                        views.stateView.state = StateView.State.Content
+                    }
+            ).perform()
+            viewModel.handle(AccountsAction.SetErrorWhileAccountChange(null))
         }
         state.errorMessage?.let {message ->
             activity?.toast(message)

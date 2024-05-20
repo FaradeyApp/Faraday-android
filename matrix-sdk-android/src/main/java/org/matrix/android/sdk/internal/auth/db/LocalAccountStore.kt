@@ -38,6 +38,8 @@ interface LocalAccountStore {
 
     suspend fun updatePassword(userId: String, newPassword: String)
 
+    suspend fun deleteAccount(userId: String)
+
     suspend fun clearAll()
 }
 
@@ -67,6 +69,10 @@ class DefaultLocalAccountStore @Inject constructor(
         }
 
         realm.insertOrUpdate(newEntity)
+    }
+
+    override suspend fun deleteAccount(userId: String) = awaitTransaction(realmConfiguration) { realm ->
+        LocalAccountEntity.where(realm, userId).findFirst()!!.deleteFromRealm()
     }
 
     override suspend fun clearAll() = awaitTransaction(realmConfiguration) { realm ->

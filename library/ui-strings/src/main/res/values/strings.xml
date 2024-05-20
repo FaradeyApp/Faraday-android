@@ -380,6 +380,8 @@
     <string name="action_sign_out_confirmation_simple">Are you sure you want to sign out?</string>
     <string name="action_add_new_account">Add new account</string>
     <string name="action_сhange_new_account">Change account</string>
+    <string name="action_сhange_error_title">Cannot change account</string>
+    <string name="action_сhange_error_delete">Remove</string>
     <string name="action_add_new_account_confirmation_simple">Are you sure you want to add new account? App will be restarted.</string>
     <string name="action_change_account_confirmation_simple">Are you sure you want to change account? App will be restarted.</string>
     <string name="action_voice_call">Voice Call</string>
@@ -3603,4 +3605,5 @@
     <string name="application_password_no_uppercase">The password must contain at least one uppercase</string>
     <string name="application_password_no_lowercase">The password must contain at least one lowercase</string>
     <string name="application_password_no_symbol">The password must contain at least one character from the list: !, @, #, $, %, ^, &amp;, *, (, )</string>
+    <string name="action_сhange_error_message">Some kind of error when trying to change the account, you can remove it from multi-account and try to add it again or cancel this and contact the server support</string>
 </resources>

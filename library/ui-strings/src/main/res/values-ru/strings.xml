@@ -258,6 +258,9 @@
     <string name="or">или</string>
     <string name="action_invite">Пригласить</string>
     <string name="action_sign_out">Выйти из учётной записи</string>
+    <string name="action_сhange_error_title">Не удалось сменить аккаунт</string>
+    <string name="action_сhange_error_message">Какая-то ошибка при попытке сменить учетную запись, вы можете удалить ее из мультиаккаунта и попробовать добавить его заново или нажать \"Отмена\" и обратиться в службу поддержки сервера</string>
+    <string name="action_сhange_error_delete">Удалить</string>
     <string name="action_voice_call">Голосовой вызов</string>
     <string name="action_video_call">Видео вызов</string>
     <string name="action_mark_all_as_read">Пометить все как прочитанное</string>
