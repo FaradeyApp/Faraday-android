@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="taiga_menu_name">taiga</string>
+    <string name="cryptpad_menu_title">cryptpad</string>
+    <string name="test_menu_title">test</string>
+</resources>
