@@ -34,7 +34,10 @@ import im.vector.app.core.platform.StateView
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.FragmentAccountsListBinding
+import im.vector.app.features.MainActivity
+import im.vector.app.features.MainActivityArgs
 import im.vector.app.features.home.HomeDrawerFragment
+import im.vector.app.features.home.ShortcutsHandler
 import im.vector.app.features.workers.changeaccount.ChangeAccountErrorUiWorker
 import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
@@ -48,6 +51,7 @@ import javax.inject.Inject
 class AccountsFragment :
         VectorBaseFragment<FragmentAccountsListBinding>(), AccountsController.Callback {
 
+    @Inject lateinit var shortcutsHandler: ShortcutsHandler
     @Inject lateinit var accountsController: AccountsController
 
     private val viewModel: AccountsViewModel by fragmentViewModel()
@@ -92,6 +96,8 @@ class AccountsFragment :
             // Ref: https://developer.android.com/about/versions/14/behavior-changes-14#safer-intents
             mainIntent.setPackage(context.packageName)
             context.startActivity(mainIntent)
+            shortcutsHandler.clearShortcuts()
+//            MainActivity.restartApp(requireActivity(), MainActivityArgs(clearNotifications = true))
             Runtime.getRuntime().exit(0)
         }
         if (state.invalidAccount != null) {
