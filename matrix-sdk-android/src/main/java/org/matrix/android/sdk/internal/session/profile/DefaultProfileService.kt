@@ -45,6 +45,7 @@ import org.matrix.android.sdk.internal.session.content.FileUploader
 import org.matrix.android.sdk.internal.session.user.UserStore
 import org.matrix.android.sdk.internal.task.TaskExecutor
 import org.matrix.android.sdk.internal.task.configureWith
+import timber.log.Timber
 import javax.inject.Inject
 
 internal class DefaultProfileService @Inject constructor(
@@ -185,12 +186,21 @@ internal class DefaultProfileService @Inject constructor(
         return localAccountStore.getAccounts().filter {
             it.userId != userId
         }.map {
-            val data = getProfile(it.userId, it.homeServerUrl)
-            AccountItem(
-                    userId = it.userId,
-                    displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
-                    avatarUrl = data.get(ProfileService.AVATAR_URL_KEY) as? String
-            )
+            try {
+                val data = getProfile(it.userId, it.homeServerUrl)
+                AccountItem(
+                        userId = it.userId,
+                        displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
+                        avatarUrl = data.get(ProfileService.AVATAR_URL_KEY) as? String
+                )
+            } catch (throwable: Throwable) {
+                Timber.i("Error get multiple account data: $throwable")
+                AccountItem(
+                        userId = it.userId,
+                        displayName = it.userId.removePrefix("@").split(':')[0],
+                        avatarUrl = null
+                )
+            }
         }
     }
 

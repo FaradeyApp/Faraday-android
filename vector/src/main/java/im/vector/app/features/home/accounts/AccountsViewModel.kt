@@ -128,9 +128,9 @@ class AccountsViewModel @AssistedInject constructor(
             Timber.i("Error re-login into app $throwable")
             if (throwable is Failure.ServerError) {
                 handleSetErrorMessage(throwable.error.message)
-                handleSetErrorWhileAccountChange(account)
-                return@launch
             }
+            handleSetErrorWhileAccountChange(account)
+            return@launch
         }
     }
 }

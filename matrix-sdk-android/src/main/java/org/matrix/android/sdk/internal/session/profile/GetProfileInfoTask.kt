@@ -45,7 +45,7 @@ internal class DefaultGetProfileInfoTask @Inject constructor(
 ) : GetProfileInfoTask() {
 
     override suspend fun execute(params: Params): JsonDict {
-        return executeRequest(globalErrorReceiver) {
+        return executeRequest(null) {
             params.homeServerUrl?.let {
                 HomeServerHolder.homeServer = it
                 multiServerProfileApi.getProfile(params.userId)

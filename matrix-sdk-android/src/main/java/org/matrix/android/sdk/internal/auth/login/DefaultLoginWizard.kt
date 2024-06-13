@@ -83,7 +83,9 @@ internal class DefaultLoginWizard(
         val profileService = session.profileService()
         val user = profileService.getProfileAsUser(session.myUserId)
         session.profileService().storeAccount(
-                user.userId, session.sessionParams.homeServerUrl, username = user.displayName, password = password
+                user.userId, session.sessionParams.homeServerUrl,
+                username = user.userId,
+                password = password
         )
 
         return session
