@@ -183,8 +183,6 @@ class VectorApplication :
 
         emojiCompatWrapper.init(fontRequest)
 
-        notificationUtils.createNotificationChannels()
-
         // It can takes time, but do we care?
         val sessionImported = legacySessionImporter.process()
         if (!sessionImported) {
@@ -236,6 +234,11 @@ class VectorApplication :
                 Timber.w(e)
             }
         }
+
+
+        Timber.i("Creating notification channels")
+        notificationUtils.createNotificationChannels()
+        Timber.i("Notification channels created")
     }
 
     private fun configureEpoxy() {

@@ -363,12 +363,7 @@ class RoomListFragment :
     }
 
     override fun openRoomDirectory(initialFilter: String) {
-        if (vectorPreferences.simplifiedMode()) {
-            // Simplified mode: don't browse room directories, just create a room
-            navigator.openCreateRoom(requireActivity())
-        } else {
-            navigator.openRoomDirectory(requireActivity(), initialFilter)
-        }
+        navigator.openRoomDirectory(requireActivity(), initialFilter)
     }
 
     // NotifsFabMenuView.Listener
@@ -377,12 +372,7 @@ class RoomListFragment :
     }
 
     override fun fabOpenRoomDirectory() {
-        if (vectorPreferences.simplifiedMode()) {
-            // Simplified mode: don't browse room directories, just create a room
-            navigator.openCreateRoom(requireActivity())
-        } else {
-            navigator.openRoomDirectory(requireActivity(), "")
-        }
+        navigator.openRoomDirectory(requireActivity(), "")
     }
 
     private fun setupRecyclerView() {

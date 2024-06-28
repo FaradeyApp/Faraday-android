@@ -58,7 +58,7 @@ class NewChatBottomSheet : VectorBaseBottomSheetDialogFragment<FragmentNewChatBo
             dismiss()
             navigator.openRoomDirectory(requireContext())
         }
-        views.exploreRooms.isVisible = !vectorPreferences.simplifiedMode()
+        views.exploreRooms.isVisible = true
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

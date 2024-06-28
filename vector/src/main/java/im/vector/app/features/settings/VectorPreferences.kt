@@ -1170,11 +1170,8 @@ class VectorPreferences @Inject constructor(
     }
 
     // SC addition
-    fun simplifiedMode(): Boolean {
-        return defaultPrefs.getBoolean(SETTINGS_SIMPLIFIED_MODE, false)
-    }
     fun needsSimplifiedModePrompt(): Boolean {
-        return !defaultPrefs.contains(SETTINGS_SIMPLIFIED_MODE)
+        return false // !defaultPrefs.contains(SETTINGS_SIMPLIFIED_MODE)
     }
     fun setSimplifiedMode(simplified: Boolean) {
         defaultPrefs

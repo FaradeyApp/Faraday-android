@@ -29,7 +29,6 @@ import im.vector.app.features.form.formEditTextItem
 import im.vector.app.features.form.formEditableAvatarItem
 import im.vector.app.features.form.formSubmitButtonItem
 import im.vector.app.features.form.formSwitchItem
-import im.vector.app.features.settings.VectorPreferences
 import org.matrix.android.sdk.api.MatrixConstants
 import org.matrix.android.sdk.api.extensions.orFalse
 import org.matrix.android.sdk.api.session.room.failure.CreateRoomFailure
@@ -39,7 +38,6 @@ import javax.inject.Inject
 class CreateRoomController @Inject constructor(
         private val stringProvider: StringProvider,
         private val roomAliasErrorFormatter: RoomAliasErrorFormatter,
-        private val vectorPreferences: VectorPreferences
 ) : TypedEpoxyController<CreateRoomViewState>() {
 
     var listener: Listener? = null
@@ -52,8 +50,6 @@ class CreateRoomController @Inject constructor(
     }
 
     private fun buildForm(viewState: CreateRoomViewState, enableFormElement: Boolean) {
-        val enableNonSimplifiedMode = !vectorPreferences.simplifiedMode()
-
         val host = this
         formEditableAvatarItem {
             id("avatar")
@@ -92,9 +88,6 @@ class CreateRoomController @Inject constructor(
                 host.listener?.onTopicChange(text)
             }
         }
-        // Following settings are for advanced users only
-        if (enableNonSimplifiedMode) {
-        // Wrong indention for upstream merge-ability
 
         settingsSectionTitleItem {
             id("settingsSection")
@@ -203,9 +196,6 @@ class CreateRoomController @Inject constructor(
                 switchChecked(viewState.disableFederation)
                 listener { value -> host.listener?.setDisableFederation(value) }
             }
-        }
-
-        // end wrong indention for upstream merge-ability
         }
 
         formSubmitButtonItem {

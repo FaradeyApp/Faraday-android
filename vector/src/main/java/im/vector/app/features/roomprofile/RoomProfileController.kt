@@ -76,7 +76,6 @@ class RoomProfileController @Inject constructor(
         data ?: return
         val host = this
         val roomSummary = data.roomSummary() ?: return
-        val enableNonSimplifiedMode = !vectorPreferences.simplifiedMode()
 
         // Topic
         roomSummary
@@ -291,9 +290,8 @@ class RoomProfileController @Inject constructor(
                     action = { callback?.createShortcut() }
             )
         }
-        if (enableNonSimplifiedMode) {
-            buildEncryptionAction(data.actionPermissions, roomSummary)
-        }
+        buildEncryptionAction(data.actionPermissions, roomSummary)
+
         buildProfileAction(
                 id = "leave",
                 title = stringProvider.getString(
@@ -311,29 +309,25 @@ class RoomProfileController @Inject constructor(
         )
 
         // Advanced
-        if (enableNonSimplifiedMode || vectorPreferences.developerMode()) {
-            buildProfileSection(stringProvider.getString(R.string.room_settings_category_advanced_title))
-        }
+        buildProfileSection(stringProvider.getString(R.string.room_settings_category_advanced_title))
 
-        if (enableNonSimplifiedMode) {
-            buildProfileAction(
-                    id = "alias",
-                    title = stringProvider.getString(R.string.room_settings_alias_title),
-                    subtitle = stringProvider.getString(R.string.room_settings_alias_subtitle),
-                    divider = true,
-                    editable = true,
-                    action = { callback?.onRoomAliasesClicked() }
-            )
+        buildProfileAction(
+                id = "alias",
+                title = stringProvider.getString(R.string.room_settings_alias_title),
+                subtitle = stringProvider.getString(R.string.room_settings_alias_subtitle),
+                divider = true,
+                editable = true,
+                action = { callback?.onRoomAliasesClicked() }
+        )
 
-            buildProfileAction(
-                    id = "permissions",
-                    title = stringProvider.getString(R.string.room_settings_permissions_title),
-                    subtitle = stringProvider.getString(R.string.room_settings_permissions_subtitle),
-                    divider = vectorPreferences.developerMode(),
-                    editable = true,
-                    action = { callback?.onRoomPermissionsClicked() }
-            )
-        }
+        buildProfileAction(
+                id = "permissions",
+                title = stringProvider.getString(R.string.room_settings_permissions_title),
+                subtitle = stringProvider.getString(R.string.room_settings_permissions_subtitle),
+                divider = vectorPreferences.developerMode(),
+                editable = true,
+                action = { callback?.onRoomPermissionsClicked() }
+        )
 
         if (vectorPreferences.developerMode()) {
             buildProfileAction(
