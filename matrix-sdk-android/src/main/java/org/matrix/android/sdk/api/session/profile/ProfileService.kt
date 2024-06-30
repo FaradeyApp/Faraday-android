@@ -20,7 +20,6 @@ package org.matrix.android.sdk.api.session.profile
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import org.matrix.android.sdk.api.auth.UserInteractiveAuthInterceptor
-import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.identity.ThreePid
@@ -29,7 +28,6 @@ import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.session.user.model.User
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.Optional
-import org.matrix.android.sdk.internal.auth.SessionCreator
 
 /**
  * This interface defines methods to handling profile information. It's implemented at the session level.
@@ -153,7 +151,7 @@ interface ProfileService {
     /**
      * Switch to another account in multi-account.
      */
-    suspend fun reLoginMultiAccount(userId: String, homeServerConnectionConfig: HomeServerConnectionConfig, currentCredentials: Credentials, sessionCreator: SessionCreator): Session
+    suspend fun reLoginMultiAccount(userId: String): Session
 
     /**
      * Register new account.

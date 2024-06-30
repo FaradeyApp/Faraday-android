@@ -25,7 +25,6 @@ import kotlinx.coroutines.withContext
 import org.matrix.android.sdk.api.MatrixCoroutineDispatchers
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.auth.UserInteractiveAuthInterceptor
-import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.session.identity.ThreePid
@@ -35,7 +34,6 @@ import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.MimeTypes
 import org.matrix.android.sdk.api.util.Optional
-import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.database.model.PendingThreePidEntity
@@ -204,18 +202,9 @@ internal class DefaultProfileService @Inject constructor(
         }
     }
 
-    override suspend fun reLoginMultiAccount(
-            userId: String,
-            homeServerConnectionConfig: HomeServerConnectionConfig,
-            currentCredentials: Credentials,
-            sessionCreator: SessionCreator): Session {
+    override suspend fun reLoginMultiAccount(userId: String): Session {
         return reLoginInMultiAccountTask.execute(
-                ReLoginInMultiAccountTask.Params(
-                        homeServerConnectionConfig= homeServerConnectionConfig,
-                        userId = userId,
-                        currentCredentials = currentCredentials,
-                        sessionCreator = sessionCreator
-                )
+                ReLoginInMultiAccountTask.Params(userId = userId)
         )
     }
 

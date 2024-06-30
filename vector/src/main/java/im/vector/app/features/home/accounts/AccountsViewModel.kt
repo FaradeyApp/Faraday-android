@@ -112,12 +112,8 @@ class AccountsViewModel @AssistedInject constructor(
 
     private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
         try {
-            val result = session.profileService().reLoginMultiAccount(
-                    userId = account.userId,
-                    homeServerConnectionConfig = session.sessionParams.homeServerConnectionConfig,
-                    currentCredentials = session.sessionParams.credentials,
-                    sessionCreator = authenticationService.getSessionCreator()
-            )
+            val result = session.profileService()
+                    .reLoginMultiAccount(userId = account.userId)
             activeSessionHolder.setActiveSession(result)
             authenticationService.reset()
             configureAndStartSessionUseCase.execute(result)
