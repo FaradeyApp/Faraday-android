@@ -25,9 +25,12 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
+import im.vector.app.core.di.ActiveSessionHolder
+import im.vector.app.core.extensions.cannotLogoutSafely
 import im.vector.app.core.extensions.hideKeyboard
 import im.vector.app.core.extensions.hidePassword
 import im.vector.app.core.extensions.observeK
@@ -35,11 +38,14 @@ import im.vector.app.core.extensions.replaceChildFragment
 import im.vector.app.core.platform.SimpleTextWatcher
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.resources.BuildMeta
+import im.vector.app.core.session.ConfigureAndStartSessionUseCase
 import im.vector.app.core.utils.ensureProtocol
 import im.vector.app.core.utils.startSharePlainTextIntent
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.DialogAddAccountBinding
 import im.vector.app.databinding.FragmentHomeDrawerBinding
+import im.vector.app.features.MainActivity
+import im.vector.app.features.MainActivityArgs
 import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.home.accounts.AccountsFragment
 import im.vector.app.features.login.HomeServerConnectionConfigFactory
@@ -49,8 +55,9 @@ import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsActivity
 import im.vector.app.features.spaces.SpaceListFragment
 import im.vector.app.features.usercode.UserCodeActivity
-import im.vector.app.features.workers.signout.SignOutUiWorker
+import im.vector.app.features.workers.signout.SignOutBottomSheetDialogFragment
 import kotlinx.coroutines.launch
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
@@ -68,6 +75,10 @@ class HomeDrawerFragment :
     @Inject lateinit var permalinkFactory: PermalinkFactory
     @Inject lateinit var lightweightSettingsStorage: LightweightSettingsStorage
     @Inject lateinit var homeServerConnectionConfigFactory: HomeServerConnectionConfigFactory
+    @Inject lateinit var authenticationService: AuthenticationService
+    @Inject lateinit var activeSessionHolder: ActiveSessionHolder
+    @Inject lateinit var configureAndStartSessionUseCase: ConfigureAndStartSessionUseCase
+    @Inject lateinit var shortcutsHandler: ShortcutsHandler
 
     private lateinit var sharedActionViewModel: HomeSharedActionViewModel
 
@@ -111,11 +122,7 @@ class HomeDrawerFragment :
         }
         // Sign out
         views.homeDrawerHeaderSignoutView.debouncedClicks {
-            sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
-            lifecycleScope.launch {
-//                session.profileService().clearMultiAccount()
-            }
-            SignOutUiWorker(requireActivity()).perform()
+            onSignOutClicked()
         }
         // Add account
         views.homeDrawerAddAccountButton.debouncedClicks {
@@ -154,6 +161,71 @@ class HomeDrawerFragment :
             sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
             navigator.openDebug(requireActivity())
         }
+    }
+
+    private fun multiAccountSignOut() {
+        sharedActionViewModel.viewModelScope.launch {
+            val result = runCatching {
+                val profileService = session.profileService()
+                val userId = session.myUserId
+                authenticationService.getLocalAccountStore().deleteAccount(userId)
+                val accounts = profileService.getMultipleAccount(userId)
+
+                var accountChanged = false
+                accounts.forEach {
+                    try {
+                        val result = profileService.reLoginMultiAccount(it.userId)
+                        activeSessionHolder.setActiveSession(result)
+                        authenticationService.reset()
+                        configureAndStartSessionUseCase.execute(result)
+
+                        accountChanged = true
+                        return@forEach
+                    } catch (_: Throwable) {
+                    }
+                }
+                accountChanged
+            }.getOrDefault(false)
+
+            MainActivity.restartApp(requireActivity(), MainActivityArgs(clearCredentials = !result))
+        }
+    }
+
+    private fun onSignOutClicked() {
+        sharedActionViewModel.post(HomeActivitySharedAction.CloseDrawer)
+        if (session.cannotLogoutSafely()) {
+            // The backup check on logout flow has to be displayed if there are keys in the store, and the keys backup state is not Ready
+            val signOutDialog = SignOutBottomSheetDialogFragment.newInstance()
+            signOutDialog.onSignOut = Runnable {
+                showLoadingDialog("Try to connect to another account. Please wait...")
+                lightweightSettingsStorage.setApplicationPasswordEnabled(false)
+                shortcutsHandler.clearShortcuts()
+                multiAccountSignOut()
+            }
+            signOutDialog.show(requireActivity().supportFragmentManager, "SO")
+        } else {
+            // Display a simple confirmation dialog
+            MaterialAlertDialogBuilder(requireActivity())
+                    .setTitle(R.string.action_sign_out)
+                    .setMessage(R.string.action_sign_out_confirmation_simple)
+                    .setPositiveButton(R.string.action_sign_out) { _, _ ->
+                        showLoadingDialog("Try to connect to another account. Please wait...")
+                        lightweightSettingsStorage.setApplicationPasswordEnabled(false)
+                        shortcutsHandler.clearShortcuts()
+                        multiAccountSignOut()
+                    }
+                    .setNegativeButton(R.string.action_cancel, null)
+                    .show()
+        }
+        //                val context = requireContext()
+        //                val packageManager = context.packageManager
+        //                val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+        //                val componentName = intent!!.component
+        //                val mainIntent = Intent.makeRestartActivityTask(componentName)
+        //                mainIntent.setPackage(context.packageName)
+        //                context.startActivity(mainIntent)
+        //                Runtime.getRuntime().exit(0)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

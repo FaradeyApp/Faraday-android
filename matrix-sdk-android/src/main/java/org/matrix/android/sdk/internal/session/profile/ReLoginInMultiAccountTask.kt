@@ -17,21 +17,16 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import org.matrix.android.sdk.api.auth.AuthenticationService
-import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.login.LoginWizard
 import org.matrix.android.sdk.api.session.Session
-import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.task.Task
 import javax.inject.Inject
 
 internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Params, Session> {
     data class Params(
-            val homeServerConnectionConfig: HomeServerConnectionConfig,
             val userId: String,
-            val currentCredentials: Credentials,
-            val sessionCreator: SessionCreator,
     )
 }
 
