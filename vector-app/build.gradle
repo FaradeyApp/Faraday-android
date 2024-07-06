@@ -126,7 +126,7 @@ android {
     compileSdk versions.compileSdk
 
     defaultConfig {
-        applicationId "de.spiritcroc.riotx"
+        applicationId "pw.faraday.faraday"
         // Set to API 21: see #405
         minSdk versions.minSdk
         targetSdk versions.targetSdk
