@@ -173,7 +173,7 @@ android {
             }
         }
 
-        /*
+
         applicationVariants.all { variant ->
             // assign different version code for each output
             def baseVariantVersion = variant.versionCode * 10
@@ -186,7 +186,7 @@ android {
                 output.outputFileName = output.outputFileName.replace("vector-app", "vector")
             }
         }
-        */
+
 
         // The following argument makes the Android Test Orchestrator run its
         // "pm clear" command after each test invocation. This command ensures
