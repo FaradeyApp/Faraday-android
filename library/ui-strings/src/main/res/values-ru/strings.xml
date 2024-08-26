@@ -3039,7 +3039,7 @@
     <string name="settings_connection_method">Способ подключения</string>
     <string name="settings_matrix_protocol">Протокол Matrix</string>
     <string name="settings_onion_routing_protocol">Onion routing</string>
-    <string name="settings_i2p_network">Сеть I2P</string>
+    <string name="settings_i2p_network">Сеть I2P (скоро будет)</string>
     <string name="settings_use_proxy_server">Использовать прокси-сервер</string>
     <string name="settings_connection_method_password_hint">Пароль</string>
     <string name="settings_connection_method_user_name_hint">Имя пользователя</string>

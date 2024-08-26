@@ -48,6 +48,8 @@
 
         <im.vector.app.core.ui.views.IndentedRadioButton
             android:id="@+id/i2p_radio_button"
+            android:enabled="false"
+            android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
