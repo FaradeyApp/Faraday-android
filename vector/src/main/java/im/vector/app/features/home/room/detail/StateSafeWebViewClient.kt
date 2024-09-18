@@ -16,21 +16,19 @@
 
 package im.vector.app.features.home.room.detail
 
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class StateSafeWebViewClient @Inject constructor() : WebViewClient() {
+class StateSafeWebViewClient : WebViewClient() {
     var lastUrl: String? = null
         private set
 
-    @Deprecated("Deprecated in Java")
-    @Suppress("DEPRECATION")
-    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-        lastUrl = url
-        return super.shouldOverrideUrlLoading(view, url)
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        Timber.d("LAST URL:" + lastUrl)
+        lastUrl = request.url.toString()
+        Timber.d("LAST URL:" + lastUrl)
+        return super.shouldOverrideUrlLoading(view, request)
     }
 }

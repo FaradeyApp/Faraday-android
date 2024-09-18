@@ -76,6 +76,4 @@ interface SingletonEntryPoint {
     fun webRtcCallManager(): WebRtcCallManager
 
     fun appCoroutineScope(): CoroutineScope
-
-    fun stateSafeWebViewClient(): StateSafeWebViewClient
 }

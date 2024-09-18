@@ -103,10 +103,6 @@ allprojects {
                 groups.google.group.each { includeGroup it }
             }
         }
-        // Do not use `jcenter`, it prevents Dependabot from working properly
-        maven {
-            url 'https://jcenter.bintray.com'
-        }
         google()
         mavenCentral()
     }
