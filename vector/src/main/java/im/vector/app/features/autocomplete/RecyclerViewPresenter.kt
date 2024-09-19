@@ -68,7 +68,7 @@ abstract class RecyclerViewPresenter<T>(context: Context) : AutocompletePresente
      * @param item the clicked item.
      */
     protected fun dispatchClick(item: T) {
-        if (clicks != null) clicks?.click(item)
+        if (clicks != null && item != null) clicks?.click(item)
     }
 
     /**

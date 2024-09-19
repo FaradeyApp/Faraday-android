@@ -105,6 +105,10 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    configurations {
+        all*.exclude group: 'androidx.annotation', module: 'annotation-jvm'
+    }
 }
 
 dependencies {
