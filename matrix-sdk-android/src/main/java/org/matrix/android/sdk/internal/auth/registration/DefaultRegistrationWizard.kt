@@ -71,12 +71,14 @@ internal class DefaultRegistrationWizard(
     override suspend fun createAccount(
             userName: String?,
             password: String?,
-            initialDeviceDisplayName: String?
+            initialDeviceDisplayName: String?,
+            deviceId: String?
     ): RegistrationResult {
         val params = RegistrationParams(
                 username = userName,
                 password = password,
-                initialDeviceDisplayName = initialDeviceDisplayName
+                initialDeviceDisplayName = initialDeviceDisplayName,
+                deviceId = deviceId
         )
         return performRegistrationRequest(params, LoginType.PASSWORD)
                 .also {
@@ -85,7 +87,12 @@ internal class DefaultRegistrationWizard(
                 }.also {
                     if(it is RegistrationResult.Success) {
                         it.session.profileService().storeAccount(
-                                it.session.myUserId, it.session.sessionParams.homeServerUrl, username = userName, password = password
+                                userId = it.session.myUserId,
+                                homeServerUrl = it.session.sessionParams.homeServerUrl,
+                                token = it.session.sessionParams.credentials.accessToken,
+                                username = userName,
+                                password = password,
+                                deviceId = deviceId
                         )
                     }
                 }
@@ -223,8 +230,11 @@ internal class DefaultRegistrationWizard(
         return register(loginType) { registerTask.execute(RegisterTask.Params(registrationParams)) }.also {
             if(it is RegistrationResult.Success) {
                 it.session.profileService().storeAccount(
-                        it.session.myUserId, it.session.sessionParams.homeServerUrl,
-                        username = registrationParams.username, password = registrationParams.password
+                        userId = it.session.myUserId,
+                        homeServerUrl = it.session.sessionParams.homeServerUrl,
+                        token = it.session.sessionParams.credentials.accessToken,
+                        username = registrationParams.username,
+                        password = registrationParams.password
                 )
             }
         }

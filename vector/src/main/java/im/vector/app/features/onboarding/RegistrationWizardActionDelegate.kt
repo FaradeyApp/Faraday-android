@@ -48,7 +48,8 @@ class RegistrationWizardActionDelegate @Inject constructor(
                 registrationWizard.createAccount(
                         action.username,
                         action.password,
-                        action.initialDeviceName
+                        action.initialDeviceName,
+                        authenticationService.generateDeviceId(action.username, emptyList())
                 )
             }
         }

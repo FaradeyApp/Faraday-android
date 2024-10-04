@@ -25,11 +25,14 @@ internal open class LocalAccountEntity(
         var token: String? = null,
         var username: String? = null,
         var password: String? = null,
-        var homeServerUrl: String = ""
+        var homeServerUrl: String = "",
+        var deviceId: String? = null,
 ) : RealmObject() {
 
-    companion object
+    companion object {
+        val t = Credential
+    }
 }
 
 internal fun LocalAccountEntity.toLocalAccount() =
-        LocalAccount(userId, token, username, password, homeServerUrl)
+        LocalAccount(userId, token, username, password, homeServerUrl, deviceId)

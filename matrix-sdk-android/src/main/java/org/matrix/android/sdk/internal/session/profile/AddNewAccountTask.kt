@@ -31,7 +31,8 @@ internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, Boolean> {
     data class Params(
             val username: String,
             val password: String,
-            val homeServerUrl: String? = null
+            val homeServerUrl: String? = null,
+            val deviceId: String
     )
 }
 
@@ -56,6 +57,7 @@ internal class DefaultAddNewAccountTask @Inject constructor(
                                             user = params.username
                                     ),
                                     password = params.password,
+                                    deviceId = params.deviceId
                             )
                     )
                 }.also { HomeServerHolder.setDefaultHomeServer() }
@@ -67,6 +69,7 @@ internal class DefaultAddNewAccountTask @Inject constructor(
                                         user = params.username
                                 ),
                                 password = params.password,
+                                deviceId = params.deviceId
                         )
                 )
             }
@@ -79,7 +82,14 @@ internal class DefaultAddNewAccountTask @Inject constructor(
 //            executeRequest(globalErrorReceiver) {
 //                profileAPI.addNewAccount(AddNewAccountBody(token = credentials.accessToken))
 //            }.status
-            localAccountStore.addAccount(credentials.userId, params.homeServerUrl!!, params.username, params.password)
+            localAccountStore.addAccount(
+                credentials.userId,
+                params.homeServerUrl!!,
+                params.username,
+                params.password,
+                credentials.accessToken,
+                params.deviceId
+            )
             "OK"
         } catch (throwable: Throwable) {
             if(throwable is Failure.ServerError) throw throwable

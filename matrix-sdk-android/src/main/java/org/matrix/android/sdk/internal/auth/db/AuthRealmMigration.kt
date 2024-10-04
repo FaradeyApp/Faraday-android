@@ -23,12 +23,13 @@ import org.matrix.android.sdk.internal.auth.db.migration.MigrateAuthTo003
 import org.matrix.android.sdk.internal.auth.db.migration.MigrateAuthTo004
 import org.matrix.android.sdk.internal.auth.db.migration.MigrateAuthTo005
 import org.matrix.android.sdk.internal.auth.db.migration.MigrateAuthTo006
+import org.matrix.android.sdk.internal.auth.db.migration.MigrateAuthTo007
 import org.matrix.android.sdk.internal.util.database.MatrixRealmMigration
 import javax.inject.Inject
 
 internal class AuthRealmMigration @Inject constructor() : MatrixRealmMigration(
         dbName = "Auth",
-        schemaVersion = 6L,
+        schemaVersion = 7L,
 ) {
     /**
      * Forces all AuthRealmMigration instances to be equal.
@@ -44,5 +45,6 @@ internal class AuthRealmMigration @Inject constructor() : MatrixRealmMigration(
         if (oldVersion < 4) MigrateAuthTo004(realm).perform()
         if (oldVersion < 5) MigrateAuthTo005(realm).perform()
         if (oldVersion < 6) MigrateAuthTo006(realm).perform()
+        if (oldVersion < 7) MigrateAuthTo007(realm).perform()
     }
 }

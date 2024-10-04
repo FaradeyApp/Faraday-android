@@ -354,7 +354,8 @@ class LoginViewModel @AssistedInject constructor(
             it.createAccount(
                     action.username,
                     action.password,
-                    action.initialDeviceName
+                    action.initialDeviceName,
+                    authenticationService.generateDeviceId(action.username, emptyList())
             )
         }
     }
@@ -699,7 +700,8 @@ class LoginViewModel @AssistedInject constructor(
                     safeLoginWizard.login(
                             action.username.trim(),
                             action.password,
-                            action.initialDeviceName
+                            action.initialDeviceName,
+                            deviceId = authenticationService.generateDeviceId(action.username, emptyList())
                     )
                 } catch (failure: Throwable) {
                     setState {
@@ -748,9 +750,12 @@ class LoginViewModel @AssistedInject constructor(
         authenticationService.reset()
         configureAndStartSessionUseCase.execute(session)
         session.profileService().storeAccount(
-                session.myUserId, session.sessionParams.homeServerUrl,
+                userId = session.myUserId,
+                homeServerUrl = session.sessionParams.homeServerUrl,
+                token = session.sessionParams.credentials.accessToken,
                 username = session.myUserId,
-                password = reAuthHelper.data!!
+                password = reAuthHelper.data!!,
+                deviceId = session.sessionParams.deviceId
         )
 
         //Check whether application password is set for this user. If so, after every launch, EnterPasswordFragment will be shown first.

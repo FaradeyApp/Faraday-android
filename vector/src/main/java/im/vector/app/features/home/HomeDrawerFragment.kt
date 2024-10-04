@@ -174,7 +174,9 @@ class HomeDrawerFragment :
                 var accountChanged = false
                 accounts.forEach {
                     try {
-                        val result = profileService.reLoginMultiAccount(it.userId)
+                        val result = profileService.reLoginMultiAccount(
+                                it.userId, authenticationService.getSessionCreator()
+                        )
                         activeSessionHolder.setActiveSession(result)
                         authenticationService.reset()
                         configureAndStartSessionUseCase.execute(result)

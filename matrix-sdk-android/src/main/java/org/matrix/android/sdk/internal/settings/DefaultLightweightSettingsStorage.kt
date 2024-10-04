@@ -179,6 +179,16 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         }
     }
 
+    override fun getLastSessionHash(): String? {
+        return sdkDefaultPrefs.getString(MATRIX_SDK_LAST_SESSION_HASH, null)
+    }
+
+    override fun setLastSessionHash(hash: String?) {
+        sdkDefaultPrefs.edit {
+            putString(MATRIX_SDK_LAST_SESSION_HASH, hash)
+        }
+    }
+
     /**
      * Set the presence status sent on syncs when the application is in foreground.
      *
@@ -214,5 +224,6 @@ class DefaultLightweightSettingsStorage @Inject constructor(
         const val MATRIX_SDK_APPLICATION_PASSWORD = "MATRIX_SDK_APPLICATION_PASSWORD"
         const val MATRIX_SDK_NUKE_PASSWORD = "MATRIX_SDK_NUKE_PASSWORD"
         const val MATRIX_SDK_CUSTOM_SETTINGS_ENABLED = "MATRIX_SDK_CUSTOM_SETTINGS_ENABLED"
+        const val MATRIX_SDK_LAST_SESSION_HASH = "MATRIX_SDK_LAST_SESSION_HASH"
     }
 }

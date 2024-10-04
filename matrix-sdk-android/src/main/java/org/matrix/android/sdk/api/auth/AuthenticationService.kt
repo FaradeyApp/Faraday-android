@@ -16,6 +16,7 @@
 
 package org.matrix.android.sdk.api.auth
 
+import androidx.core.text.isDigitsOnly
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.data.LoginFlowResult
@@ -25,6 +26,7 @@ import org.matrix.android.sdk.api.auth.wellknown.WellknownResult
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
+import org.matrix.android.sdk.internal.session.profile.DefaultProfileService.Companion.APP_PREFIX
 
 /**
  * This interface defines methods to authenticate or to create an account to a matrix server.
@@ -144,4 +146,8 @@ interface AuthenticationService {
             initialDeviceName: String? = null,
             deviceId: String? = null
     ): Session
+
+    fun getSessionById(id: String): Session?
+
+    fun generateDeviceId(userId: String, ids: List<String>): String
 }

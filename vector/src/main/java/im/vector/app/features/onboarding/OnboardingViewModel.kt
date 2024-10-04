@@ -617,7 +617,8 @@ class OnboardingViewModel @AssistedInject constructor(
                 val result = safeLoginWizard.login(
                         action.username,
                         action.password,
-                        action.initialDeviceName
+                        action.initialDeviceName,
+                        authenticationService.generateDeviceId(action.username, emptyList())
                 )
                 reAuthHelper.data = action.password
                 onSessionCreated(result, authenticationDescription = AuthenticationDescription.Login)

@@ -20,12 +20,15 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.session.Session
+import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import org.matrix.android.sdk.internal.settings.DefaultLightweightSettingsStorage
 import javax.inject.Inject
 
 private val initializerSemaphore = Semaphore(permits = 1)
 
 class SessionInitializer @Inject constructor(
         private val authenticationService: AuthenticationService,
+        private val lightweightSettingsStorage: LightweightSettingsStorage,
 ) {
 
     /**
@@ -41,7 +44,15 @@ class SessionInitializer @Inject constructor(
             when {
                 currentInMemorySession != null -> currentInMemorySession
                 authenticationService.hasAuthenticatedSessions() -> {
-                    val lastAuthenticatedSession = authenticationService.getLastAuthenticatedSession()!!
+                    val lastSessionId = lightweightSettingsStorage.getLastSessionHash()
+
+                    var lastAuthenticatedSession: Session? = null
+                    if (lastSessionId != null)
+                        lastAuthenticatedSession = authenticationService.getSessionById(lastSessionId)
+
+                    if (lastAuthenticatedSession == null)
+                        lastAuthenticatedSession = authenticationService.getLastAuthenticatedSession()!!
+
                     lastAuthenticatedSession.also { initializer(lastAuthenticatedSession) }
                 }
                 else -> null

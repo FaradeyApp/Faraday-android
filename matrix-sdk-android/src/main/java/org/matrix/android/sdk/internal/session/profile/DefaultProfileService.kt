@@ -18,6 +18,7 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import android.net.Uri
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.LiveData
 import com.zhuinden.monarchy.Monarchy
 import io.realm.kotlin.where
@@ -34,6 +35,7 @@ import org.matrix.android.sdk.api.session.profile.model.AccountLoginCredentials
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.MimeTypes
 import org.matrix.android.sdk.api.util.Optional
+import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.database.model.PendingThreePidEntity
@@ -65,7 +67,7 @@ internal class DefaultProfileService @Inject constructor(
         private val pendingThreePidMapper: PendingThreePidMapper,
         private val userStore: UserStore,
         private val fileUploader: FileUploader,
-        authenticationService: AuthenticationService
+        private val authenticationService: AuthenticationService
 ) : ProfileService {
     private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
 
@@ -202,17 +204,27 @@ internal class DefaultProfileService @Inject constructor(
         }
     }
 
-    override suspend fun reLoginMultiAccount(userId: String): Session {
+    override suspend fun reLoginMultiAccount(userId: String, sessionCreator: SessionCreator): Session {
         return reLoginInMultiAccountTask.execute(
-                ReLoginInMultiAccountTask.Params(userId = userId)
+                ReLoginInMultiAccountTask.Params(userId, sessionCreator)
         )
+    }
+
+    override suspend fun getDeviceId(userId: String): String {
+        val accounts = localAccountStore.getAccounts()
+        val user = accounts.find { it.userId == userId }
+        user?.deviceId?.let { return it }
+
+        val ids = accounts.map { it.deviceId.orEmpty() }
+        return authenticationService.generateDeviceId(userId, ids)
     }
 
     override suspend fun createAccount(userName: String?, password: String?, initialDeviceDisplayName: String?, homeServerConnectionConfig: HomeServerConnectionConfig): Boolean {
         val params = RegistrationParams(
                 username = userName,
                 password = password,
-                initialDeviceDisplayName = initialDeviceDisplayName
+                initialDeviceDisplayName = initialDeviceDisplayName,
+                deviceId = getDeviceId(userName.orEmpty())
         )
         return registerNewAccountTask.execute(RegisterNewAccountTask.Params(params, homeServerConnectionConfig))
     }
@@ -222,13 +234,14 @@ internal class DefaultProfileService @Inject constructor(
                 AddNewAccountTask.Params(
                         username = userName,
                         password = password,
-                        homeServerUrl = homeServerUrl
+                        homeServerUrl = homeServerUrl,
+                        deviceId = getDeviceId(userName)
                 )
         )
     }
 
-    override suspend fun storeAccount(userId: String, homeServerUrl: String, token: String?, username: String?, password: String?) {
-        localAccountStore.addAccount(userId, homeServerUrl, username, password, token)
+    override suspend fun storeAccount(userId: String, homeServerUrl: String, token: String?, username: String?, password: String?, deviceId: String?) {
+        localAccountStore.addAccount(userId, homeServerUrl, username, password, token, deviceId)
     }
 
     override suspend fun clearMultiAccount() {
@@ -241,6 +254,10 @@ internal class DefaultProfileService @Inject constructor(
                         token = token
                 )
         )
+    }
+
+    companion object {
+        const val APP_PREFIX = "Faraday"
     }
 }
 

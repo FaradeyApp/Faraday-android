@@ -17,6 +17,7 @@
 package org.matrix.android.sdk.internal.auth
 
 import android.net.Uri
+import androidx.core.text.isDigitsOnly
 import dagger.Lazy
 import okhttp3.OkHttpClient
 import org.matrix.android.sdk.api.MatrixPatterns
@@ -53,7 +54,9 @@ import org.matrix.android.sdk.internal.network.RetrofitFactory
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.network.httpclient.addSocketFactory
 import org.matrix.android.sdk.internal.network.ssl.UnrecognizedCertificateException
+import org.matrix.android.sdk.internal.session.profile.DefaultProfileService.Companion.APP_PREFIX
 import org.matrix.android.sdk.internal.wellknown.GetWellknownTask
+import java.util.UUID
 import javax.inject.Inject
 import javax.net.ssl.HttpsURLConnection
 
@@ -436,6 +439,22 @@ internal class DefaultAuthenticationService @Inject constructor(
                         deviceId = deviceId
                 )
         )
+    }
+
+    override fun getSessionById(id: String): Session? {
+        return sessionParamsStore.get(id)?.let { sessionManager.getOrCreateSession(it) }
+    }
+
+    override fun generateDeviceId(userId: String, ids: List<String>): String {
+        val uniqueId = UUID.randomUUID()
+        val postfix = ids.filter { it.startsWith("${uniqueId}-$APP_PREFIX-$userId-") }.maxOfOrNull {
+            it.removePrefix("$APP_PREFIX-$userId-").let { postfix ->
+                if (postfix.isDigitsOnly()) postfix.toInt()
+                else 0
+            }
+        } ?: 0
+
+        return "${uniqueId}-$APP_PREFIX-$userId-$postfix"
     }
 
     private fun buildAuthAPI(homeServerConnectionConfig: HomeServerConnectionConfig): AuthAPI {

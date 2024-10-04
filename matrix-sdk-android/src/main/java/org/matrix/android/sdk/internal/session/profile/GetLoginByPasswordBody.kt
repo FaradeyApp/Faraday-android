@@ -24,6 +24,7 @@ internal data class GetLoginByPasswordBody(
         @Json(name = "type") val type: String,
         @Json(name = "identifier") val identifier: LoginIdentifier,
         @Json(name = "password") val password: String,
+        @Json(name = "device_id") val deviceId: String,
 )
 
 @JsonClass(generateAdapter = true)

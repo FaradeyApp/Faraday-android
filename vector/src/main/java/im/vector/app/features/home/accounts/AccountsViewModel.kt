@@ -113,9 +113,12 @@ class AccountsViewModel @AssistedInject constructor(
     private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
         try {
             val result = session.profileService()
-                    .reLoginMultiAccount(userId = account.userId)
+                    .reLoginMultiAccount(userId = account.userId, authenticationService.getSessionCreator())
+            Timber.d("Session created")
             activeSessionHolder.setActiveSession(result)
+            lightweightSettingsStorage.setLastSessionHash(result.sessionId)
             authenticationService.reset()
+            Timber.d("Configure and start session")
             configureAndStartSessionUseCase.execute(result)
             Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
 

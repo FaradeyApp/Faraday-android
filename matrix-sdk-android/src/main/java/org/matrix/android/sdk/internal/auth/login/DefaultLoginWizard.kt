@@ -83,9 +83,12 @@ internal class DefaultLoginWizard(
         val profileService = session.profileService()
         val user = profileService.getProfileAsUser(session.myUserId)
         session.profileService().storeAccount(
-                user.userId, session.sessionParams.homeServerUrl,
+                userId = user.userId,
+                homeServerUrl = session.sessionParams.homeServerUrl,
+                token = session.sessionParams.credentials.accessToken,
                 username = user.userId,
-                password = password
+                password = password,
+                deviceId = deviceId
         )
 
         return session
@@ -103,7 +106,12 @@ internal class DefaultLoginWizard(
         }
 
         val session = sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.SSO)
-        session.profileService().storeAccount(session.myUserId, session.sessionParams.homeServerUrl, token = loginToken)
+        session.profileService().storeAccount(
+                userId = session.myUserId,
+                homeServerUrl = session.sessionParams.homeServerUrl,
+                token = loginToken,
+                deviceId = session.sessionParams.deviceId
+        )
 
         return session
     }

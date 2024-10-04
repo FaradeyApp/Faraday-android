@@ -16,6 +16,7 @@
 
 package org.matrix.android.sdk.internal.session.profile
 
+import com.otaliastudios.opengl.core.use
 import dagger.Lazy
 import okhttp3.OkHttpClient
 import org.matrix.android.sdk.api.auth.AuthenticationService
@@ -74,10 +75,12 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
 //                    profileAPI.addNewAccount(AddNewAccountBody(token = it.accessToken))
 //                }.status
                 localAccountStore.addAccount(
-                        it.userId,
-                        params.homeServerConnectionConfig.homeServerUri.toString(),
-                        params.registrationParams.username,
-                        params.registrationParams.password
+                        userId = it.userId,
+                        homeServerUrl = params.homeServerConnectionConfig.homeServerUri.toString(),
+                        username = params.registrationParams.username,
+                        password = params.registrationParams.password,
+                        token = it.accessToken,
+                        deviceId = params.registrationParams.deviceId
                 )
                 "OK"
             } catch (throwable: Throwable) {
