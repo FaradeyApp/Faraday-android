@@ -29,9 +29,7 @@ internal open class LocalAccountEntity(
         var deviceId: String? = null,
 ) : RealmObject() {
 
-    companion object {
-        val t = Credential
-    }
+    companion object
 }
 
 internal fun LocalAccountEntity.toLocalAccount() =
