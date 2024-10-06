@@ -35,6 +35,7 @@ import org.matrix.android.sdk.internal.auth.registration.RegisterAddThreePidTask
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.session.content.DefaultContentUrlResolver
 import org.matrix.android.sdk.internal.session.contentscanner.DisabledContentScannerService
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 
 internal class DefaultLoginWizard(
         private val authAPI: AuthAPI,
@@ -82,14 +83,15 @@ internal class DefaultLoginWizard(
         val session = sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.PASSWORD)
         val profileService = session.profileService()
         val user = profileService.getProfileAsUser(session.myUserId)
-        session.profileService().storeAccount(
-                userId = user.userId,
-                homeServerUrl = session.sessionParams.homeServerUrl,
-                token = session.sessionParams.credentials.accessToken,
-                username = user.userId,
-                password = password,
-                deviceId = deviceId
-        )
+        session.profileService().storeAccount(LocalAccount(
+            userId = user.userId,
+            homeServerUrl = session.sessionParams.homeServerUrl,
+            token = session.sessionParams.credentials.accessToken,
+            username = user.userId,
+            password = password,
+            deviceId = deviceId,
+            refreshToken = session.sessionParams.credentials.refreshToken
+        ))
 
         return session
     }
@@ -106,12 +108,15 @@ internal class DefaultLoginWizard(
         }
 
         val session = sessionCreator.createSession(credentials, pendingSessionData.homeServerConnectionConfig, LoginType.SSO)
-        session.profileService().storeAccount(
+        session.profileService().storeAccount(LocalAccount(
                 userId = session.myUserId,
                 homeServerUrl = session.sessionParams.homeServerUrl,
                 token = loginToken,
-                deviceId = session.sessionParams.deviceId
-        )
+                deviceId = session.sessionParams.deviceId,
+                refreshToken = session.sessionParams.credentials.refreshToken,
+                username = null,
+                password = null
+        ))
 
         return session
     }

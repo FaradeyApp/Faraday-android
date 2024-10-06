@@ -20,12 +20,14 @@ import io.realm.DynamicRealm
 import org.matrix.android.sdk.internal.util.database.RealmMigrator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountEntityFields
 
-internal class MigrateAuthTo007(realm: DynamicRealm) : RealmMigrator(realm, 7) {
+internal class MigrateAuthTo008(realm: DynamicRealm) : RealmMigrator(realm, 8) {
 
     override fun doMigrate(realm: DynamicRealm) {
         realm.schema.get("LocalAccountEntity")
-            ?.addField(LocalAccountEntityFields.DEVICE_ID, String::class.java)
-            ?.setNullable(LocalAccountEntityFields.DEVICE_ID, true)
+                ?.addField(LocalAccountEntityFields.REFRESH_TOKEN, String::class.java)?.apply {
+                    if (!isNullable(LocalAccountEntityFields.REFRESH_TOKEN))
+                        setNullable(LocalAccountEntityFields.REFRESH_TOKEN, true)
+                }
     }
 }
 

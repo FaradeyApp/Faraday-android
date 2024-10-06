@@ -68,7 +68,7 @@ internal class DefaultReLoginInMultiAccountTask @Inject constructor(
                 deviceId = account.deviceId,
                 homeServer = account.homeServerUrl,
                 accessToken = account.token!!,
-                refreshToken = null,
+                refreshToken = account.refreshToken,
         )
 
         Timber.d("Create Session")

@@ -32,6 +32,7 @@ import org.matrix.android.sdk.internal.auth.AuthAPI
 import org.matrix.android.sdk.internal.auth.PendingSessionStore
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.PendingSessionData
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 
 /**
  * This class execute the registration request and is responsible to keep the session of interactive authentication.
@@ -86,14 +87,15 @@ internal class DefaultRegistrationWizard(
                             .also { pendingSessionStore.savePendingSessionData(it) }
                 }.also {
                     if(it is RegistrationResult.Success) {
-                        it.session.profileService().storeAccount(
-                                userId = it.session.myUserId,
-                                homeServerUrl = it.session.sessionParams.homeServerUrl,
-                                token = it.session.sessionParams.credentials.accessToken,
-                                username = userName,
-                                password = password,
-                                deviceId = deviceId
-                        )
+                        it.session.profileService().storeAccount(LocalAccount(
+                            userId = it.session.myUserId,
+                            homeServerUrl = it.session.sessionParams.homeServerUrl,
+                            token = it.session.sessionParams.credentials.accessToken,
+                            username = userName,
+                            password = password,
+                            deviceId = deviceId,
+                            refreshToken = it.session.sessionParams.credentials.refreshToken
+                        ))
                     }
                 }
     }
@@ -229,13 +231,15 @@ internal class DefaultRegistrationWizard(
         delay(delayMillis)
         return register(loginType) { registerTask.execute(RegisterTask.Params(registrationParams)) }.also {
             if(it is RegistrationResult.Success) {
-                it.session.profileService().storeAccount(
-                        userId = it.session.myUserId,
-                        homeServerUrl = it.session.sessionParams.homeServerUrl,
-                        token = it.session.sessionParams.credentials.accessToken,
-                        username = registrationParams.username,
-                        password = registrationParams.password
-                )
+                it.session.profileService().storeAccount(LocalAccount(
+                    userId = it.session.myUserId,
+                    homeServerUrl = it.session.sessionParams.homeServerUrl,
+                    token = it.session.sessionParams.credentials.accessToken,
+                    username = registrationParams.username,
+                    password = registrationParams.password,
+                    deviceId = it.session.sessionParams.deviceId,
+                    refreshToken = it.session.sessionParams.credentials.refreshToken
+                ))
             }
         }
     }

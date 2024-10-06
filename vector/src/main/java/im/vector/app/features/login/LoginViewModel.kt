@@ -52,6 +52,7 @@ import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.MatrixIdFailure
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 
@@ -750,12 +751,15 @@ class LoginViewModel @AssistedInject constructor(
         authenticationService.reset()
         configureAndStartSessionUseCase.execute(session)
         session.profileService().storeAccount(
+            LocalAccount(
                 userId = session.myUserId,
                 homeServerUrl = session.sessionParams.homeServerUrl,
                 token = session.sessionParams.credentials.accessToken,
                 username = session.myUserId,
                 password = reAuthHelper.data!!,
-                deviceId = session.sessionParams.deviceId
+                deviceId = session.sessionParams.deviceId,
+                refreshToken = session.sessionParams.credentials.refreshToken,
+            )
         )
 
         //Check whether application password is set for this user. If so, after every launch, EnterPasswordFragment will be shown first.

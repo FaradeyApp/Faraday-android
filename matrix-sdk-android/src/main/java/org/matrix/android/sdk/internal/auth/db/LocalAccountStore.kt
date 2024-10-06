@@ -26,14 +26,8 @@ import javax.inject.Inject
 
 interface LocalAccountStore {
     suspend fun getAccounts(): List<LocalAccount>
-    suspend fun addAccount(
-            userId: String,
-            homeServerUrl: String,
-            username: String? = null,
-            password: String? = null,
-            token: String? = null,
-            deviceId: String? = null
-    )
+
+    suspend fun addAccount(account: LocalAccount)
 
     suspend fun getAccount(userId: String): LocalAccount
 
@@ -48,15 +42,9 @@ class DefaultLocalAccountStore @Inject constructor(
         @AuthDatabase private val realmConfiguration: RealmConfiguration,
 ) : LocalAccountStore {
     override suspend fun addAccount(
-            userId: String,
-            homeServerUrl: String,
-            username: String?,
-            password: String?,
-            token: String?,
-            deviceId: String?
+            account: LocalAccount
     ) = awaitTransaction(realmConfiguration) { realm ->
-        val accountEntity = LocalAccountEntity(userId, token, username, password, homeServerUrl, deviceId)
-        realm.insertOrUpdate(accountEntity)
+        realm.insertOrUpdate(account.toEntity())
     }
 
     override suspend fun getAccount(userId: String): LocalAccount = awaitTransaction(realmConfiguration) { realm ->
@@ -64,16 +52,12 @@ class DefaultLocalAccountStore @Inject constructor(
     }
 
     override suspend fun updatePassword(userId: String, newPassword: String) = awaitTransaction(realmConfiguration) { realm ->
-        val oldEntity = LocalAccountEntity.where(realm, userId).findFirst()!!
+        val oldEntity = LocalAccountEntity.where(realm, userId).findFirst()!!.toLocalAccount()
 
         val newEntity = oldEntity.run {
-            LocalAccountEntity(
-                    userId = this.userId,
-                    token = token,
-                    username = username,
-                    password = newPassword,
-                    homeServerUrl = homeServerUrl
-            )
+            oldEntity.copy(
+                    password = newPassword
+            ).toEntity()
         }
 
         realm.insertOrUpdate(newEntity)

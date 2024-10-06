@@ -29,6 +29,7 @@ import org.matrix.android.sdk.api.session.user.model.User
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.api.util.Optional
 import org.matrix.android.sdk.internal.auth.SessionCreator
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 
 /**
  * This interface defines methods to handling profile information. It's implemented at the session level.
@@ -169,14 +170,7 @@ interface ProfileService {
      */
     suspend fun addNewAccount(userName: String, password: String, homeServerUrl: String): Boolean
 
-    suspend fun storeAccount(
-            userId: String,
-            homeServerUrl: String,
-            token: String? = null,
-            username: String? = null,
-            password: String? = null,
-            deviceId: String? = null
-    )
+    suspend fun storeAccount(account: LocalAccount)
 
     suspend fun clearMultiAccount()
     suspend fun getDeviceId(userId: String): String

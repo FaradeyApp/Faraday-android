@@ -20,6 +20,7 @@ import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import org.matrix.android.sdk.internal.session.profile.LocalAccount
 
+// TODO: make fields non-nullable
 internal open class LocalAccountEntity(
         @PrimaryKey var userId: String = "",
         var token: String? = null,
@@ -27,10 +28,14 @@ internal open class LocalAccountEntity(
         var password: String? = null,
         var homeServerUrl: String = "",
         var deviceId: String? = null,
+        var refreshToken: String? = null,
 ) : RealmObject() {
 
     companion object
 }
 
 internal fun LocalAccountEntity.toLocalAccount() =
-        LocalAccount(userId, token, username, password, homeServerUrl, deviceId)
+        LocalAccount(userId, token, username, password, homeServerUrl, deviceId, refreshToken)
+
+internal fun LocalAccount.toEntity() =
+        LocalAccountEntity(userId, token, username, password, homeServerUrl, deviceId, refreshToken)

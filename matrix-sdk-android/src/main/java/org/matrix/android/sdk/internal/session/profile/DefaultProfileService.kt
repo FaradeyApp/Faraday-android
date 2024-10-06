@@ -226,22 +226,28 @@ internal class DefaultProfileService @Inject constructor(
                 initialDeviceDisplayName = initialDeviceDisplayName,
                 deviceId = getDeviceId(userName.orEmpty())
         )
-        return registerNewAccountTask.execute(RegisterNewAccountTask.Params(params, homeServerConnectionConfig))
+        val account = registerNewAccountTask.execute(RegisterNewAccountTask.Params(params, homeServerConnectionConfig)) ?: return false
+
+        localAccountStore.addAccount(account)
+        return true
     }
 
     override suspend fun addNewAccount(userName: String, password: String, homeServerUrl: String): Boolean {
-        return addNewAccountTask.execute(
-                AddNewAccountTask.Params(
-                        username = userName,
-                        password = password,
-                        homeServerUrl = homeServerUrl,
-                        deviceId = getDeviceId(userName)
-                )
-        )
+        val account = addNewAccountTask.execute(
+            AddNewAccountTask.Params(
+                    username = userName,
+                    password = password,
+                    homeServerUrl = homeServerUrl,
+                    deviceId = getDeviceId(userName)
+            )
+        ) ?: return false
+
+        localAccountStore.addAccount(account)
+        return true
     }
 
-    override suspend fun storeAccount(userId: String, homeServerUrl: String, token: String?, username: String?, password: String?, deviceId: String?) {
-        localAccountStore.addAccount(userId, homeServerUrl, username, password, token, deviceId)
+    override suspend fun storeAccount(account: LocalAccount) {
+        localAccountStore.addAccount(account)
     }
 
     override suspend fun clearMultiAccount() {

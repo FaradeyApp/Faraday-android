@@ -17,9 +17,7 @@
 package org.matrix.android.sdk.internal.session.profile
 
 
-import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.Failure
-import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.session.HomeServerHolder
@@ -27,11 +25,11 @@ import org.matrix.android.sdk.internal.task.Task
 import timber.log.Timber
 import javax.inject.Inject
 
-internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, Boolean> {
+internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, LocalAccount?> {
     data class Params(
             val username: String,
             val password: String,
-            val homeServerUrl: String? = null,
+            val homeServerUrl: String,
             val deviceId: String
     )
 }
@@ -39,15 +37,12 @@ internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, Boolean> {
 internal class DefaultAddNewAccountTask @Inject constructor(
         private val profileAPI: ProfileAPI,
         private val multiServerProfileApi: MultiServerProfileApi,
-        private val globalErrorReceiver: GlobalErrorReceiver,
-        authenticationService: AuthenticationService
+        private val globalErrorReceiver: GlobalErrorReceiver
 ) : AddNewAccountTask {
-    private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
-
-    override suspend fun execute(params: AddNewAccountTask.Params): Boolean {
+    override suspend fun execute(params: AddNewAccountTask.Params): LocalAccount? {
         val credentials = try {
             executeRequest(globalErrorReceiver) {
-                params.homeServerUrl?.let {
+                params.homeServerUrl.let {
                     HomeServerHolder.homeServer = it
                     multiServerProfileApi.getLoginByPassword(
                             GetLoginByPasswordBody(
@@ -61,42 +56,21 @@ internal class DefaultAddNewAccountTask @Inject constructor(
                             )
                     )
                 }.also { HomeServerHolder.setDefaultHomeServer() }
-                        ?: profileAPI.getLoginByPassword(
-                        GetLoginByPasswordBody(
-                                type = "m.login.password",
-                                identifier = LoginIdentifier(
-                                        type = "m.id.user",
-                                        user = params.username
-                                ),
-                                password = params.password,
-                                deviceId = params.deviceId
-                        )
-                )
             }
         } catch (throwable: Throwable) {
             Timber.i("Get Login By Password error $throwable")
             if(throwable is Failure.ServerError) throw throwable
-            null
-        } ?: return false
-        val result = try {
-//            executeRequest(globalErrorReceiver) {
-//                profileAPI.addNewAccount(AddNewAccountBody(token = credentials.accessToken))
-//            }.status
-            localAccountStore.addAccount(
-                credentials.userId,
-                params.homeServerUrl!!,
-                params.username,
-                params.password,
-                credentials.accessToken,
-                params.deviceId
-            )
-            "OK"
-        } catch (throwable: Throwable) {
-            if(throwable is Failure.ServerError) throw throwable
-            Timber.i("Add New Account error $throwable")
-            null
+            return null
         }
-        Timber.i("DefaultAddNewAccountTask result=$result")
-        return result == "OK"
+
+        return LocalAccount(
+            userId = credentials.userId,
+            homeServerUrl = params.homeServerUrl,
+            username = params.username,
+            password = params.password,
+            token = credentials.accessToken,
+            deviceId = params.deviceId,
+            refreshToken = null
+        )
     }
 }

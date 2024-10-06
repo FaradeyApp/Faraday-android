@@ -16,16 +16,12 @@
 
 package org.matrix.android.sdk.internal.session.profile
 
-import com.otaliastudios.opengl.core.use
 import dagger.Lazy
 import okhttp3.OkHttpClient
-import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.data.LoginFlowTypes
-import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.failure.toRegistrationFlowResponse
-import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
 import org.matrix.android.sdk.internal.auth.registration.AuthParams
 import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.di.Unauthenticated
@@ -37,7 +33,7 @@ import org.matrix.android.sdk.internal.task.Task
 import timber.log.Timber
 import javax.inject.Inject
 
-internal interface RegisterNewAccountTask : Task<RegisterNewAccountTask.Params, Boolean> {
+internal interface RegisterNewAccountTask : Task<RegisterNewAccountTask.Params, LocalAccount?> {
     data class Params(
             val registrationParams: RegistrationParams,
             val homeServerConnectionConfig: HomeServerConnectionConfig
@@ -49,11 +45,8 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
         @Unauthenticated
         private val okHttpClient: Lazy<OkHttpClient>,
         private val retrofitFactory: RetrofitFactory,
-        authenticationService: AuthenticationService
 ) : RegisterNewAccountTask {
-    private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
-
-    override suspend fun execute(params: RegisterNewAccountTask.Params): Boolean {
+    override suspend fun execute(params: RegisterNewAccountTask.Params): LocalAccount? {
         var credentials: Credentials? = null
         val unauthorizedProfileAPI = buildProfileAPI(params.homeServerConnectionConfig)
         try {
@@ -69,31 +62,20 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
                 }
             } ?: throw throwable
         }
+
         credentials?.let {
-            val result = try {
-//                executeRequest(globalErrorReceiver) {
-//                    profileAPI.addNewAccount(AddNewAccountBody(token = it.accessToken))
-//                }.status
-                localAccountStore.addAccount(
-                        userId = it.userId,
-                        homeServerUrl = params.homeServerConnectionConfig.homeServerUri.toString(),
-                        username = params.registrationParams.username,
-                        password = params.registrationParams.password,
-                        token = it.accessToken,
-                        deviceId = params.registrationParams.deviceId
-                )
-                "OK"
-            } catch (throwable: Throwable) {
-                Timber.i("Add New Account error $throwable")
-                if (throwable is Failure.ServerError) {
-                    throw throwable
-                }
-                null
-            }
-            Timber.i("DefaultRegisterNewAccountTask result=$result")
-            return result == "OK"
+            return LocalAccount(
+                    userId = it.userId,
+                    homeServerUrl = params.homeServerConnectionConfig.homeServerUri.toString(),
+                    username = params.registrationParams.username,
+                    password = params.registrationParams.password,
+                    token = it.accessToken,
+                    deviceId = params.registrationParams.deviceId,
+                    refreshToken = it.refreshToken
+            )
         }
-        return false
+
+        return null
     }
 
     private fun buildClient(homeServerConnectionConfig: HomeServerConnectionConfig): OkHttpClient {
