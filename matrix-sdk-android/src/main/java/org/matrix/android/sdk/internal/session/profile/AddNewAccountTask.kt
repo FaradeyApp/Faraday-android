@@ -35,7 +35,6 @@ internal interface AddNewAccountTask: Task<AddNewAccountTask.Params, LocalAccoun
 }
 
 internal class DefaultAddNewAccountTask @Inject constructor(
-        private val profileAPI: ProfileAPI,
         private val multiServerProfileApi: MultiServerProfileApi,
         private val globalErrorReceiver: GlobalErrorReceiver
 ) : AddNewAccountTask {

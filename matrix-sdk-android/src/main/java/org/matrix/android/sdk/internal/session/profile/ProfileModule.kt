@@ -82,9 +82,6 @@ internal abstract class ProfileModule {
     abstract fun bindDeleteThreePidTask(task: DefaultDeleteThreePidTask): DeleteThreePidTask
 
     @Binds
-    abstract fun bindGetMultipleAccountTask(task: DefaultGetMultipleAccountTask): GetMultipleAccountTask
-
-    @Binds
     abstract fun bindAddNewAccountTask(task: DefaultAddNewAccountTask): AddNewAccountTask
 
     @Binds

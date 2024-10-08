@@ -113,21 +113,6 @@ internal interface ProfileAPI {
     suspend fun deleteThreePid(@Body body: DeleteThreePidBody): DeleteThreePidResponse
 
     /**
-     * Return a list of accounts linked to current account via multi-account.
-     */
-    @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
-    suspend fun getMultiAccount(): List<AccountItemResponse>
-
-    /**
-     * Switch to another account in multi-account.
-     */
-    @GET(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account/{user}")
-    suspend fun reLoginMultiAccount(
-            @Path("user") userId: String
-    ): ReLoginInMultiAccountResponse
-
-
-    /**
      * Return user credentials by password.
      */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
@@ -147,10 +132,4 @@ internal interface ProfileAPI {
      */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_R0 + "register")
     suspend fun register(@Body registrationParams: RegistrationParams): Credentials
-
-    /**
-     * Add account to multi-account.
-     */
-    @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "user/multi_account")
-    suspend fun addNewAccount(@Body body: AddNewAccountBody): BaseRequestStatusResponse
 }

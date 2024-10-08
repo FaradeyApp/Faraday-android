@@ -18,7 +18,6 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import android.net.Uri
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.LiveData
 import com.zhuinden.monarchy.Monarchy
 import io.realm.kotlin.where
