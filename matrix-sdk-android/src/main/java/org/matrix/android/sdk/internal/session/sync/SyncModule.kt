@@ -20,6 +20,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import org.matrix.android.sdk.api.session.sync.SyncService
+import org.matrix.android.sdk.internal.di.MultiServer
 import org.matrix.android.sdk.internal.session.SessionScope
 import retrofit2.Retrofit
 
@@ -33,6 +34,13 @@ internal abstract class SyncModule {
         @SessionScope
         fun providesSyncAPI(retrofit: Retrofit): SyncAPI {
             return retrofit.create(SyncAPI::class.java)
+        }
+
+        @Provides
+        @JvmStatic
+        @SessionScope
+        fun providesMultiServerSyncAPI(@MultiServer retrofit: Retrofit): MultiServerSyncApi {
+            return retrofit.create(MultiServerSyncApi::class.java)
         }
     }
 

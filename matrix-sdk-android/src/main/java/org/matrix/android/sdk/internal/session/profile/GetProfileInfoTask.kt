@@ -22,8 +22,8 @@ import org.matrix.android.sdk.api.session.user.model.User
 import org.matrix.android.sdk.api.util.JsonDict
 import org.matrix.android.sdk.internal.di.SessionDatabase
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
+import org.matrix.android.sdk.internal.network.MultiServerCredentials
 import org.matrix.android.sdk.internal.network.executeRequest
-import org.matrix.android.sdk.internal.session.HomeServerHolder
 import org.matrix.android.sdk.internal.session.user.UserEntityFactory
 import org.matrix.android.sdk.internal.task.Task
 import org.matrix.android.sdk.internal.util.awaitTransaction
@@ -46,10 +46,10 @@ internal class DefaultGetProfileInfoTask @Inject constructor(
 
     override suspend fun execute(params: Params): JsonDict {
         return executeRequest(null) {
-            params.homeServerUrl?.let {
-                HomeServerHolder.homeServer = it
-                multiServerProfileApi.getProfile(params.userId)
-            }.also { HomeServerHolder.setDefaultHomeServer() } ?: profileAPI.getProfile(params.userId)
+            multiServerProfileApi.getProfile(
+                    MultiServerCredentials(homeserver = params.homeServerUrl),
+                    params.userId
+            )
         }.also { user ->
             if (params.storeInDatabase) {
                 // Insert into DB

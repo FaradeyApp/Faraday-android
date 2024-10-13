@@ -17,25 +17,36 @@
 package org.matrix.android.sdk.internal.session.profile
 
 import org.matrix.android.sdk.api.util.JsonDict
+import org.matrix.android.sdk.internal.network.MultiServerCredentials
 import org.matrix.android.sdk.internal.network.NetworkConstants
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Tag
 
 internal interface MultiServerProfileApi {
     /**
      * Return user credentials by password.
      */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
-    suspend fun getLoginByPassword(@Body body: GetLoginByPasswordBody): GetLoginResponse
+    suspend fun getLoginByPassword(
+            @Tag requestCredentials: MultiServerCredentials,
+            @Body body: GetLoginByPasswordBody
+    ): GetLoginResponse
 
     /**
      * Return user credentials by token.
      */
     @POST(NetworkConstants.URI_API_PREFIX_PATH_V3 + "login")
-    suspend fun getLoginByToken(@Body body: GetLoginByTokenBody): GetLoginResponse
+    suspend fun getLoginByToken(
+            @Tag requestCredentials: MultiServerCredentials,
+            @Body body: GetLoginByTokenBody
+    ): GetLoginResponse
 
     @GET(NetworkConstants.URI_API_PREFIX_PATH_R0 + "profile/{userId}")
-    suspend fun getProfile(@Path("userId") userId: String): JsonDict
+    suspend fun getProfile(
+            @Tag requestCredentials: MultiServerCredentials,
+            @Path("userId") userId: String
+    ): JsonDict
 }

@@ -54,6 +54,7 @@ import org.matrix.android.sdk.internal.database.SessionRealmConfigurationFactory
 import org.matrix.android.sdk.internal.di.Authenticated
 import org.matrix.android.sdk.internal.di.CacheDirectory
 import org.matrix.android.sdk.internal.di.DeviceId
+import org.matrix.android.sdk.internal.di.MultiServer
 import org.matrix.android.sdk.internal.di.ProxyProvider
 import org.matrix.android.sdk.internal.di.SessionDatabase
 import org.matrix.android.sdk.internal.di.SessionDownloadsDirectory
@@ -69,6 +70,7 @@ import org.matrix.android.sdk.internal.network.FallbackNetworkCallbackStrategy
 import org.matrix.android.sdk.internal.network.GlobalErrorHandler
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.HttpAuthenticator
+import org.matrix.android.sdk.internal.network.MultiServerInterceptor
 import org.matrix.android.sdk.internal.network.NetworkCallbackStrategy
 import org.matrix.android.sdk.internal.network.NetworkConnectivityChecker
 import org.matrix.android.sdk.internal.network.PreferredNetworkCallbackStrategy
@@ -245,6 +247,43 @@ internal abstract class SessionModule {
                 @SessionId sessionId: String,
                 @MockHttpInterceptor testInterceptor: TestInterceptor?,
                 matrixConfiguration: MatrixConfiguration,
+//                multiServerInterceptor: MultiServerInterceptor,
+                lightweightSettingsStorage: LightweightSettingsStorage
+        ): OkHttpClient {
+            val proxy = ProxyProvider(lightweightSettingsStorage).providesProxy()
+            return okHttpClient
+                    .newBuilder()
+//                    .addInterceptor(multiServerInterceptor)
+                    .addAccessTokenInterceptor(accessTokenProvider)
+                    .apply {
+                        if (testInterceptor != null) {
+                            testInterceptor.sessionId = sessionId
+                            addInterceptor(testInterceptor)
+                        }
+                    }
+                    .applyMatrixConfiguration(matrixConfiguration)
+                    .proxy(proxy)
+                    .apply {
+                        val username = lightweightSettingsStorage.getProxyUsername()
+                        val password = lightweightSettingsStorage.getProxyPassword()
+                        if (username.isNotEmpty() && password.isNotEmpty()) {
+                            val credentials = okhttp3.Credentials.basic(username, password)
+                            val authenticator = HttpAuthenticator(credentials = credentials, "Proxy-Authorization")
+                            proxyAuthenticator(authenticator)
+                        }
+                    }
+                    .build()
+        }
+
+        @JvmStatic
+        @Provides
+        @SessionScope
+        @MultiServer
+        fun providesMultiServerOkHttpClient(
+                @UnauthenticatedWithCertificate okHttpClient: OkHttpClient,
+                @SessionId sessionId: String,
+                @MockHttpInterceptor testInterceptor: TestInterceptor?,
+                matrixConfiguration: MatrixConfiguration,
                 multiServerInterceptor: MultiServerInterceptor,
                 lightweightSettingsStorage: LightweightSettingsStorage
         ): OkHttpClient {
@@ -252,7 +291,17 @@ internal abstract class SessionModule {
             return okHttpClient
                     .newBuilder()
                     .addInterceptor(multiServerInterceptor)
-                    .addAccessTokenInterceptor(accessTokenProvider)
+                    .apply {
+                        val existingCurlInterceptors = interceptors().filterIsInstance<CurlLoggingInterceptor>()
+                        interceptors().removeAll(existingCurlInterceptors)
+
+                        addInterceptor(multiServerInterceptor)
+
+                        // Re add eventually the curl logging interceptors
+                        existingCurlInterceptors.forEach {
+                            addInterceptor(it)
+                        }
+                    }
                     .apply {
                         if (testInterceptor != null) {
                             testInterceptor.sessionId = sessionId
@@ -318,6 +367,19 @@ internal abstract class SessionModule {
         fun providesRetrofit(
                 @Authenticated okHttpClient: Lazy<OkHttpClient>,
                 sessionParams: SessionParams,
+                retrofitFactory: RetrofitFactory
+        ): Retrofit {
+            return retrofitFactory
+                    .create(okHttpClient, sessionParams.homeServerConnectionConfig.homeServerUriBase.toString())
+        }
+
+        @JvmStatic
+        @Provides
+        @SessionScope
+        @MultiServer
+        fun providesMultiServerRetrofit(
+                @MultiServer okHttpClient: Lazy<OkHttpClient>,
+                sessionParams: SessionParams, // TODO: make something rationale with it, it default session?
                 retrofitFactory: RetrofitFactory
         ): Retrofit {
             return retrofitFactory

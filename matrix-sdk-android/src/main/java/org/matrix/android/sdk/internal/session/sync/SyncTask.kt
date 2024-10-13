@@ -18,6 +18,7 @@ package org.matrix.android.sdk.internal.session.sync
 
 import android.os.SystemClock
 import okhttp3.ResponseBody
+import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.extensions.tryOrNull
 import org.matrix.android.sdk.api.logger.LoggerTag
 import org.matrix.android.sdk.api.session.Session
@@ -31,6 +32,7 @@ import org.matrix.android.sdk.api.session.sync.model.SyncResponse
 import org.matrix.android.sdk.internal.di.SessionFilesDirectory
 import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
+import org.matrix.android.sdk.internal.network.MultiServerCredentials
 import org.matrix.android.sdk.internal.network.TimeOutInterceptor
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.network.toFailure
@@ -38,6 +40,7 @@ import org.matrix.android.sdk.internal.session.SessionListeners
 import org.matrix.android.sdk.internal.session.dispatchTo
 import org.matrix.android.sdk.internal.session.filter.GetCurrentFilterTask
 import org.matrix.android.sdk.internal.session.homeserver.GetHomeServerCapabilitiesTask
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 import org.matrix.android.sdk.internal.session.sync.parsing.InitialSyncResponseParser
 import org.matrix.android.sdk.internal.session.user.UserStore
 import org.matrix.android.sdk.internal.task.Task
@@ -62,7 +65,8 @@ internal interface SyncTask : Task<SyncTask.Params, SyncResponse> {
 }
 
 internal class DefaultSyncTask @Inject constructor(
-        private val syncAPI: SyncAPI,
+        private val syncAPI: MultiServerSyncApi,
+        private val authenticationService: AuthenticationService, // TODO: add user to params and make sequential task execution for each account
         @UserId private val userId: String,
         private val syncResponseHandler: SyncResponseHandler,
         private val syncRequestStateTracker: SyncRequestStateTracker,
@@ -86,11 +90,31 @@ internal class DefaultSyncTask @Inject constructor(
 
     override suspend fun execute(params: SyncTask.Params): SyncResponse {
         return syncTaskSequencer.post {
-            doSync(params)
+            val accounts = authenticationService.getLocalAccountStore().getAccounts()
+            var mainAccount: LocalAccount? = null
+            accounts.forEach { account ->
+                if (account.userId != userId) {
+                    val response = doSync(account.userId, MultiServerCredentials(account.token, account.homeServerUrl), params)
+                    response.rooms?.let {
+                        Timber.d("sync response multiserver: $response")
+                        var unreadCount = 0
+                        it.join.values.forEach { room ->
+                            room.unreadNotifications?.notificationCount?.let { unreadCount += it }
+                        }
+                        it.leave.values.forEach { room ->
+                            room.unreadNotifications?.notificationCount?.let { unreadCount += it }
+                        }
+                        Timber.d("Unread count is $unreadCount for the ${account.userId}")
+                    }
+                } else {
+                    mainAccount = account
+                }
+            }
+            doSync(mainAccount!!.userId, MultiServerCredentials(mainAccount!!.token, mainAccount!!.homeServerUrl), params, isMainAccount = true)
         }
     }
 
-    private suspend fun doSync(params: SyncTask.Params): SyncResponse {
+    private suspend fun doSync(userId: String, credentials: MultiServerCredentials, params: SyncTask.Params, isMainAccount: Boolean = false): SyncResponse {
         Timber.tag(loggerTag.value).i("Sync task started on Thread: ${Thread.currentThread().name}")
 
         val requestParams = HashMap<String, String>()
@@ -104,11 +128,19 @@ internal class DefaultSyncTask @Inject constructor(
         // Maybe refresh the homeserver capabilities data we know
         getHomeServerCapabilitiesTask.execute(GetHomeServerCapabilitiesTask.Params(forceRefresh = false))
         val filter = getCurrentFilterTask.execute(Unit)
+        val readTimeOut = (params.timeout + TIMEOUT_MARGIN).coerceAtLeast(TimeOutInterceptor.DEFAULT_LONG_TIMEOUT)
 
         requestParams["timeout"] = timeout.toString()
         requestParams["filter"] = filter
         params.presence?.let { requestParams["set_presence"] = it.value }
 
+        if (!isMainAccount) {
+            return syncAPI.sync(
+                    requestCredentials = credentials,
+                    params = requestParams,
+                    readTimeOut = readTimeOut
+            )
+        }
         val isInitialSync = token == null
         if (isInitialSync) {
             // We might want to get the user information in parallel too
@@ -121,7 +153,6 @@ internal class DefaultSyncTask @Inject constructor(
             syncRequestStateTracker.startRoot(InitialSyncStep.ImportingAccount, 100)
         }
 
-        val readTimeOut = (params.timeout + TIMEOUT_MARGIN).coerceAtLeast(TimeOutInterceptor.DEFAULT_LONG_TIMEOUT)
 
         var syncResponseToReturn: SyncResponse? = null
         val syncStatisticsData = SyncStatisticsData(isInitialSync, params.afterPause)
@@ -132,7 +163,7 @@ internal class DefaultSyncTask @Inject constructor(
                 if (initSyncStrategy is InitialSyncStrategy.Optimized) {
                     roomSyncEphemeralTemporaryStore.reset()
                     workingDir.mkdirs()
-                    val file = downloadInitSyncResponse(requestParams, syncStatisticsData)
+                    val file = downloadInitSyncResponse(credentials, requestParams, syncStatisticsData)
                     syncResponseToReturn = reportSubtask(syncRequestStateTracker, InitialSyncStep.ImportingAccount, 1, 0.7F) {
                         handleSyncFile(file, initSyncStrategy)
                     }
@@ -142,6 +173,7 @@ internal class DefaultSyncTask @Inject constructor(
                     val syncResponse = logDuration("INIT_SYNC Request", loggerTag, clock) {
                         executeRequest(globalErrorReceiver) {
                             syncAPI.sync(
+                                    requestCredentials = credentials,
                                     params = requestParams,
                                     readTimeOut = readTimeOut,
                             )
@@ -163,6 +195,7 @@ internal class DefaultSyncTask @Inject constructor(
             val syncResponse = try {
                 executeRequest(globalErrorReceiver) {
                     syncAPI.sync(
+                            requestCredentials = credentials,
                             params = requestParams,
                             readTimeOut = readTimeOut
                     )
@@ -197,7 +230,7 @@ internal class DefaultSyncTask @Inject constructor(
         return syncResponseToReturn!!
     }
 
-    private suspend fun downloadInitSyncResponse(requestParams: Map<String, String>, syncStatisticsData: SyncStatisticsData): File {
+    private suspend fun downloadInitSyncResponse(credentials: MultiServerCredentials, requestParams: Map<String, String>, syncStatisticsData: SyncStatisticsData): File {
         val workingFile = File(workingDir, "initSync.json")
         val status = initialSyncStatusRepository.getStep()
         if (workingFile.exists() && status >= InitialSyncStatus.STEP_DOWNLOADED) {
@@ -209,7 +242,7 @@ internal class DefaultSyncTask @Inject constructor(
             initialSyncStatusRepository.setStep(InitialSyncStatus.STEP_DOWNLOADING)
             val syncResponse = logDuration("INIT_SYNC Perform server request", loggerTag, clock) {
                 reportSubtask(syncRequestStateTracker, InitialSyncStep.ServerComputing, 1, 0.2f) {
-                    getSyncResponse(requestParams, MAX_NUMBER_OF_RETRY_AFTER_TIMEOUT)
+                    getSyncResponse(credentials, requestParams, MAX_NUMBER_OF_RETRY_AFTER_TIMEOUT)
                 }
             }
             syncStatisticsData.requestInitSyncTime = SystemClock.elapsedRealtime()
@@ -233,12 +266,13 @@ internal class DefaultSyncTask @Inject constructor(
         return workingFile
     }
 
-    private suspend fun getSyncResponse(requestParams: Map<String, String>, maxNumberOfRetries: Int): Response<ResponseBody> {
+    private suspend fun getSyncResponse(credentials: MultiServerCredentials, requestParams: Map<String, String>, maxNumberOfRetries: Int): Response<ResponseBody> {
         var retry = maxNumberOfRetries
         while (true) {
             retry--
             try {
                 return syncAPI.syncStream(
+                        credentials,
                         params = requestParams
                 ).awaitResponse()
             } catch (throwable: Throwable) {

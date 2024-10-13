@@ -21,7 +21,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import org.matrix.android.sdk.api.session.profile.ProfileService
-import org.matrix.android.sdk.internal.session.LOCALHOST_DOMAIN
+import org.matrix.android.sdk.internal.di.MultiServer
 import org.matrix.android.sdk.internal.session.SessionScope
 import retrofit2.Retrofit
 
@@ -40,11 +40,8 @@ internal abstract class ProfileModule {
         @Provides
         @JvmStatic
         @SessionScope
-        fun providesMultiServerProfileAPI(retrofit: Retrofit): MultiServerProfileApi {
-            return retrofit.newBuilder()
-                    .baseUrl(LOCALHOST_DOMAIN)
-                    .build()
-                    .create(MultiServerProfileApi::class.java)
+        fun providesMultiServerProfileAPI(@MultiServer retrofit: Retrofit): MultiServerProfileApi {
+            return retrofit.create(MultiServerProfileApi::class.java)
         }
     }
 

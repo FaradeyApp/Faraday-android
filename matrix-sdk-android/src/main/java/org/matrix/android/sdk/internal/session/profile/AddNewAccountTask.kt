@@ -19,8 +19,8 @@ package org.matrix.android.sdk.internal.session.profile
 
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
+import org.matrix.android.sdk.internal.network.MultiServerCredentials
 import org.matrix.android.sdk.internal.network.executeRequest
-import org.matrix.android.sdk.internal.session.HomeServerHolder
 import org.matrix.android.sdk.internal.task.Task
 import timber.log.Timber
 import javax.inject.Inject
@@ -41,20 +41,18 @@ internal class DefaultAddNewAccountTask @Inject constructor(
     override suspend fun execute(params: AddNewAccountTask.Params): LocalAccount? {
         val credentials = try {
             executeRequest(globalErrorReceiver) {
-                params.homeServerUrl.let {
-                    HomeServerHolder.homeServer = it
-                    multiServerProfileApi.getLoginByPassword(
-                            GetLoginByPasswordBody(
-                                    type = "m.login.password",
-                                    identifier = LoginIdentifier(
-                                            type = "m.id.user",
-                                            user = params.username
-                                    ),
-                                    password = params.password,
-                                    deviceId = params.deviceId
-                            )
-                    )
-                }.also { HomeServerHolder.setDefaultHomeServer() }
+                multiServerProfileApi.getLoginByPassword(
+                        MultiServerCredentials(homeserver = params.homeServerUrl),
+                        GetLoginByPasswordBody(
+                                type = "m.login.password",
+                                identifier = LoginIdentifier(
+                                        type = "m.id.user",
+                                        user = params.username
+                                ),
+                                password = params.password,
+                                deviceId = params.deviceId
+                        )
+                )
             }
         } catch (throwable: Throwable) {
             Timber.i("Get Login By Password error $throwable")
