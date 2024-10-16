@@ -32,6 +32,7 @@ import org.matrix.android.sdk.internal.database.model.EventEntityFields
 import org.matrix.android.sdk.internal.database.query.TimelineEventFilter
 import org.matrix.android.sdk.internal.database.query.whereType
 import org.matrix.android.sdk.internal.di.SessionDatabase
+import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.session.filter.FilterFactory
@@ -55,6 +56,7 @@ internal interface GetUploadsTask : Task<GetUploadsTask.Params, GetUploadsResult
 internal class DefaultGetUploadsTask @Inject constructor(
         private val roomAPI: RoomAPI,
         private val tokenStore: SyncTokenStore,
+        @UserId private val userId: String,
         @SessionDatabase private val monarchy: Monarchy,
         private val globalErrorReceiver: GlobalErrorReceiver
 ) : GetUploadsTask {
@@ -84,7 +86,7 @@ internal class DefaultGetUploadsTask @Inject constructor(
             }
             events = eventsFromRealm
         } else {
-            val since = params.since ?: tokenStore.getLastToken() ?: throw IllegalStateException("No token available")
+            val since = params.since ?: tokenStore.getLastToken(userId) ?: throw IllegalStateException("No token available")
 
             val filter = FilterFactory.createUploadsFilter(params.numberOfEvents).toJSONString()
             val chunk = executeRequest(globalErrorReceiver) {

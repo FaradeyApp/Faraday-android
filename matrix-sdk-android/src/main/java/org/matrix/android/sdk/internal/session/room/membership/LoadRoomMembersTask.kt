@@ -34,6 +34,7 @@ import org.matrix.android.sdk.internal.database.query.copyToRealmOrIgnore
 import org.matrix.android.sdk.internal.database.query.getOrCreate
 import org.matrix.android.sdk.internal.database.query.where
 import org.matrix.android.sdk.internal.di.SessionDatabase
+import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.network.executeRequest
 import org.matrix.android.sdk.internal.session.room.RoomAPI
@@ -57,6 +58,7 @@ internal interface LoadRoomMembersTask : Task<LoadRoomMembersTask.Params, Unit> 
 
 internal class DefaultLoadRoomMembersTask @Inject constructor(
         private val roomAPI: RoomAPI,
+        @UserId private val userId: String,
         @SessionDatabase private val monarchy: Monarchy,
         private val roomDataSource: RoomDataSource,
         private val syncTokenStore: SyncTokenStore,
@@ -92,7 +94,7 @@ internal class DefaultLoadRoomMembersTask @Inject constructor(
     private suspend fun doRequest(params: LoadRoomMembersTask.Params) {
         setRoomMembersLoadStatus(params.roomId, RoomMembersLoadStatusType.LOADING)
 
-        val lastToken = syncTokenStore.getLastToken()
+        val lastToken = syncTokenStore.getLastToken(userId)
         val response = try {
             executeRequest(globalErrorReceiver) {
                 roomAPI.getMembers(params.roomId, lastToken, null, params.excludeMembership)

@@ -18,6 +18,7 @@ package org.matrix.android.sdk.internal.session.sync
 
 import org.matrix.android.sdk.api.session.sync.SyncService
 import org.matrix.android.sdk.internal.di.SessionId
+import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.di.WorkManagerProvider
 import org.matrix.android.sdk.internal.session.SessionState
 import org.matrix.android.sdk.internal.session.sync.job.SyncThread
@@ -28,6 +29,7 @@ import javax.inject.Provider
 
 internal class DefaultSyncService @Inject constructor(
         @SessionId val sessionId: String,
+        @UserId val userId: String,
         private val workManagerProvider: WorkManagerProvider,
         private val syncThreadProvider: Provider<SyncThread>,
         private val syncTokenStore: SyncTokenStore,
@@ -78,7 +80,7 @@ internal class DefaultSyncService @Inject constructor(
     override fun getSyncRequestStateFlow() = syncRequestStateTracker.syncRequestState
 
     override fun hasAlreadySynced(): Boolean {
-        return syncTokenStore.getLastToken() != null
+        return syncTokenStore.getLastToken(userId) != null
     }
 
     private fun getSyncThread(): SyncThread {

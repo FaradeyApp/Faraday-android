@@ -33,6 +33,7 @@ import org.matrix.android.sdk.internal.crypto.DefaultCryptoService
 import org.matrix.android.sdk.internal.crypto.store.db.CryptoStoreAggregator
 import org.matrix.android.sdk.internal.di.SessionDatabase
 import org.matrix.android.sdk.internal.di.SessionId
+import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.session.SessionListeners
 import org.matrix.android.sdk.internal.session.dispatchTo
 import org.matrix.android.sdk.internal.session.pushrules.ProcessEventForPushTask
@@ -49,6 +50,7 @@ import kotlin.system.measureTimeMillis
 internal class SyncResponseHandler @Inject constructor(
         @SessionDatabase private val monarchy: Monarchy,
         @SessionId private val sessionId: String,
+        @UserId private val activeUserId: String,
         private val sessionManager: SessionManager,
         private val sessionListeners: SessionListeners,
         private val roomSyncHandler: RoomSyncHandler,
@@ -66,6 +68,7 @@ internal class SyncResponseHandler @Inject constructor(
     private val relevantPlugins = matrixConfiguration.metricPlugins.filterIsInstance<SyncDurationMetricPlugin>()
 
     suspend fun handleResponse(
+            userId: String,
             syncResponse: SyncResponse,
             fromToken: String?,
             afterPause: Boolean,
@@ -75,30 +78,34 @@ internal class SyncResponseHandler @Inject constructor(
         Timber.v("Start handling sync, is InitialSync: $isInitialSync")
 
         relevantPlugins.filter { it.shouldReport(isInitialSync, afterPause) }.measureSpannableMetric {
-            startCryptoService(isInitialSync)
+            if (userId == activeUserId) {
+                startCryptoService(isInitialSync)
 
-            // Handle the to device events before the room ones
-            // to ensure to decrypt them properly
-            handleToDevice(syncResponse, reporter)
+                // Handle the to device events before the room ones
+                // to ensure to decrypt them properly
+                handleToDevice(syncResponse, reporter)
 
-            val aggregator = SyncResponsePostTreatmentAggregator()
+                val aggregator = SyncResponsePostTreatmentAggregator()
 
-            // Prerequisite for thread events handling in RoomSyncHandler
-            // Disabled due to the new fallback
-            //        if (!lightweightSettingsStorage.areThreadMessagesEnabled()) {
-            //            threadsAwarenessHandler.fetchRootThreadEventsIfNeeded(syncResponse)
-            //        }
+                // Prerequisite for thread events handling in RoomSyncHandler
+                // Disabled due to the new fallback
+                //        if (!lightweightSettingsStorage.areThreadMessagesEnabled()) {
+                //            threadsAwarenessHandler.fetchRootThreadEventsIfNeeded(syncResponse)
+                //        }
 
-            startMonarchyTransaction(syncResponse, isInitialSync, reporter, aggregator)
+                startMonarchyTransaction(userId, syncResponse, isInitialSync, reporter, aggregator)
 
-            aggregateSyncResponse(aggregator)
+                aggregateSyncResponse(aggregator)
 
-            postTreatmentSyncResponse(syncResponse, isInitialSync)
+                postTreatmentSyncResponse(syncResponse, isInitialSync)
 
-            markCryptoSyncCompleted(syncResponse, aggregator.cryptoStoreAggregator)
+                markCryptoSyncCompleted(syncResponse, aggregator.cryptoStoreAggregator)
 
-            handlePostSync()
-
+                handlePostSync()
+            } else {
+                val aggregator = SyncResponsePostTreatmentAggregator()
+                startMonarchyTransaction(userId, syncResponse, isInitialSync, reporter, aggregator)
+            }
             Timber.v("On sync completed")
         }
     }
@@ -133,6 +140,7 @@ internal class SyncResponseHandler @Inject constructor(
     }
 
     private suspend fun List<SpannableMetricPlugin>.startMonarchyTransaction(
+            userId: String,
             syncResponse: SyncResponse,
             isInitialSync: Boolean,
             reporter: ProgressReporter?,
@@ -141,12 +149,15 @@ internal class SyncResponseHandler @Inject constructor(
         // Start one big transaction
         measureSpan("task", "monarchy_transaction") {
             monarchy.awaitTransaction { realm ->
-                // IMPORTANT nothing should be suspend here as we are accessing the realm instance (thread local)
                 handleRooms(reporter, syncResponse, realm, isInitialSync, aggregator)
-                handleAccountData(reporter, realm, syncResponse)
-                handlePresence(realm, syncResponse)
 
-                tokenStore.saveToken(realm, syncResponse.nextBatch)
+                if (userId == activeUserId) {
+                    // IMPORTANT nothing should be suspend here as we are accessing the realm instance (thread local)
+                    handleAccountData(reporter, realm, syncResponse)
+                    handlePresence(realm, syncResponse)
+                }
+
+                tokenStore.saveToken(realm, userId, syncResponse.nextBatch)
             }
         }
     }

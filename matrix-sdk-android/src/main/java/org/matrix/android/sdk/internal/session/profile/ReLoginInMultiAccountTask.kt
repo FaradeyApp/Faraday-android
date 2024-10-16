@@ -20,11 +20,9 @@ import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.auth.LoginType
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
-import org.matrix.android.sdk.api.auth.login.LoginWizard
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
-import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.task.Task
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,12 +36,9 @@ internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Pa
 }
 
 internal class DefaultReLoginInMultiAccountTask @Inject constructor(
-        private val authenticationService: AuthenticationService,
-        private val globalErrorReceiver: GlobalErrorReceiver
+        authenticationService: AuthenticationService
 ) : ReLoginInMultiAccountTask {
     private val localAccountStore: LocalAccountStore = authenticationService.getLocalAccountStore()
-    private val loginWizard: LoginWizard
-        get() = authenticationService.getLoginWizard()
 
     override suspend fun execute(params: ReLoginInMultiAccountTask.Params): Session {
         val account = localAccountStore.getAccount(params.userId)

@@ -33,6 +33,7 @@ import org.matrix.android.sdk.internal.crypto.model.rest.KeysQueryResponse
 import org.matrix.android.sdk.internal.crypto.store.IMXCryptoStore
 import org.matrix.android.sdk.internal.crypto.store.UserDataToStore
 import org.matrix.android.sdk.internal.crypto.tasks.DownloadKeysForUsersTask
+import org.matrix.android.sdk.internal.di.UserId
 import org.matrix.android.sdk.internal.session.SessionScope
 import org.matrix.android.sdk.internal.session.sync.SyncTokenStore
 import org.matrix.android.sdk.internal.task.TaskExecutor
@@ -44,6 +45,7 @@ import javax.inject.Inject
 // Legacy name: MXDeviceList
 @SessionScope
 internal class DeviceListManager @Inject constructor(
+        @UserId private val userId: String,
         private val cryptoStore: IMXCryptoStore,
         private val olmDevice: MXOlmDevice,
         private val syncTokenStore: SyncTokenStore,
@@ -353,7 +355,7 @@ internal class DeviceListManager @Inject constructor(
             // trigger nothing
             return MXUsersDevicesMap()
         }
-        val params = DownloadKeysForUsersTask.Params(filteredUsers, syncTokenStore.getLastToken())
+        val params = DownloadKeysForUsersTask.Params(filteredUsers, syncTokenStore.getLastToken(userId))
         val relevantPlugins = metricPlugins.filterIsInstance<DownloadDeviceKeysMetricsPlugin>()
 
         val response: KeysQueryResponse

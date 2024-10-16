@@ -119,7 +119,7 @@ internal class DefaultSyncTask @Inject constructor(
 
         val requestParams = HashMap<String, String>()
         var timeout = 0L
-        val token = syncTokenStore.getLastToken()
+        val token = if (isMainAccount) syncTokenStore.getLastToken(userId) else null
         if (token != null) {
             requestParams["since"] = token
             timeout = params.timeout
@@ -183,7 +183,7 @@ internal class DefaultSyncTask @Inject constructor(
                     syncStatisticsData.requestInitSyncTime = SystemClock.elapsedRealtime()
                     syncStatisticsData.downloadInitSyncTime = syncStatisticsData.requestInitSyncTime
                     logDuration("INIT_SYNC Database insertion", loggerTag, clock) {
-                        syncResponseHandler.handleResponse(syncResponse, null, afterPause = true, syncRequestStateTracker)
+                        syncResponseHandler.handleResponse(userId, syncResponse, null, afterPause = true, syncRequestStateTracker)
                     }
                     syncResponseToReturn = syncResponse
                 }
@@ -217,7 +217,7 @@ internal class DefaultSyncTask @Inject constructor(
                             toDevice = nbToDevice,
                     )
             )
-            syncResponseHandler.handleResponse(syncResponse, token, afterPause = params.afterPause, null)
+            syncResponseHandler.handleResponse(userId, syncResponse, token, afterPause = params.afterPause, null)
             syncResponseToReturn = syncResponse
             Timber.tag(loggerTag.value).i("Incremental sync done")
             syncRequestStateTracker.setSyncRequestState(SyncRequestState.IncrementalSyncDone)
@@ -298,7 +298,7 @@ internal class DefaultSyncTask @Inject constructor(
             Timber.tag(loggerTag.value).i("INIT_SYNC $nbOfJoinedRooms rooms, $nbOfJoinedRoomsInFile ephemeral stored into files")
 
             logDuration("INIT_SYNC Database insertion", loggerTag, clock) {
-                syncResponseHandler.handleResponse(syncResponse, null, afterPause = true, syncRequestStateTracker)
+                syncResponseHandler.handleResponse(userId, syncResponse, null, afterPause = true, syncRequestStateTracker)
             }
             initialSyncStatusRepository.setStep(InitialSyncStatus.STEP_SUCCESS)
             syncResponse
