@@ -71,7 +71,8 @@ internal class DefaultRegisterNewAccountTask @Inject constructor(
                     password = params.registrationParams.password,
                     token = it.accessToken,
                     deviceId = params.registrationParams.deviceId,
-                    refreshToken = it.refreshToken
+                    refreshToken = it.refreshToken,
+                    isNew = true
             )
         }
 

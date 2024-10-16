@@ -24,7 +24,6 @@ import org.matrix.android.sdk.api.auth.login.LoginWizard
 import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.internal.auth.SessionCreator
 import org.matrix.android.sdk.internal.auth.db.LocalAccountStore
-import org.matrix.android.sdk.internal.network.DefaultRequestExecutor.executeRequest
 import org.matrix.android.sdk.internal.network.GlobalErrorReceiver
 import org.matrix.android.sdk.internal.task.Task
 import timber.log.Timber
@@ -34,6 +33,7 @@ internal interface ReLoginInMultiAccountTask : Task<ReLoginInMultiAccountTask.Pa
     data class Params(
             val userId: String,
             val sessionCreator: SessionCreator,
+            val actionForNew: (LocalAccount) -> Unit,
     )
 }
 
@@ -52,17 +52,6 @@ internal class DefaultReLoginInMultiAccountTask @Inject constructor(
         val homeServerConnectionConfig = HomeServerConnectionConfig.Builder()
                 .withHomeServerUri(account.homeServerUrl)
                 .build()
-
-
-//        authenticationService.cancelPendingLoginOrRegistration()
-//        authenticationService.getLoginFlow(homeServerConnectionConfig)
-//        val session = loginWizard.login(
-//                account.username!!,
-//                account.password!!,
-//                "Faraday Android"
-//        )
-//        return session
-
         val credentials = Credentials(
                 userId = account.userId,
                 deviceId = account.deviceId,
@@ -70,6 +59,12 @@ internal class DefaultReLoginInMultiAccountTask @Inject constructor(
                 accessToken = account.token!!,
                 refreshToken = account.refreshToken,
         )
+
+        if (account.isNew) {
+            Timber.d("Do action for newly created account")
+            params.actionForNew.invoke(account)
+            localAccountStore.markAsOld(account.userId)
+        }
 
         Timber.d("Create Session")
         return params.sessionCreator.createSession(credentials, homeServerConnectionConfig, LoginType.DIRECT)

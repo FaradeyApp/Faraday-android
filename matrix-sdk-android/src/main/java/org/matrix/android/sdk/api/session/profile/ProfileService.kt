@@ -153,7 +153,7 @@ interface ProfileService {
     /**
      * Switch to another account in multi-account.
      */
-    suspend fun reLoginMultiAccount(userId: String, sessionCreator: SessionCreator): Session
+    suspend fun reLoginMultiAccount(userId: String, sessionCreator: SessionCreator, actionForNew: (LocalAccount) -> Unit = {}): Session
 
     /**
      * Register new account.

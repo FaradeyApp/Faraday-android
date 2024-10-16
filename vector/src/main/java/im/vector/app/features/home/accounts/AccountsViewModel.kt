@@ -26,6 +26,7 @@ import im.vector.app.core.di.MavericksAssistedViewModelFactory
 import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import im.vector.app.core.session.ConfigureAndStartSessionUseCase
+import im.vector.app.features.login.ReAuthHelper
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.auth.AuthenticationService
@@ -37,6 +38,7 @@ import timber.log.Timber
 
 class AccountsViewModel @AssistedInject constructor(
         @Assisted initialState: AccountsViewState,
+        private val reAuthHelper: ReAuthHelper,
         private val session: Session,
         private val lightweightSettingsStorage: LightweightSettingsStorage,
         private val authenticationService: AuthenticationService,
@@ -112,8 +114,12 @@ class AccountsViewModel @AssistedInject constructor(
 
     private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
         try {
+            session.close()
+            reAuthHelper.data = null
             val result = session.profileService()
-                    .reLoginMultiAccount(userId = account.userId, authenticationService.getSessionCreator())
+                    .reLoginMultiAccount(userId = account.userId, authenticationService.getSessionCreator()) {
+                        reAuthHelper.data = it.password
+                    }
             Timber.d("Session created")
             activeSessionHolder.setActiveSession(result)
             lightweightSettingsStorage.setLastSessionHash(result.sessionId)

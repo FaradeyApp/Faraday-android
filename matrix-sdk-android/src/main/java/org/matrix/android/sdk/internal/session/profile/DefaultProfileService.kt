@@ -203,9 +203,9 @@ internal class DefaultProfileService @Inject constructor(
         }
     }
 
-    override suspend fun reLoginMultiAccount(userId: String, sessionCreator: SessionCreator): Session {
+    override suspend fun reLoginMultiAccount(userId: String, sessionCreator: SessionCreator, actionForNew: (LocalAccount) -> Unit): Session {
         return reLoginInMultiAccountTask.execute(
-                ReLoginInMultiAccountTask.Params(userId, sessionCreator)
+                ReLoginInMultiAccountTask.Params(userId, sessionCreator, actionForNew)
         )
     }
 

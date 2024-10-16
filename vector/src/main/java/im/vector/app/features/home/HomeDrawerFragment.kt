@@ -50,6 +50,7 @@ import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.home.accounts.AccountsFragment
 import im.vector.app.features.login.HomeServerConnectionConfigFactory
 import im.vector.app.features.login.PromptSimplifiedModeActivity
+import im.vector.app.features.login.ReAuthHelper
 import im.vector.app.features.permalink.PermalinkFactory
 import im.vector.app.features.settings.VectorPreferences
 import im.vector.app.features.settings.VectorSettingsActivity
@@ -79,6 +80,7 @@ class HomeDrawerFragment :
     @Inject lateinit var activeSessionHolder: ActiveSessionHolder
     @Inject lateinit var configureAndStartSessionUseCase: ConfigureAndStartSessionUseCase
     @Inject lateinit var shortcutsHandler: ShortcutsHandler
+    @Inject lateinit var reAuthHelper: ReAuthHelper
 
     private lateinit var sharedActionViewModel: HomeSharedActionViewModel
 
@@ -172,11 +174,13 @@ class HomeDrawerFragment :
                 val accounts = profileService.getMultipleAccount(userId)
 
                 var accountChanged = false
-                accounts.forEach {
+                accounts.forEach { account ->
                     try {
+                        session.close()
+                        reAuthHelper.data = null
                         val result = profileService.reLoginMultiAccount(
-                                it.userId, authenticationService.getSessionCreator()
-                        )
+                                account.userId, authenticationService.getSessionCreator()
+                        ) { reAuthHelper.data = it.password }
                         activeSessionHolder.setActiveSession(result)
                         authenticationService.reset()
                         configureAndStartSessionUseCase.execute(result)
@@ -219,15 +223,6 @@ class HomeDrawerFragment :
                     .setNegativeButton(R.string.action_cancel, null)
                     .show()
         }
-        //                val context = requireContext()
-        //                val packageManager = context.packageManager
-        //                val intent = packageManager.getLaunchIntentForPackage(context.packageName)
-        //                val componentName = intent!!.component
-        //                val mainIntent = Intent.makeRestartActivityTask(componentName)
-        //                mainIntent.setPackage(context.packageName)
-        //                context.startActivity(mainIntent)
-        //                Runtime.getRuntime().exit(0)
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

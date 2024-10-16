@@ -33,6 +33,8 @@ interface LocalAccountStore {
 
     suspend fun updatePassword(userId: String, newPassword: String)
 
+    suspend fun markAsOld(userId: String)
+
     suspend fun deleteAccount(userId: String)
 
     suspend fun clearAll()
@@ -57,6 +59,18 @@ class DefaultLocalAccountStore @Inject constructor(
         val newEntity = oldEntity.run {
             oldEntity.copy(
                     password = newPassword
+            ).toEntity()
+        }
+
+        realm.insertOrUpdate(newEntity)
+    }
+
+    override suspend fun markAsOld(userId: String) = awaitTransaction(realmConfiguration) { realm ->
+        val oldEntity = LocalAccountEntity.where(realm, userId).findFirst()!!.toLocalAccount()
+
+        val newEntity = oldEntity.run {
+            oldEntity.copy(
+                    isNew = false
             ).toEntity()
         }
 

@@ -16,7 +16,6 @@
 
 package im.vector.app.features.home.accounts
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,14 +33,14 @@ import im.vector.app.core.platform.StateView
 import im.vector.app.core.platform.VectorBaseFragment
 import im.vector.app.core.utils.toast
 import im.vector.app.databinding.FragmentAccountsListBinding
-import im.vector.app.features.MainActivity
-import im.vector.app.features.MainActivityArgs
+import im.vector.app.features.home.HomeActivity
 import im.vector.app.features.home.HomeDrawerFragment
 import im.vector.app.features.home.ShortcutsHandler
+import im.vector.app.features.login.ReAuthHelper
+import im.vector.app.features.onboarding.AuthenticationDescription
 import im.vector.app.features.workers.changeaccount.ChangeAccountErrorUiWorker
 import im.vector.app.features.workers.changeaccount.ChangeAccountUiWorker
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -53,6 +52,7 @@ class AccountsFragment :
 
     @Inject lateinit var shortcutsHandler: ShortcutsHandler
     @Inject lateinit var accountsController: AccountsController
+    @Inject lateinit var reAuthHelper: ReAuthHelper
 
     private val viewModel: AccountsViewModel by fragmentViewModel()
     override fun getBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAccountsListBinding {
@@ -85,20 +85,15 @@ class AccountsFragment :
     override fun invalidate() = withState(viewModel) { state ->
         if (state.restartApp) {
             viewModel.handle(AccountsAction.SetRestartAppValue(false))
+
             val context = requireContext()
-            val packageManager = context.packageManager
-            val intent = packageManager.getLaunchIntentForPackage(context.packageName)
-            val componentName = intent!!.component
-            val mainIntent = Intent.makeRestartActivityTask(componentName)
-            // Required for API 34 and later
-            // Ref: https://developer.android.com/about/versions/14/behavior-changes-14#safer-intents
-            // Required for API 34 and later
-            // Ref: https://developer.android.com/about/versions/14/behavior-changes-14#safer-intents
-            mainIntent.setPackage(context.packageName)
-            context.startActivity(mainIntent)
-            shortcutsHandler.clearShortcuts()
-//            MainActivity.restartApp(requireActivity(), MainActivityArgs(clearNotifications = true))
-            Runtime.getRuntime().exit(0)
+            var authDescription: AuthenticationDescription? = null
+            if (reAuthHelper.data != null) {
+                authDescription = AuthenticationDescription.Register(type = AuthenticationDescription.AuthenticationType.Other)
+            }
+            val intent = HomeActivity.newIntent(context, firstStartMainActivity = false, authenticationDescription = authDescription)
+            startActivity(intent)
+            activity?.finish()
         }
         if (state.invalidAccount != null) {
             ChangeAccountErrorUiWorker(
