@@ -174,4 +174,5 @@ interface ProfileService {
 
     suspend fun clearMultiAccount()
     suspend fun getDeviceId(userId: String): String
+    fun getAccounts(): LiveData<List<LocalAccount>>
 }

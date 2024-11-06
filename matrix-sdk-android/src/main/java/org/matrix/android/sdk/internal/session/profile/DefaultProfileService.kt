@@ -40,7 +40,11 @@ import org.matrix.android.sdk.internal.auth.registration.RegistrationParams
 import org.matrix.android.sdk.internal.database.model.PendingThreePidEntity
 import org.matrix.android.sdk.internal.database.model.UserThreePidEntity
 import org.matrix.android.sdk.internal.di.SessionDatabase
+import org.matrix.android.sdk.internal.network.MultiServerCredentials
+import org.matrix.android.sdk.internal.network.TimeOutInterceptor
 import org.matrix.android.sdk.internal.session.content.FileUploader
+import org.matrix.android.sdk.internal.session.sync.MultiServerSyncApi
+import org.matrix.android.sdk.internal.session.sync.SyncPresence
 import org.matrix.android.sdk.internal.session.user.UserStore
 import org.matrix.android.sdk.internal.task.TaskExecutor
 import org.matrix.android.sdk.internal.task.configureWith
@@ -48,6 +52,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class DefaultProfileService @Inject constructor(
+        private val syncApi: MultiServerSyncApi,
         private val taskExecutor: TaskExecutor,
         @SessionDatabase private val monarchy: Monarchy,
         private val coroutineDispatchers: MatrixCoroutineDispatchers,
@@ -181,6 +186,28 @@ internal class DefaultProfileService @Inject constructor(
         refreshThreePids()
     }
 
+    private suspend fun getUnreadCount(homeServer: String, token: String): Int {
+        return syncApi.sync(
+                requestCredentials = MultiServerCredentials(token, homeServer),
+                params = hashMapOf(
+                        "timeout" to (6000L).toString(),
+                        "set_presence" to SyncPresence.Offline.value
+                ),
+                readTimeOut = (6000L + 10_000).coerceAtLeast(TimeOutInterceptor.DEFAULT_LONG_TIMEOUT)
+        ).rooms?.let {
+            Timber.d("sync response multiserver: $it")
+            var unreadCount = 0
+            it.join.values.forEach { room ->
+                room.unreadNotifications?.notificationCount?.let { unreadCount += it }
+            }
+            it.leave.values.forEach { room ->
+                room.unreadNotifications?.notificationCount?.let { unreadCount += it }
+            }
+            Timber.d("Unread count is $unreadCount for the $homeServer:$token}")
+            unreadCount
+        } ?: 0
+    }
+
     override suspend fun getMultipleAccount(userId: String): List<AccountItem> {
         return localAccountStore.getAccounts().filter {
             it.userId != userId
@@ -190,7 +217,8 @@ internal class DefaultProfileService @Inject constructor(
                 AccountItem(
                         userId = it.userId,
                         displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
-                        avatarUrl = data.get(ProfileService.AVATAR_URL_KEY) as? String
+                        avatarUrl = data.get(ProfileService.AVATAR_URL_KEY) as? String,
+                        unreadCount = getUnreadCount(it.homeServerUrl, it.token!!)
                 )
             } catch (throwable: Throwable) {
                 Timber.i("Error get multiple account data: $throwable")
@@ -201,6 +229,10 @@ internal class DefaultProfileService @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun getAccounts(): LiveData<List<LocalAccount>> {
+        return localAccountStore.getAccountsLive()
     }
 
     override suspend fun reLoginMultiAccount(userId: String, sessionCreator: SessionCreator, actionForNew: (LocalAccount) -> Unit): Session {

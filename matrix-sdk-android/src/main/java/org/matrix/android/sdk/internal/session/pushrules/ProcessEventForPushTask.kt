@@ -67,9 +67,9 @@ internal class DefaultProcessEventForPushTask @Inject constructor(
                 EventType.STATE_ROOM_MEMBER -> true
                 else -> false
             }
-        }.filter {
-            it.senderId != userId
-        }
+        }// .filter {
+//            it.senderId != userId
+//        }
         Timber.v(
                 "[PushRules] Found ${allEvents.size} out of ${(newJoinEvents + inviteEvents).size}" +
                         " to check for push rules with ${params.rules.size} rules"

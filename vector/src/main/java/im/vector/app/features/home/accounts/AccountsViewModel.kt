@@ -16,8 +16,8 @@
 
 package im.vector.app.features.home.accounts
 
+import androidx.lifecycle.asFlow
 import com.airbnb.mvrx.MavericksViewModelFactory
-import com.airbnb.mvrx.Success
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,13 +27,16 @@ import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import im.vector.app.core.session.ConfigureAndStartSessionUseCase
 import im.vector.app.features.login.ReAuthHelper
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
+import org.matrix.android.sdk.api.session.profile.ProfileService
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import org.matrix.android.sdk.internal.session.profile.LocalAccount
 import timber.log.Timber
 
 class AccountsViewModel @AssistedInject constructor(
@@ -53,8 +56,22 @@ class AccountsViewModel @AssistedInject constructor(
 
     companion object : MavericksViewModelFactory<AccountsViewModel, AccountsViewState> by hiltMavericksViewModelFactory()
 
+    private val profileService = session.profileService()
+
+    private var accountLoadingJob: Job? = null
+
     init {
-        observeAccounts()
+        accountLoadingJob = viewModelScope.launch {
+            val accounts = profileService.getMultipleAccount(session.myUserId)
+            setState {
+                copy(
+                    accountItems = accounts
+                )
+            }
+        }
+        profileService.getAccounts().asFlow().onEach {
+            observeAccounts(it)
+        }
     }
 
     override fun handle(action: AccountsAction) {
@@ -71,22 +88,41 @@ class AccountsViewModel @AssistedInject constructor(
         authenticationService.getLocalAccountStore().deleteAccount(account.userId)
     }
 
-    fun observeAccounts() = viewModelScope.launch {
-        flow {
-            if(!lightweightSettingsStorage.areCustomSettingsEnabled()) return@flow
-            val result = session.profileService().getMultipleAccount(
-                    session.myUserId
-            )
-            emit(result)
-        }.setOnEach {
-            copy(
-                    asyncAccounts = Success(it)
-            )
+    private fun observeAccounts(localAccounts: List<LocalAccount>) {
+        if (accountLoadingJob?.isActive == true) {
+            accountLoadingJob?.cancel()
+        }
+        accountLoadingJob = viewModelScope.launch {
+            val items = localAccounts.map { account ->
+                try {
+                    val data = profileService.getProfile(account.userId, account.homeServerUrl)
+                    AccountItem(
+                            userId = account.userId,
+                            displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
+                            avatarUrl = data.get(ProfileService.AVATAR_URL_KEY) as? String,
+                            unreadCount = account.unreadCount
+                    )
+                } catch (throwable: Throwable) {
+                    Timber.i("Error get multiple account data: $throwable")
+                    AccountItem(
+                            userId = account.userId,
+                            displayName = account.userId.removePrefix("@").split(':')[0],
+                            avatarUrl = null,
+                            unreadCount = account.unreadCount
+                    )
+                }
+            }
+
+            setState {
+                copy(
+                        accountItems = items
+                )
+            }
         }
     }
 
     private fun handleSetRestartAppValue(value: Boolean) {
-        if(value) {
+        if (value) {
             lightweightSettingsStorage.setApplicationPasswordEnabled(false)
         }
         setState {

@@ -30,12 +30,13 @@ internal open class LocalAccountEntity(
         var deviceId: String? = null,
         var refreshToken: String? = null,
         var isNew: Boolean = false,
+        var unreadCount: Int = 0,
 ) : RealmObject() {
     companion object
 }
 
 internal fun LocalAccountEntity.toLocalAccount() =
-        LocalAccount(userId, token, username, password, homeServerUrl, deviceId, refreshToken, isNew)
+        LocalAccount(userId, token, username, password, homeServerUrl, deviceId, refreshToken, isNew, unreadCount)
 
 internal fun LocalAccount.toEntity() =
-        LocalAccountEntity(userId, token, username, password, homeServerUrl, deviceId, refreshToken, isNew)
+        LocalAccountEntity(userId, token, username, password, homeServerUrl, deviceId, refreshToken, isNew, unreadCount)

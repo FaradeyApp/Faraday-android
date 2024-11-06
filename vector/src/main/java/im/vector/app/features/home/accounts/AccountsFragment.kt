@@ -21,9 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.airbnb.mvrx.Loading
-import com.airbnb.mvrx.Success
-import com.airbnb.mvrx.Uninitialized
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,6 +61,49 @@ class AccountsFragment :
         views.stateView.contentView = views.groupListView
         setupAccountsController()
         observeViewEvents()
+        observeViewState()
+    }
+
+    private fun observeViewState() {
+        viewModel.onEach { state ->
+            if (state.restartApp) {
+                viewModel.handle(AccountsAction.SetRestartAppValue(false))
+
+                val context = requireContext()
+                var authDescription: AuthenticationDescription? = null
+                if (reAuthHelper.data != null) {
+                    authDescription = AuthenticationDescription.Register(type = AuthenticationDescription.AuthenticationType.Other)
+                }
+                val intent = HomeActivity.newIntent(context, firstStartMainActivity = false, authenticationDescription = authDescription)
+                startActivity(intent)
+                activity?.finish()
+            }
+            if (state.invalidAccount != null) {
+                ChangeAccountErrorUiWorker(
+                        requireActivity(),
+                        accountItem = state.invalidAccount,
+                        onPositiveActionClicked = {
+                            viewModel.handle(AccountsAction.DeleteAccount(it))
+                            views.stateView.state = StateView.State.Content
+                        }
+                ).perform()
+                viewModel.handle(AccountsAction.SetErrorWhileAccountChange(null))
+            }
+            state.errorMessage?.let { message ->
+                activity?.toast(message)
+                viewModel.handle(AccountsAction.SetErrorMessage(null))
+            }
+            if (state.accountItems != null) {
+                views.stateView.state = StateView.State.Content
+                views.groupListView.isVisible = state.accountItems.isNotEmpty()
+                (parentFragment as? HomeDrawerFragment)
+                        ?.updateAddAccountButtonVisibility(isVisible = state.accountItems.size < 4)
+            } else {
+                views.stateView.state = StateView.State.Loading
+                return@onEach
+            }
+            accountsController.update(state)
+        }
     }
 
     private fun setupAccountsController() {
@@ -101,30 +141,23 @@ class AccountsFragment :
                     accountItem = state.invalidAccount,
                     onPositiveActionClicked = {
                         viewModel.handle(AccountsAction.DeleteAccount(it))
-                        updateMultiAccount()
                         views.stateView.state = StateView.State.Content
                     }
             ).perform()
             viewModel.handle(AccountsAction.SetErrorWhileAccountChange(null))
         }
-        state.errorMessage?.let {message ->
+        state.errorMessage?.let { message ->
             activity?.toast(message)
             viewModel.handle(AccountsAction.SetErrorMessage(null))
         }
-        when (val spaces = state.asyncAccounts) {
-            Uninitialized,
-            is Loading -> {
-                views.stateView.state = StateView.State.Loading
-                return@withState
-            }
-
-            is Success -> {
-                views.stateView.state = StateView.State.Content
-                views.groupListView.isVisible = spaces.invoke().isNotEmpty()
-                (parentFragment as? HomeDrawerFragment)?.updateAddAccountButtonVisibility(isVisible = spaces.invoke().size < 4)
-            }
-
-            else -> Unit
+        if (state.accountItems != null) {
+            views.stateView.state = StateView.State.Content
+            views.groupListView.isVisible = state.accountItems.isNotEmpty()
+            (parentFragment as? HomeDrawerFragment)
+                    ?.updateAddAccountButtonVisibility(isVisible = state.accountItems.size < 4)
+        } else {
+            views.stateView.state = StateView.State.Loading
+            return@withState
         }
         accountsController.update(state)
     }
@@ -144,9 +177,5 @@ class AccountsFragment :
         accountsController.callback = null
         views.groupListView.cleanup()
         super.onDestroyView()
-    }
-
-    fun updateMultiAccount() {
-        viewModel.observeAccounts()
     }
 }

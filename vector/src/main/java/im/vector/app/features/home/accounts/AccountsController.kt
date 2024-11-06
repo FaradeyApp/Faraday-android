@@ -32,7 +32,7 @@ class AccountsController @Inject constructor(
 
     override fun buildModels() {
         val nonNullViewState = viewState ?: return
-        buildAccountsModels(accounts = nonNullViewState.asyncAccounts())
+        buildAccountsModels(accounts = nonNullViewState.accountItems)
     }
 
     fun update(state: AccountsViewState) {
@@ -48,7 +48,9 @@ class AccountsController @Inject constructor(
             accountItem {
                 id(account.userId)
                 avatarRenderer(host.avatarRenderer)
-                countState(UnreadCounterBadgeView.State.Text(account.userId, false))
+                // TODO: update model for full information about account
+                countState(UnreadCounterBadgeView.State.Text(account.unreadCount.toString(), false))
+//                countState(UnreadCounterBadgeView.State.Text(account.userId, false))
                 listener { host.callback?.onAccountSelected(account) }
                 matrixItem(account.toMatrixItem())
             }

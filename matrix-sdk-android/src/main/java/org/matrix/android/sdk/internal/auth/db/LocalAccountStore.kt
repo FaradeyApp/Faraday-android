@@ -16,12 +16,15 @@
 
 package org.matrix.android.sdk.internal.auth.db
 
+import androidx.lifecycle.LiveData
+import com.zhuinden.monarchy.Monarchy
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
 import org.matrix.android.sdk.internal.auth.db.query.where
 import org.matrix.android.sdk.internal.database.awaitTransaction
 import org.matrix.android.sdk.internal.di.AuthDatabase
 import org.matrix.android.sdk.internal.session.profile.LocalAccount
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 interface LocalAccountStore {
@@ -33,11 +36,14 @@ interface LocalAccountStore {
 
     suspend fun updatePassword(userId: String, newPassword: String)
 
+    suspend fun updateUnreadCount(userId: String, unreadCount: Int)
+
     suspend fun markAsOld(userId: String)
 
     suspend fun deleteAccount(userId: String)
 
     suspend fun clearAll()
+    fun getAccountsLive(): LiveData<List<LocalAccount>>
 }
 
 class DefaultLocalAccountStore @Inject constructor(
@@ -59,6 +65,18 @@ class DefaultLocalAccountStore @Inject constructor(
         val newEntity = oldEntity.run {
             oldEntity.copy(
                     password = newPassword
+            ).toEntity()
+        }
+
+        realm.insertOrUpdate(newEntity)
+    }
+
+    override suspend fun updateUnreadCount(userId: String, unreadCount: Int) = awaitTransaction(realmConfiguration) { realm ->
+        val oldEntity = LocalAccountEntity.where(realm, userId).findFirst()!!.toLocalAccount()
+
+        val newEntity = oldEntity.run {
+            oldEntity.copy(
+                    unreadCount = unreadCount
             ).toEntity()
         }
 
@@ -88,4 +106,15 @@ class DefaultLocalAccountStore @Inject constructor(
     override suspend fun getAccounts(): List<LocalAccount> = awaitTransaction(realmConfiguration) { realm ->
         realm.where<LocalAccountEntity>().findAll().map { it.toLocalAccount() }
     }
+
+    private val monarchyWriteAsyncExecutor = Executors.newSingleThreadExecutor()
+
+    private val monarchy = Monarchy.Builder()
+            .setRealmConfiguration(realmConfiguration)
+            .setWriteAsyncExecutor(monarchyWriteAsyncExecutor)
+            .build()
+
+    override fun getAccountsLive(): LiveData<List<LocalAccount>> = monarchy.findAllMappedWithChanges(
+            { realm -> realm.where(LocalAccountEntity::class.java) }, { it.toLocalAccount() }
+    )
 }

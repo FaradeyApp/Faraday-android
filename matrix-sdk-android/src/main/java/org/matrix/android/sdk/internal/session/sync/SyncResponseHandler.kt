@@ -103,8 +103,14 @@ internal class SyncResponseHandler @Inject constructor(
 
                 handlePostSync()
             } else {
-                val aggregator = SyncResponsePostTreatmentAggregator()
-                startMonarchyTransaction(userId, syncResponse, isInitialSync, reporter, aggregator)
+                // TODO: attach full processing of events from non-active accounts
+//                postTreatmentSyncResponse(syncResponse, isInitialSync)
+//                val aggregator = SyncResponsePostTreatmentAggregator()
+//                startMonarchyTransaction(userId, syncResponse, isInitialSync, reporter, aggregator)
+                syncResponse.rooms?.let {
+                    Timber.d("Check push rules for user: $userId")
+                    checkPushRules(it, isInitialSync = false)
+                }
             }
             Timber.v("On sync completed")
         }
@@ -149,10 +155,10 @@ internal class SyncResponseHandler @Inject constructor(
         // Start one big transaction
         measureSpan("task", "monarchy_transaction") {
             monarchy.awaitTransaction { realm ->
+                // IMPORTANT nothing should be suspend here as we are accessing the realm instance (thread local)
                 handleRooms(reporter, syncResponse, realm, isInitialSync, aggregator)
 
                 if (userId == activeUserId) {
-                    // IMPORTANT nothing should be suspend here as we are accessing the realm instance (thread local)
                     handleAccountData(reporter, realm, syncResponse)
                     handlePresence(realm, syncResponse)
                 }

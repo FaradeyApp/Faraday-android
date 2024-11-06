@@ -72,7 +72,34 @@ class NotifiableEventResolver @Inject constructor(
         if (event.getClearType() == EventType.STATE_ROOM_MEMBER) {
             return resolveStateRoomEvent(event, session, canBeReplaced = false, isNoisy = isNoisy)
         }
-        val timelineEvent = session.getRoom(roomID)?.getTimelineEvent(eventId) ?: return null
+        // TODO: add endpoints for work with non-active sessions
+        val timelineEvent = session.getRoom(roomID)?.getTimelineEvent(eventId)
+
+        if (timelineEvent == null) {
+            Timber.d("Cannot get timelineEvent")
+
+            return when {
+                event.supportsNotification() -> {
+                    NotifiableMessageEvent(
+                            eventId = event.eventId!!,
+                            editedEventId = null,
+                            canBeReplaced = false,
+                            timestamp = event.originServerTs ?: 0,
+                            noisy = isNoisy,
+                            senderName = event.senderId,
+                            senderId = event.senderId,
+                            body = event.content?.get("body").toString(),
+                            imageUriString = null,
+                            roomId = event.roomId!!,
+                            threadId = null,
+                            roomName = null,
+                            matrixID = session.myUserId
+                    )
+                }
+                else -> null
+            }
+        }
+
         return when {
             event.supportsNotification() || event.type == EventType.ENCRYPTED -> {
                 resolveMessageEvent(timelineEvent, session, canBeReplaced = false, isNoisy = isNoisy)

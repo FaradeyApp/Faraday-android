@@ -16,13 +16,11 @@
 
 package im.vector.app.features.home.accounts
 
-import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.MavericksState
-import com.airbnb.mvrx.Uninitialized
 import org.matrix.android.sdk.api.session.profile.model.AccountItem
 
 data class AccountsViewState(
-        val asyncAccounts: Async<List<AccountItem>> = Uninitialized,
+        val accountItems: List<AccountItem>? = null,
         val restartApp: Boolean = false,
         val errorMessage: String? = null,
         val invalidAccount: AccountItem? = null

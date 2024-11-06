@@ -367,9 +367,6 @@ class HomeDrawerFragment :
                                 true -> {
                                     dialog.dismiss()
                                     activity.toast(R.string.account_successfully_added)
-                                    childFragmentManager.findFragmentByTag(ACCOUNTS_FRAGMENT_TAG)?.let {
-                                        (it as? AccountsFragment)?.updateMultiAccount()
-                                    }
                                 }
 
                                 false -> activity.toast(R.string.error_adding_account)

@@ -87,24 +87,29 @@ internal class DefaultSyncTask @Inject constructor(
 
     private val workingDir = File(fileDirectory, "is")
     private val initialSyncStatusRepository: InitialSyncStatusRepository = FileInitialSyncStatusRepository(workingDir, clock)
+    private val accountStore = authenticationService.getLocalAccountStore()
 
     override suspend fun execute(params: SyncTask.Params): SyncResponse {
         return syncTaskSequencer.post {
-            val accounts = authenticationService.getLocalAccountStore().getAccounts()
+            val accounts = accountStore.getAccounts()
             var mainAccount: LocalAccount? = null
             accounts.forEach { account ->
                 if (account.userId != userId) {
                     val response = doSync(account.userId, MultiServerCredentials(account.token, account.homeServerUrl), params)
+                    Timber.d("sync response multiserver: $response")
+                    var unreadCount = 0
                     response.rooms?.let {
-                        Timber.d("sync response multiserver: $response")
-                        var unreadCount = 0
                         it.join.values.forEach { room ->
                             room.unreadNotifications?.notificationCount?.let { unreadCount += it }
                         }
                         it.leave.values.forEach { room ->
                             room.unreadNotifications?.notificationCount?.let { unreadCount += it }
                         }
-                        Timber.d("Unread count is $unreadCount for the ${account.userId}")
+                    }
+
+                    if (account.unreadCount != unreadCount) {
+                        Timber.d("updating unread count")
+                        accountStore.updateUnreadCount(account.userId, unreadCount)
                     }
                 } else {
                     mainAccount = account
@@ -137,9 +142,12 @@ internal class DefaultSyncTask @Inject constructor(
         if (!isMainAccount) {
             return syncAPI.sync(
                     requestCredentials = credentials,
-                    params = requestParams,
+                    params = hashMapOf(
+                            "timeout" to (6000L).toString(),
+                            "set_presence" to SyncPresence.Online.value
+                    ),
                     readTimeOut = readTimeOut
-            )
+            ).also { syncResponseHandler.handleResponse(userId, it, null, afterPause = true, null) }
         }
         val isInitialSync = token == null
         if (isInitialSync) {
