@@ -42,6 +42,7 @@ abstract class AccountItem : VectorEpoxyModel<AccountItem.Holder>(R.layout.item_
         super.bind(holder)
         holder.rootView.onClick(listener)
         holder.accountNameView.text = matrixItem.displayName
+        holder.homeserver.text = matrixItem.id.homeserver
         avatarRenderer.render(matrixItem, holder.avatarImageView)
         holder.counterBadgeView.render(countState)
         holder.counterBadgeView.setBackgroundResource(R.drawable.bg_unread_accounts)
@@ -55,7 +56,10 @@ abstract class AccountItem : VectorEpoxyModel<AccountItem.Holder>(R.layout.item_
     class Holder : VectorEpoxyHolder() {
         val avatarImageView by bind<ImageView>(R.id.accountAvatarImageView)
         val accountNameView by bind<TextView>(R.id.accountNameView)
+        val homeserver by bind<TextView>(R.id.homeserverView)
         val rootView by bind<ConstraintLayout>(R.id.itemAccountLayout)
         val counterBadgeView by bind<UnreadCounterBadgeView>(R.id.groupCounterBadge)
     }
 }
+
+val String.homeserver get() = split(":").last()

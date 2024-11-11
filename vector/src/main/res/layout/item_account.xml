@@ -37,20 +37,36 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Nastya Koval" />
 
+    <TextView
+        android:id="@+id/homeserverView"
+        style="@style/Widget.Vector.TextView.Subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="?vctr_content_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/accountNameView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.518"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="jmatrix.org" />
+
     <im.vector.app.features.home.room.list.UnreadCounterBadgeView
         android:id="@+id/groupCounterBadge"
         style="@style/Widget.Vector.TextView.Micro"
-        android:layout_marginEnd="@dimen/layout_horizontal_margin"
         android:layout_width="wrap_content"
         android:layout_height="18dp"
+        android:layout_marginEnd="@dimen/layout_horizontal_margin"
         android:gravity="center"
         android:minWidth="18dp"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:textColor="?colorOnError"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

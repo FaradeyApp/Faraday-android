@@ -48,9 +48,7 @@ class AccountsController @Inject constructor(
             accountItem {
                 id(account.userId)
                 avatarRenderer(host.avatarRenderer)
-                // TODO: update model for full information about account
                 countState(UnreadCounterBadgeView.State.Text(account.unreadCount.toString(), false))
-//                countState(UnreadCounterBadgeView.State.Text(account.userId, false))
                 listener { host.callback?.onAccountSelected(account) }
                 matrixItem(account.toMatrixItem())
             }
