@@ -77,7 +77,11 @@ interface ProfileService {
      * @param userId the userId param to look for
      *
      */
-    suspend fun getProfile(userId: String, homeServerUrl: String? = null): JsonDict
+    suspend fun getProfile(
+            userId: String,
+            homeServerUrl: String? = null,
+            storeInDatabase: Boolean = true
+    ): JsonDict
 
     /**
      * Get the current user 3Pids.
@@ -140,6 +144,7 @@ interface ProfileService {
             )
         }
     }
+
     /**
      * Return multi-account data.
      */

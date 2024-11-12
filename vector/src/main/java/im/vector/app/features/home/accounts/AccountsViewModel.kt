@@ -27,9 +27,20 @@ import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import im.vector.app.core.session.ConfigureAndStartSessionUseCase
 import im.vector.app.features.login.ReAuthHelper
+import im.vector.lib.core.utils.flow.throttleFirst
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import org.matrix.android.sdk.api.auth.AuthenticationService
 import org.matrix.android.sdk.api.failure.Failure
 import org.matrix.android.sdk.api.session.Session
@@ -57,21 +68,21 @@ class AccountsViewModel @AssistedInject constructor(
     companion object : MavericksViewModelFactory<AccountsViewModel, AccountsViewState> by hiltMavericksViewModelFactory()
 
     private val profileService = session.profileService()
-
-    private var accountLoadingJob: Job? = null
+//    private var rawAccounts = MutableStateFlow(emptyList<LocalAccount>())
 
     init {
-        accountLoadingJob = viewModelScope.launch {
-            val accounts = profileService.getMultipleAccount(session.myUserId)
-            setState {
-                copy(
-                    accountItems = accounts
-                )
-            }
+        viewModelScope.launch {
+            profileService.getAccounts().asFlow()
+                    .distinctUntilChanged()
+                    .collect {
+                        observeAccounts(it)
+                    }
         }
-        profileService.getAccounts().asFlow().onEach {
-            observeAccounts(it)
-        }
+//        viewModelScope.launch {
+//            rawAccounts.collectLatest {
+//                observeAccounts(it)
+//            }
+//        }
     }
 
     override fun handle(action: AccountsAction) {
@@ -88,14 +99,14 @@ class AccountsViewModel @AssistedInject constructor(
         authenticationService.getLocalAccountStore().deleteAccount(account.userId)
     }
 
-    private fun observeAccounts(localAccounts: List<LocalAccount>) {
-        if (accountLoadingJob?.isActive == true) {
-            accountLoadingJob?.cancel()
-        }
-        accountLoadingJob = viewModelScope.launch {
-            val items = localAccounts.map { account ->
+    private fun observeAccounts(localAccounts: List<LocalAccount>) = viewModelScope.launch(Dispatchers.Main) {
+        Timber.d("Accounts observing: $localAccounts")
+        val items = localAccounts.map { account ->
+            async(SupervisorJob() + Dispatchers.IO) {
                 try {
-                    val data = profileService.getProfile(account.userId, account.homeServerUrl)
+                    val data = profileService.getProfile(
+                            account.userId, account.homeServerUrl, storeInDatabase = false
+                    )
                     AccountItem(
                             userId = account.userId,
                             displayName = data.get(ProfileService.DISPLAY_NAME_KEY) as? String ?: "",
@@ -112,12 +123,13 @@ class AccountsViewModel @AssistedInject constructor(
                     )
                 }
             }
+        }.awaitAll()
 
-            setState {
-                copy(
-                        accountItems = items
-                )
-            }
+        Timber.d("Running on thread: ${Thread.currentThread().name}")
+        setState {
+            copy(
+                    accountItems = items
+            )
         }
     }
 

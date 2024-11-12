@@ -102,8 +102,8 @@ internal class DefaultProfileService @Inject constructor(
         return Optional.from(avatarUrl)
     }
 
-    override suspend fun getProfile(userId: String, homeServerUrl: String?): JsonDict {
-        val params = GetProfileInfoTask.Params(userId, homeServerUrl = homeServerUrl)
+    override suspend fun getProfile(userId: String, homeServerUrl: String?, storeInDatabase: Boolean): JsonDict {
+        val params = GetProfileInfoTask.Params(userId, homeServerUrl = homeServerUrl, storeInDatabase = storeInDatabase)
         return getProfileInfoTask.execute(params)
     }
 
