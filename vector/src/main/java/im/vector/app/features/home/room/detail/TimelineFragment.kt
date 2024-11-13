@@ -1489,6 +1489,8 @@ class TimelineFragment :
     }
 
     private fun handleRoomSummaryFailure(asyncRoomSummary: Fail<RoomSummary>) {
+        if (timelineArgs.changeAccount) return
+
         views.roomNotFound.isVisible = true
         views.roomNotFoundText.text = when (asyncRoomSummary.error) {
             is RoomNotFound -> {

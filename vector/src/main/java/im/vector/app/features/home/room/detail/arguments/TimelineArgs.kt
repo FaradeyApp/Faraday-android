@@ -24,6 +24,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class TimelineArgs(
         val roomId: String,
+        val userId: String? = null,
+        val changeAccount: Boolean = false,
         val eventId: String? = null,
         val sharedData: SharedData? = null,
         val openShareSpaceForId: String? = null,
