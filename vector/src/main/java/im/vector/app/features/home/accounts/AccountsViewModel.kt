@@ -26,6 +26,7 @@ import im.vector.app.core.di.MavericksAssistedViewModelFactory
 import im.vector.app.core.di.hiltMavericksViewModelFactory
 import im.vector.app.core.platform.VectorViewModel
 import im.vector.app.core.session.ConfigureAndStartSessionUseCase
+import im.vector.app.features.home.ChangeAccountUseCase
 import im.vector.app.features.login.ReAuthHelper
 import im.vector.lib.core.utils.flow.throttleFirst
 import kotlinx.coroutines.Dispatchers
@@ -52,12 +53,10 @@ import timber.log.Timber
 
 class AccountsViewModel @AssistedInject constructor(
         @Assisted initialState: AccountsViewState,
-        private val reAuthHelper: ReAuthHelper,
         private val session: Session,
         private val lightweightSettingsStorage: LightweightSettingsStorage,
         private val authenticationService: AuthenticationService,
-        private val activeSessionHolder: ActiveSessionHolder,
-        private val configureAndStartSessionUseCase: ConfigureAndStartSessionUseCase,
+        private val changeAccountUseCase: ChangeAccountUseCase,
 ) : VectorViewModel<AccountsViewState, AccountsAction, AccountsViewEvents>(initialState) {
 
     @AssistedFactory
@@ -162,20 +161,7 @@ class AccountsViewModel @AssistedInject constructor(
 
     private fun handleSelectAccountAction(account: AccountItem) = viewModelScope.launch {
         try {
-            session.close()
-            reAuthHelper.data = null
-            val result = session.profileService()
-                    .reLoginMultiAccount(userId = account.userId, authenticationService.getSessionCreator()) {
-                        reAuthHelper.data = it.password
-                    }
-            Timber.d("Session created")
-            activeSessionHolder.setActiveSession(result)
-            lightweightSettingsStorage.setLastSessionHash(result.sessionId)
-            authenticationService.reset()
-            Timber.d("Configure and start session")
-            configureAndStartSessionUseCase.execute(result)
-            Timber.i("handleSelectAccountAction ${result.sessionParams.credentials}")
-
+            changeAccountUseCase.execute(account.userId)
             handleSetRestartAppValue(value = true)
         } catch (throwable: Throwable) {
             Timber.i("Error re-login into app $throwable")
