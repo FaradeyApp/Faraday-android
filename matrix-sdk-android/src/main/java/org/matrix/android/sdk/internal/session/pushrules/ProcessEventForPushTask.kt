@@ -30,7 +30,8 @@ import javax.inject.Inject
 internal interface ProcessEventForPushTask : Task<ProcessEventForPushTask.Params, Unit> {
     data class Params(
             val syncResponse: RoomsSyncResponse,
-            val rules: List<PushRule>
+            val rules: List<PushRule>,
+            val userId: String
     )
 }
 
@@ -93,6 +94,7 @@ internal class DefaultProcessEventForPushTask @Inject constructor(
         Timber.v("[PushRules] Found ${allRedactedEvents.size} redacted events")
 
         defaultPushRuleService.dispatchEvents(
+                params.userId,
                 PushEvents(
                         matchedEvents = matchedEvents,
                         roomsJoined = params.syncResponse.join.keys,

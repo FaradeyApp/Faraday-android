@@ -57,7 +57,7 @@ interface PushRuleService {
     ): Boolean
 
     interface PushRuleListener {
-        fun onEvents(pushEvents: PushEvents)
+        fun onEvents(userId: String, pushEvents: PushEvents)
     }
 
     fun getKeywords(): LiveData<Set<String>>

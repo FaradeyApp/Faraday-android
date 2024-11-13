@@ -109,7 +109,7 @@ internal class SyncResponseHandler @Inject constructor(
 //                startMonarchyTransaction(userId, syncResponse, isInitialSync, reporter, aggregator)
                 syncResponse.rooms?.let {
                     Timber.d("Check push rules for user: $userId")
-                    checkPushRules(it, isInitialSync = false)
+                    checkPushRules(it, userId, isInitialSync = false)
                 }
             }
             Timber.v("On sync completed")
@@ -228,7 +228,7 @@ internal class SyncResponseHandler @Inject constructor(
         measureSpan("task", "sync_response_post_treatment") {
             measureTimeMillis {
                 syncResponse.rooms?.let {
-                    checkPushRules(it, isInitialSync)
+                    checkPushRules(it, activeUserId, isInitialSync)
                     userAccountDataSyncHandler.synchronizeWithServerIfNeeded(it.invite)
                     dispatchInvitedRoom(it)
                 }
@@ -263,7 +263,7 @@ internal class SyncResponseHandler @Inject constructor(
         }
     }
 
-    private suspend fun checkPushRules(roomsSyncResponse: RoomsSyncResponse, isInitialSync: Boolean) {
+    private suspend fun checkPushRules(roomsSyncResponse: RoomsSyncResponse, userId: String, isInitialSync: Boolean) {
         Timber.v("[PushRules] --> checkPushRules")
         if (isInitialSync) {
             Timber.v("[PushRules] <-- No push rule check on initial sync")
@@ -271,7 +271,7 @@ internal class SyncResponseHandler @Inject constructor(
         } // nothing on initial sync
 
         val rules = pushRuleService.getPushRules(RuleScope.GLOBAL).getAllRules()
-        processEventForPushTask.execute(ProcessEventForPushTask.Params(roomsSyncResponse, rules))
+        processEventForPushTask.execute(ProcessEventForPushTask.Params(roomsSyncResponse, rules, userId))
         Timber.v("[PushRules] <-- Push task scheduled")
     }
 }

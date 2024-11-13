@@ -585,7 +585,7 @@ class NotificationUtils @Inject constructor(
         // Build the pending intent for when the notification is clicked
         val openIntent = when {
             threadId != null && vectorPreferences.areThreadMessagesEnabled() -> buildOpenThreadIntent(roomInfo, threadId)
-            else -> buildOpenRoomIntent(roomInfo.roomId)
+            else -> buildOpenRoomIntent(roomInfo.userId, roomInfo.roomId)
         }
 
         val smallIcon = R.drawable.ic_status_bar_sc
@@ -818,8 +818,10 @@ class NotificationUtils @Inject constructor(
                 .build()
     }
 
-    private fun buildOpenRoomIntent(roomId: String): PendingIntent? {
-        val roomIntentTap = RoomDetailActivity.newIntent(context, TimelineArgs(roomId = roomId, switchToParentSpace = false), true)
+    private fun buildOpenRoomIntent(userId: String?, roomId: String): PendingIntent? {
+        val roomIntentTap = RoomDetailActivity.newIntent(context, TimelineArgs(
+                roomId = roomId, userId =  userId, changeAccount = true, switchToParentSpace = false
+        ), true)
         roomIntentTap.action = actionIds.tapToView
         // pending intent get reused by system, this will mess up the extra params, so put unique info to avoid that
         roomIntentTap.data = createIgnoredUri("openRoom?$roomId")

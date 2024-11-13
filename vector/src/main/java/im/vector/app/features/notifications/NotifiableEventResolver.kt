@@ -66,7 +66,7 @@ class NotifiableEventResolver @Inject constructor(
         private val buildMeta: BuildMeta,
 ) {
 
-    suspend fun resolveEvent(event: Event, session: Session, isNoisy: Boolean): NotifiableEvent? {
+    suspend fun resolveEvent(event: Event, session: Session, userId: String?, isNoisy: Boolean): NotifiableEvent? {
         val roomID = event.roomId ?: return null
         val eventId = event.eventId ?: return null
         if (event.getClearType() == EventType.STATE_ROOM_MEMBER) {
@@ -93,7 +93,7 @@ class NotifiableEventResolver @Inject constructor(
                             roomId = event.roomId!!,
                             threadId = null,
                             roomName = null,
-                            matrixID = session.myUserId
+                            userId = userId
                     )
                 }
                 else -> null
@@ -181,7 +181,7 @@ class NotifiableEventResolver @Inject constructor(
                     roomId = event.root.roomId!!,
                     threadId = event.root.getRootThreadEventId(),
                     roomName = roomName,
-                    matrixID = session.myUserId
+                    userId = session.myUserId
             )
         } else {
             event.attemptToDecryptIfNeeded(session)
@@ -220,7 +220,7 @@ class NotifiableEventResolver @Inject constructor(
                                             250,
                                             ContentUrlResolver.ThumbnailMethod.SCALE
                                     ),
-                            matrixID = session.myUserId,
+                            userId = session.myUserId,
                             soundName = null
                     )
                 }

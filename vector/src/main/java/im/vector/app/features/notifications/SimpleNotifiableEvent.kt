@@ -16,7 +16,7 @@
 package im.vector.app.features.notifications
 
 data class SimpleNotifiableEvent(
-        val matrixID: String?,
+        override val userId: String?,
         override val eventId: String,
         override val editedEventId: String?,
         val noisy: Boolean,

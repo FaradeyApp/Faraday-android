@@ -294,7 +294,7 @@ class DefaultNavigator @Inject constructor(
     }
 
     override fun openRoomForSharingAndFinish(activity: Activity, roomId: String, sharedData: SharedData) {
-        val args = TimelineArgs(roomId, null, sharedData)
+        val args = TimelineArgs(roomId, eventId = null, sharedData = sharedData)
         val intent = RoomDetailActivity.newIntent(activity, args, false)
         activity.startActivity(intent)
         activity.finish()

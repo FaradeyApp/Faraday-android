@@ -38,10 +38,10 @@ class PushRuleTriggerListener @Inject constructor(
     private var session: Session? = null
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-    override fun onEvents(pushEvents: PushEvents) {
+    override fun onEvents(userId: String, pushEvents: PushEvents) {
         scope.launch {
             session?.let { session ->
-                val notifiableEvents = createNotifiableEvents(pushEvents, session)
+                val notifiableEvents = createNotifiableEvents(pushEvents, session, userId)
                 notificationDrawerManager.updateEvents { queuedEvents ->
                     notifiableEvents.forEach { notifiableEvent ->
                         queuedEvents.onNotifiableEventReceived(notifiableEvent)
@@ -53,12 +53,12 @@ class PushRuleTriggerListener @Inject constructor(
         }
     }
 
-    private suspend fun createNotifiableEvents(pushEvents: PushEvents, session: Session): List<NotifiableEvent> {
+    private suspend fun createNotifiableEvents(pushEvents: PushEvents, session: Session, userId: String): List<NotifiableEvent> {
         return pushEvents.matchedEvents.mapNotNull { (event, pushRule) ->
             Timber.d("Push rule match for event ${event.eventId}")
             val action = pushRule.getActions().toNotificationAction()
             if (action.shouldNotify) {
-                resolver.resolveEvent(event, session, isNoisy = !action.soundName.isNullOrBlank())
+                resolver.resolveEvent(event, session, userId, isNoisy = !action.soundName.isNullOrBlank())
             } else {
                 Timber.d("Matched push rule is set to not notify")
                 null

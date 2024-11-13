@@ -165,11 +165,11 @@ internal class DefaultPushRuleService @Inject constructor(
         }
     }
 
-    fun dispatchEvents(pushEvents: PushEvents) {
+    fun dispatchEvents(userId: String, pushEvents: PushEvents) {
         synchronized(listeners) {
             listeners.forEach {
                 try {
-                    it.onEvents(pushEvents)
+                    it.onEvents(userId, pushEvents)
                 } catch (e: Throwable) {
                     Timber.e(e, "Error while dispatching push events")
                 }

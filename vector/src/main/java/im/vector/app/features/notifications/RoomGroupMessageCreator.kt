@@ -40,7 +40,7 @@ class RoomGroupMessageCreator @Inject constructor(
                 Person.Builder()
                         .setName(userDisplayName)
                         .setIcon(bitmapLoader.getUserIcon(userAvatarUrl))
-                        .setKey(lastKnownRoomEvent.matrixID)
+                        .setKey(lastKnownRoomEvent.userId)
                         .build()
         ).also {
             it.conversationTitle = roomName.takeIf { roomIsGroup }
@@ -69,7 +69,12 @@ class RoomGroupMessageCreator @Inject constructor(
         return RoomNotification.Message(
                 notificationUtils.buildMessagesListNotification(
                         style,
-                        RoomEventGroupInfo(roomId, roomName, isDirect = !roomIsGroup).also {
+                        RoomEventGroupInfo(
+                                roomId,
+                                roomName,
+                                isDirect = !roomIsGroup,
+                                userId = lastKnownRoomEvent.userId,
+                        ).also {
                             it.hasSmartReplyError = smartReplyErrors.isNotEmpty()
                             it.shouldBing = meta.shouldBing
                             it.customSound = events.last().soundName

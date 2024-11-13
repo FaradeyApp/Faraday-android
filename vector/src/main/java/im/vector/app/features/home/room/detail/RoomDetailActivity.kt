@@ -40,17 +40,22 @@ import im.vector.app.databinding.ActivityRoomDetailBinding
 import im.vector.app.features.MainActivity
 import im.vector.app.features.analytics.plan.MobileScreen
 import im.vector.app.features.analytics.plan.ViewRoom
+import im.vector.app.features.home.ChangeAccountUseCase
+import im.vector.app.features.home.HomeActivity
 import im.vector.app.features.home.room.breadcrumbs.BreadcrumbsFragment
 import im.vector.app.features.home.room.detail.arguments.TimelineArgs
 import im.vector.app.features.home.room.detail.timeline.helper.AudioMessagePlaybackTracker
+import im.vector.app.features.login.ReAuthHelper
 import im.vector.app.features.matrixto.MatrixToBottomSheet
 import im.vector.app.features.navigation.Navigator
+import im.vector.app.features.onboarding.AuthenticationDescription
 import im.vector.app.features.room.RequireActiveMembershipAction
 import im.vector.app.features.room.RequireActiveMembershipViewEvents
 import im.vector.app.features.room.RequireActiveMembershipViewModel
 import im.vector.lib.core.utils.compat.getParcelableCompat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -92,6 +97,9 @@ class RoomDetailActivity :
     override fun getCoordinatorLayout() = views.coordinatorLayout
 
     @Inject lateinit var playbackTracker: AudioMessagePlaybackTracker
+    @Inject lateinit var changeAccountUseCase: ChangeAccountUseCase
+    @Inject lateinit var reAuthHelper: ReAuthHelper
+
     private lateinit var sharedActionViewModel: RoomDetailSharedActionViewModel
     private val requireActiveMembershipViewModel: RequireActiveMembershipViewModel by viewModel()
 
@@ -109,6 +117,18 @@ class RoomDetailActivity :
         waitingView = views.waitingView.waitingView
         val timelineArgs: TimelineArgs = intent?.extras?.getParcelableCompat(EXTRA_ROOM_DETAIL_ARGS) ?: return
         intent.putExtra(Mavericks.KEY_ARG, timelineArgs)
+
+        if (timelineArgs.changeAccount && timelineArgs.userId != null) {
+            lifecycleScope.launch {
+                changeAccountUseCase.execute(timelineArgs.userId)
+            }.invokeOnCompletion {
+                val intent = newIntent(this, timelineArgs = timelineArgs.copy(
+                        changeAccount = false
+                ), firstStartMainActivity = true)
+                startActivity(intent)
+                this.finish()
+            }
+        }
         currentRoomId = timelineArgs.roomId
 
         if (isFirstCreation()) {
