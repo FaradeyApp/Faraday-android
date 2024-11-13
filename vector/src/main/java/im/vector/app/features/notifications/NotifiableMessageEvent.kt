@@ -36,7 +36,7 @@ data class NotifiableMessageEvent(
         val roomIsDirect: Boolean = false,
         val roomAvatarPath: String? = null,
         val senderAvatarPath: String? = null,
-        val matrixID: String? = null,
+        override val userId: String? = null,
         val soundName: String? = null,
         // This is used for >N notification, as the result of a smart reply
         val outGoingMessage: Boolean = false,

@@ -21,6 +21,7 @@ import java.io.Serializable
  * Parent interface for all events which can be displayed as a Notification.
  */
 sealed interface NotifiableEvent : Serializable {
+    val userId: String?
     val eventId: String
     val editedEventId: String?
 

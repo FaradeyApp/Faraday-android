@@ -16,7 +16,7 @@
 package im.vector.app.features.notifications
 
 data class InviteNotifiableEvent(
-        val matrixID: String?,
+        override val userId: String?,
         override val eventId: String,
         override val editedEventId: String?,
         override val canBeReplaced: Boolean,

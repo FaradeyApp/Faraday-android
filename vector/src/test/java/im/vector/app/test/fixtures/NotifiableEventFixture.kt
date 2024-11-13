@@ -27,7 +27,7 @@ fun aSimpleNotifiableEvent(
         canBeReplaced: Boolean = false,
         editedEventId: String? = null
 ) = SimpleNotifiableEvent(
-        matrixID = null,
+        userId = null,
         eventId = eventId,
         editedEventId = editedEventId,
         noisy = false,
@@ -45,7 +45,7 @@ fun anInviteNotifiableEvent(
         eventId: String = "invite-event-id",
         isRedacted: Boolean = false
 ) = InviteNotifiableEvent(
-        matrixID = null,
+        userId = null,
         eventId = eventId,
         roomId = roomId,
         roomName = "a room name",
