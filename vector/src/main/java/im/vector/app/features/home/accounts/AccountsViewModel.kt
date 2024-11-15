@@ -100,7 +100,7 @@ class AccountsViewModel @AssistedInject constructor(
 
     private fun observeAccounts(localAccounts: List<LocalAccount>) = viewModelScope.launch(Dispatchers.Main) {
         Timber.d("Accounts observing: $localAccounts")
-        val items = localAccounts.map { account ->
+        val items = localAccounts.filter { it.userId != session.myUserId }.map { account ->
             async(SupervisorJob() + Dispatchers.IO) {
                 try {
                     val data = profileService.getProfile(
