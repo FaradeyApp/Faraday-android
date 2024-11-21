@@ -25,7 +25,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
 import io.realm.RealmConfiguration
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.matrix.android.sdk.api.MatrixConfiguration
 import org.matrix.android.sdk.api.auth.data.Credentials
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
@@ -75,6 +80,7 @@ import org.matrix.android.sdk.internal.network.NetworkCallbackStrategy
 import org.matrix.android.sdk.internal.network.NetworkConnectivityChecker
 import org.matrix.android.sdk.internal.network.PreferredNetworkCallbackStrategy
 import org.matrix.android.sdk.internal.network.RetrofitFactory
+import org.matrix.android.sdk.internal.network.awaitResponse
 import org.matrix.android.sdk.internal.network.httpclient.addAccessTokenInterceptor
 import org.matrix.android.sdk.internal.network.httpclient.addSocketFactory
 import org.matrix.android.sdk.internal.network.httpclient.applyMatrixConfiguration
@@ -102,6 +108,7 @@ import org.matrix.android.sdk.internal.session.typing.DefaultTypingUsersTracker
 import org.matrix.android.sdk.internal.session.user.accountdata.DefaultSessionAccountDataService
 import org.matrix.android.sdk.internal.session.widgets.DefaultWidgetURLFormatter
 import retrofit2.Retrofit
+import timber.log.Timber
 import java.io.File
 import javax.inject.Provider
 import javax.inject.Qualifier
@@ -275,6 +282,7 @@ internal abstract class SessionModule {
                     .build()
         }
 
+        @OptIn(DelicateCoroutinesApi::class)
         @JvmStatic
         @Provides
         @SessionScope
@@ -319,7 +327,22 @@ internal abstract class SessionModule {
                             proxyAuthenticator(authenticator)
                         }
                     }
-                    .build()
+                    .build().also {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            try {
+                                Timber.d(
+                                        "Check tor:" + it.newCall(
+                                                Request.Builder()
+                                                        .url("il7uf3kkxkryrtzqqj5j2axo45byy6h7z44uyr66lx5hbfxjb5uf4yyd.onion")
+                                                        .get()
+                                                        .build()
+                                        ).awaitResponse()
+                                )
+                            } catch (e: Throwable) {
+                                Timber.d("Check tor: failed with $e")
+                            }
+                        }
+                    }
         }
 
         @JvmStatic

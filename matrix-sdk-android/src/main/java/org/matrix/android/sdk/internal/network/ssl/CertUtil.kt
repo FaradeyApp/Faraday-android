@@ -204,6 +204,9 @@ internal object CertUtil {
         val trustedFingerprints = hsConfig.allowedFingerprints
 
         return HostnameVerifier { hostname, session ->
+            // TODO: can i check proxied domain instead?
+            if (hostname.split(".").last() == "onion") return@HostnameVerifier true
+
             if (USE_DEFAULT_HOSTNAME_VERIFIER) {
                 if (defaultVerifier.verify(hostname, session)) return@HostnameVerifier true
             }

@@ -24,6 +24,7 @@ import im.vector.app.core.error.ErrorFormatter
 import im.vector.app.core.settings.connectionmethods.onion.TorEventBroadcaster
 import im.vector.app.core.settings.connectionmethods.onion.TorEventListener
 import im.vector.app.core.settings.connectionmethods.onion.TorService
+import im.vector.app.core.settings.connectionmethods.onion.TorSetup
 import im.vector.app.features.analytics.AnalyticsTracker
 import im.vector.app.features.call.webrtc.WebRtcCallManager
 import im.vector.app.features.home.AvatarRenderer
@@ -61,7 +62,7 @@ interface SingletonEntryPoint {
 
     fun torService(): TorService
 
-    fun torSetup(): TorService
+    fun torSetup(): TorSetup
 
     fun torEventBroadcaster(): TorEventBroadcaster
 

@@ -27,8 +27,8 @@ import io.matthewnelson.topl_service_base.ApplicationDefaultTorSettings
 class TorSettings(private val context: Context) : ApplicationDefaultTorSettings() {
     override val connectionPadding = ConnectionPadding.OFF
 
-    override val customTorrc: String = "Bridge obfs4 45.142.181.131:42069 6EBCF6B02DA2B982F4080A7119D737366AFB74FA cert=9HyWH/BCwWzNirZdTQtluCgJk+gFhpOqydIuyQ1iDvpnqsAynKF+zcPE/INZFefm86UlBg iat-mode=0\n" +
-            "Bridge obfs4 24.134.5.121:8989 6C11CE58EA4D4C3C7EC078EBDC9D7D8961A58699 cert=q9W7JYmdRvQqs9MEa7rAKU5iNiu5zKtkyJPVH5aH61QRgcTrjtom58EoDnTnnlc37xNZPQ iat-mode=0\n" +
+    override val customTorrc: String = "Bridge obfs4 88.198.45.215:444 E356D47DBB5D8655BD312C49B2EC61F20FFA1D8D cert=q9ZrxFpo8LkS4N6fWjmfSYQ0VHab9xFKOsJfoZ2rB0LtY58IsjIv/qrexKM6pqccpyRCXA iat-mode=0\n" +
+            "Bridge obfs4 88.87.54.244:8080 2B2F89D522FB81758453A5DF9D30B330A706647B cert=jYWrkq03zXjbiqoyIUPZMpgXt2fNCA87sIyP0yvebHAqcF5I/ixawQE9ymlA0ZZvvqdnPQ iat-mode=0\n" +
             "UseBridges 1\n" +
             "ClientTransportPlugin obfs4 exec ${context.applicationInfo.nativeLibraryDir}/libobfs4proxy.so"
 

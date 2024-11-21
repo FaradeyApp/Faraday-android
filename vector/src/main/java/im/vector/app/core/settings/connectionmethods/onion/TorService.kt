@@ -19,6 +19,7 @@ package im.vector.app.core.settings.connectionmethods.onion
 
 import io.matthewnelson.topl_service.TorServiceController
 import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,10 +36,12 @@ class TorService @Inject constructor(
     var isProxyRunning = false
 
     private fun startTor() {
+        Timber.d("Start tor")
         TorServiceController.startTor()
     }
 
     private fun stopTor() {
+        Timber.d("Stop tor")
         TorServiceController.stopTor()
     }
 
