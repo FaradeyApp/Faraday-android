@@ -201,6 +201,10 @@ internal class RealmCryptoStore @Inject constructor(
                 realmLocker = Realm.getInstance(realmConfiguration)
             }
         }
+
+        if (olmAccount == null) {
+            getOrCreateOlmAccount()
+        }
     }
 
     override fun close() {

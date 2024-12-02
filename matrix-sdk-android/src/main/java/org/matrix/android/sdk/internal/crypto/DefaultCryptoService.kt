@@ -405,6 +405,7 @@ internal class DefaultCryptoService @Inject constructor(
      */
     fun close() = runBlocking(coroutineDispatchers.crypto) {
         cryptoCoroutineScope.coroutineContext.cancelChildren(CancellationException("Closing crypto module"))
+        roomEncryptorsStore.discardAllKeys()
         incomingKeyRequestManager.close()
         outgoingKeyRequestManager.close()
         unrequestedForwardManager.close()

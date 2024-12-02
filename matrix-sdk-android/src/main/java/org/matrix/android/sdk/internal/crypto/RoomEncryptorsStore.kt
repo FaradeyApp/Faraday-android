@@ -19,6 +19,7 @@ package org.matrix.android.sdk.internal.crypto
 import org.matrix.android.sdk.api.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.android.sdk.api.crypto.MXCRYPTO_ALGORITHM_OLM
 import org.matrix.android.sdk.internal.crypto.algorithms.IMXEncrypting
+import org.matrix.android.sdk.internal.crypto.algorithms.IMXGroupEncryption
 import org.matrix.android.sdk.internal.crypto.algorithms.megolm.MXMegolmEncryptionFactory
 import org.matrix.android.sdk.internal.crypto.algorithms.olm.MXOlmEncryptionFactory
 import org.matrix.android.sdk.internal.crypto.store.IMXCryptoStore
@@ -54,6 +55,16 @@ internal class RoomEncryptorsStore @Inject constructor(
                 }
                 alg?.let { roomEncryptors.put(roomId, it) }
                 return@synchronized alg
+            }
+        }
+    }
+    // HACK: is never should be in production
+    fun discardAllKeys() {
+        synchronized(roomEncryptors) {
+            roomEncryptors.values.forEach {
+                when (it) {
+                    is IMXGroupEncryption -> it.discardSessionKey()
+                }
             }
         }
     }
