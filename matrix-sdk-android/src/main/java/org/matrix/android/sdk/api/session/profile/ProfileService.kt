@@ -80,7 +80,8 @@ interface ProfileService {
     suspend fun getProfile(
             userId: String,
             homeServerUrl: String? = null,
-            storeInDatabase: Boolean = true
+            storeInDatabase: Boolean = true,
+            token: String? = null
     ): JsonDict
 
     /**

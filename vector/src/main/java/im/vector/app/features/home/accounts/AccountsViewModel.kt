@@ -104,7 +104,7 @@ class AccountsViewModel @AssistedInject constructor(
             async(SupervisorJob() + Dispatchers.IO) {
                 try {
                     val data = profileService.getProfile(
-                            account.userId, account.homeServerUrl, storeInDatabase = false
+                            account.userId, account.homeServerUrl, storeInDatabase = false, account.token
                     )
                     AccountItem(
                             userId = account.userId,

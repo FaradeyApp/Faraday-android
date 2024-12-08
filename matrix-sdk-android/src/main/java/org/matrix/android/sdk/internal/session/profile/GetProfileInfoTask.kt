@@ -33,7 +33,10 @@ internal abstract class GetProfileInfoTask : Task<GetProfileInfoTask.Params, Jso
     data class Params(
             val userId: String,
             val storeInDatabase: Boolean = true,
-            val homeServerUrl: String? = null
+            val homeServerUrl: String? = null,
+            // It is not declared in documentation,
+            // but some servers require token for using profile API
+            val token: String? = null,
     )
 }
 
@@ -46,10 +49,13 @@ internal class DefaultGetProfileInfoTask @Inject constructor(
 
     override suspend fun execute(params: Params): JsonDict {
         return executeRequest(null) {
-            multiServerProfileApi.getProfile(
-                    MultiServerCredentials(homeserver = params.homeServerUrl),
-                    params.userId
-            )
+            if (params.homeServerUrl == null)
+                profileAPI.getProfile(params.userId)
+            else
+                multiServerProfileApi.getProfile(
+                        MultiServerCredentials(homeserver = params.homeServerUrl, accessToken = params.token),
+                        params.userId
+                )
         }.also { user ->
             if (params.storeInDatabase) {
                 // Insert into DB
