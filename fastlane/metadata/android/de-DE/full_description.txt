@@ -1,6 +1,16 @@
-SchildiChat ist ein Client für das Matrix-Protokoll und basiert auf der Element-Codebasis.
-Das Matrix-Protokoll ist ein dezentralisierter Ansatz für die moderne Nachrichtenübermittlung, und erlaubt hierbei Ende-zu-Ende-Verschlüsselung, einen gemeinsamen Verlauf über mehrere Geräte, und mehr.
-Zusätzlich zum vollen Funktionsumfang von Element bietet SchildiChat einige Design-Anpassungen, weiterführende Einstellungen, und zusätzliche Features aus der Community.
+Faraday ist ein Client für das Matrix-Protokoll, der hauptsächlich für die Arbeit mit benutzerdefinierten Servern konfiguriert ist.
+Im Vergleich zu anderen Clients ermöglicht es Ihnen, mit der Matrix-Funktionalität flexibler zu arbeiten und mit dem Team zu arbeiten, ohne Datenlecks zu befürchten
 
-SchildiChat ist quelloffen: https://github.com/SchildiChat/SchildiChat-android
-Informationen zum Matrix-Protokoll: https://matrix.org/
+Das Matrix-Protokoll ist eine dezentrale Methode zum Austausch von Nachrichten mit End-to-End-Verschlüsselung, die die gemeinsame Nutzung des Nachrichtenverlaufs auf mehreren Geräten und vieles mehr ermöglicht, das dank unseres Kunden möglich ist
+
+Faraday hat viele Verbesserungen:
+- Unterstützung mehrerer Server in einer Anwendung
+- Multi-Account für verschiedene Benutzerserver
+- Benachrichtigungen für Multi-Account mit automatischer Übertragung auf den Server, von dem die Benachrichtigung empfangen wurde
+- Widgets für die Teamzusammenarbeit mit der Integration von Taiga-Diensten, Cryptpad
+- Nuke-Passwort zum Löschen von Anwendungsdaten
+- Möglichkeit .onion Verbindung zum Server
+- Allgemeine Verbesserungen für den Benutzer
+
+Faraday hat einen offenen Code: https://github.com/FaradayApp/Faraday-android
+Weitere Informationen zum Matrix-Protokoll: https://matrix.org/
