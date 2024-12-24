@@ -18,6 +18,7 @@ package org.matrix.android.sdk.internal.wellknown
 
 import android.util.MalformedJsonException
 import dagger.Lazy
+import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
 import org.matrix.android.sdk.api.auth.data.HomeServerConnectionConfig
 import org.matrix.android.sdk.api.auth.data.WellKnown
@@ -44,7 +45,8 @@ internal interface GetWellknownTask : Task<GetWellknownTask.Params, WellknownRes
              * the URL will be https://{domain}/.well-known/matrix/client
              */
             val domain: String,
-            val homeServerConnectionConfig: HomeServerConnectionConfig
+            val homeServerConnectionConfig: HomeServerConnectionConfig,
+            val timeout: Long = 3_000 // 3s
     )
 }
 
@@ -60,7 +62,7 @@ internal class DefaultGetWellknownTask @Inject constructor(
 
     override suspend fun execute(params: GetWellknownTask.Params): WellknownResult {
         val client = buildClient(params.homeServerConnectionConfig)
-        return findClientConfig(params.domain, client)
+        return findClientConfig(params.domain, client, params.timeout)
     }
 
     private fun buildClient(homeServerConnectionConfig: HomeServerConnectionConfig): OkHttpClient {
@@ -80,7 +82,7 @@ internal class DefaultGetWellknownTask @Inject constructor(
      * @param domain homeserver domain, deduced from mx userId (ex: "matrix.org" from userId "@user:matrix.org")
      * @param client Http client to perform the request
      */
-    private suspend fun findClientConfig(domain: String, client: OkHttpClient): WellknownResult {
+    private suspend fun findClientConfig(domain: String, client: OkHttpClient, timeout: Long): WellknownResult {
         val wellKnownAPI = retrofitFactory.create(client, "https://dummy.org")
                 .create(WellKnownAPI::class.java)
 
@@ -103,7 +105,7 @@ internal class DefaultGetWellknownTask @Inject constructor(
             } else {
                 if (homeServerBaseUrl.isValidUrl()) {
                     // Check that HS is a real one
-                    validateHomeServer(homeServerBaseUrl, wellKnown, client)
+                    validateHomeServer(homeServerBaseUrl, wellKnown, client, timeout)
                 } else {
                     WellknownResult.FailError
                 }
@@ -138,13 +140,20 @@ internal class DefaultGetWellknownTask @Inject constructor(
     /**
      * Return true if homeserver is valid, and (if applicable) if identity server is pingable.
      */
-    private suspend fun validateHomeServer(homeServerBaseUrl: String, wellKnown: WellKnown, client: OkHttpClient): WellknownResult {
+    private suspend fun validateHomeServer(
+            homeServerBaseUrl: String,
+            wellKnown: WellKnown,
+            client: OkHttpClient,
+            pingTimeout: Long
+    ): WellknownResult {
         val capabilitiesAPI = retrofitFactory.create(client, homeServerBaseUrl)
                 .create(CapabilitiesAPI::class.java)
 
         try {
             executeRequest(null) {
-                capabilitiesAPI.ping()
+                withTimeout(pingTimeout) {
+                    capabilitiesAPI.ping()
+                }
             }
         } catch (throwable: Throwable) {
             return WellknownResult.FailError
