@@ -34,6 +34,7 @@ import org.matrix.android.sdk.internal.session.homeserver.CapabilitiesAPI
 import org.matrix.android.sdk.internal.session.identity.IdentityAuthAPI
 import org.matrix.android.sdk.internal.task.Task
 import org.matrix.android.sdk.internal.util.isValidUrl
+import timber.log.Timber
 import java.io.EOFException
 import javax.inject.Inject
 import javax.net.ssl.HttpsURLConnection
@@ -169,7 +170,7 @@ internal class DefaultGetWellknownTask @Inject constructor(
                 WellknownResult.FailError
             } else {
                 if (identityServerBaseUrl.isValidUrl()) {
-                    if (validateIdentityServer(identityServerBaseUrl, client)) {
+                    if (validateIdentityServer(identityServerBaseUrl, client, pingTimeout)) {
                         // All is ok
                         WellknownResult.Prompt(homeServerBaseUrl, identityServerBaseUrl, wellKnown)
                     } else {
@@ -185,13 +186,16 @@ internal class DefaultGetWellknownTask @Inject constructor(
     /**
      * Return true if identity server is pingable.
      */
-    private suspend fun validateIdentityServer(identityServerBaseUrl: String, client: OkHttpClient): Boolean {
+    private suspend fun validateIdentityServer(identityServerBaseUrl: String, client: OkHttpClient, timeout: Long): Boolean {
         val identityPingApi = retrofitFactory.create(client, identityServerBaseUrl)
                 .create(IdentityAuthAPI::class.java)
 
         return try {
             executeRequest(null) {
-                identityPingApi.ping()
+                Timber.d("ping: validateIdentityServer")
+                withTimeout(timeout) {
+                    identityPingApi.ping()
+                }
             }
 
             true
