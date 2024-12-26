@@ -24,6 +24,7 @@ import org.matrix.android.sdk.api.settings.LightweightSettingsStorage
 import org.matrix.android.sdk.api.util.ConnectionType
 import org.matrix.android.sdk.api.util.ProxyType
 import org.matrix.android.sdk.internal.session.sync.SyncPresence
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -79,9 +80,10 @@ class DefaultLightweightSettingsStorage @Inject constructor(
     }
 
     override fun setConnectionType(connectionType: ConnectionType) {
-        sdkDefaultPrefs.edit {
+        sdkDefaultPrefs.edit(commit = true) {
             putString(MATRIX_SDK_SETTINGS_CONNECTION_TYPE, connectionType.name)
         }
+        Timber.d("connection type changed to $connectionType")
     }
 
     override fun getProxyType(): ProxyType {

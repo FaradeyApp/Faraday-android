@@ -17,11 +17,11 @@
 package im.vector.app.features.settings.connectionmethod
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.preference.Preference
-import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.hilt.android.AndroidEntryPoint
 import im.vector.app.R
 import im.vector.app.core.error.ErrorFormatter
@@ -36,7 +36,6 @@ import org.matrix.android.sdk.api.session.Session
 import org.matrix.android.sdk.api.util.ConnectionType
 import timber.log.Timber
 import java.io.File
-
 
 @AndroidEntryPoint
 class VectorSettingsConnectionMethodFragment : ConnectionSettingsBaseFragment() {
@@ -104,11 +103,13 @@ class VectorSettingsConnectionMethodFragment : ConnectionSettingsBaseFragment() 
                     ConnectionType.MATRIX -> {
                         when (switchUseProxyPreference?.isChecked ?: return@OnPreferenceClickListener true) {
                             true -> {
+                                Timber.d("disable tor: Proxy Checked")
                                 if (proxyFieldsAreValid()) {
                                     restartApp(ConnectionType.MATRIX)
                                 }
                             }
                             false -> {
+                                Timber.d("disable tor: Proxy unchecked")
                                 disableProxy()
                                 restartApp(ConnectionType.MATRIX)
                             }
@@ -164,12 +165,27 @@ class VectorSettingsConnectionMethodFragment : ConnectionSettingsBaseFragment() 
      * would be started in MainActivity.
      */
     private fun restartApp(connectionType: ConnectionType) {
+        Timber.d("restart app")
         if (connectionType != ConnectionType.ONION && torService.isProxyRunning) {
             torService.switchTorPrefState(false)
         }
         lightweightSettingsStorage.setConnectionType(connectionType)
+        Timber.d("switch connection type: ${lightweightSettingsStorage.getConnectionType()}")
         displayLoadingView()
-        ProcessPhoenix.triggerRebirth(context)
+//        val activity = requireActivity()
+//        val intent = HomeActivity.newIntent(activity, firstStartMainActivity = true)
+//        startActivity(intent)
+//        activity.finish()
+
+        startActivity(
+                Intent.makeRestartActivityTask(
+                        requireContext().packageManager.getLaunchIntentForPackage(
+                                requireContext().packageName
+                        )!!.component
+                )!!
+        )
+        Runtime.getRuntime().exit(0)
+
     }
 
     private fun displayLoadingView() {

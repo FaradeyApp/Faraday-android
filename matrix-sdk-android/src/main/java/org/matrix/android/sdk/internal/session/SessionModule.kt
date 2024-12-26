@@ -333,7 +333,7 @@ internal abstract class SessionModule {
                                 Timber.d(
                                         "Check tor:" + it.newCall(
                                                 Request.Builder()
-                                                        .url("il7uf3kkxkryrtzqqj5j2axo45byy6h7z44uyr66lx5hbfxjb5uf4yyd.onion")
+                                                        .url("http://il7uf3kkxkryrtzqqj5j2axo45byy6h7z44uyr66lx5hbfxjb5uf4yyd.onion")
                                                         .get()
                                                         .build()
                                         ).awaitResponse()
