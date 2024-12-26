@@ -1,0 +1,3 @@
+- fix bugs with syncing multi-accounts
+- fix bug with changing connection type from settings
+- change file-sharing from megafile.sb to files.fm
