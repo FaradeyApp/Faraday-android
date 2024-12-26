@@ -16,7 +16,7 @@
 
 package im.vector.app.features.home.room.detail
 
-private const val FILE_SHARING_URL = "https://megafile.sb/"
+private const val FILE_SHARING_URL = "https://files.fm/"
 
 class RoomDetailFileSharing : BaseWidgetActivity(
         webViewClientProvider = Companion,
